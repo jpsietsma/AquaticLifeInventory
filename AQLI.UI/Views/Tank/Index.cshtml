@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@*@inject AQLI.DataServices.DataFactory DataSource*@ 
+@model AQLI.Data.Models.WebsiteUser;
+@using System.Linq;
+@using AQLI.Data.Models;
+
+<div class="grid">
+    <div class="row justify-content-center">
+        <div id="AnnouncementsDiv" class="col-8 jumbotron">
+            <b>Notifications &amp; Announcements</b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8 text-center">
+            <h2 class="display-9 col-8">Watched Tanks:</h2>            
+        </div>
+        <hr class="col-8" />
+    </div>
+    <div name="tankCards" class="row justify-content-center">
+        @foreach (var item in Model.AquaticTanks)
+        {
+            <!-- Favorite tank cards -->
+            <div id="tankCard_@item.TankId" class="card tank-card col-2">
+                <div class="card-header text-lg-center">
+                    @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankId)
+                    <button type="button" class="close remove-card float-right align-top" onclick="HideCard('#tankCard_' + @(item.TankId))">&times;</button>
+                </div>
+                <div class="card-body text-left">
+                    <div>Description: @(item.Description ?? item.Environment.ToString() + " tank") </div>
+                    <div>Tank Size: @item.Capacity gallons</div>
+                    <div>Environment: @item.Environment.ToString()</div>
+                    <div>Water Type: @item.WaterType</div>
+                    <div class="align-content-center align-bottom">Added @item.Added</div>
+                </div>
+                <div class="card-footer" style="font-size: 10px;">
+                    <form method="post" action="/Tank/Remove">
+                        <input type="hidden" value="@item.TankId" name="id" data-id="@item.TankId" />
+                        <input type="submit" class="btn btn-sm btn-danger float-right tank-remove-btn" value="Delete" />
+                    </form>                    
+                    <button data-toggle="modal" data-target="#tankDetailsModal" type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankId">Details</button>
+                </div>
+            </div>
+        }
+        @if (Model.AquaticTanks.Count() < 4)
+        {
+            <!-- Add tank card -->
+            <div id="tankCard_addCard" class="card tank-card col-2">
+                <div class="card-header text-center">
+                    Add New Tank
+                </div>
+                <div class="card-body text-left">
+                    <p>Freshwater: Aquatic Freshwater fish </p>
+                    <p>Saltwater: Marine Saltwater fish </p>
+                    <p>Others: Frogs, crabs, lizards, Plants </p>
+                </div>
+                <div class="card-footer" style="font-size: 10px;">
+                    <input type="button" class="btn btn-sm btn-primary" value="Freshwater" />
+                    <input type="button" class="btn btn-sm btn-info" value="Saltwater" />
+                    <input type="button" class="btn btn-sm btn-success" value="Others" />
+                </div>
+            </div>
+        }
+    </div>
+    <br />
+
+    <!-- Dashboard Pill Navigation -->
+    <div class="row justify-content-center">
+        <div class="col-8 text-center">
+            <ul class="nav nav-tabs nav-justified">
+                <li class="nav-item">
+                    <a href="#tanks_tab" class="nav-link active" data-toggle="tab">My Tanks</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#fish_tab" class="nav-link" data-toggle="tab">Fish</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#supplies_tab" class="nav-link" data-toggle="tab">Supplies &amp; Food</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#maintenance_tab" class="nav-link" data-toggle="tab">Maintenance</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#medical_tab" class="nav-link" data-toggle="tab">Medical Records</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#inventory_tab" class="nav-link" data-toggle="tab">Inventory</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#incident_tab" class="nav-link" data-toggle="tab">Incident Reports</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
+                <!-- tanks tab -->
+                <div class="tab-pane container active" id="tanks_tab">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <br />
+                            <table class="table-striped table-bordered table-hover col-12">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>Id</td>
+                                        <td>Tank Name</td>
+                                        <td>Description</td>
+                                        <td>Tank Capacity</td>
+                                        <td>Tank Population</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.AquaticTanks)
+                                    {
+                                        <tr class="user-tank-record" data-id="@item.TankId">
+                                            <td class="tank-selected"><input type="checkbox" data-id="" /></td>
+                                            <td>@item.TankId</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Description</td>
+                                            <td>@item.Capacity Gallons</td>
+                                            <td>@item.FishPopulation.Count()</td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- fish tab -->
+                <div class="tab-pane container fade" id="fish_tab">Fish</div>
+                <!-- supplies tab -->
+                <div class="tab-pane container fade" id="supplies_tab">supplies</div>
+                <!-- maintenance tab -->
+                <div class="tab-pane container fade" id="maintenance_tab">maintenance</div>
+                <!-- medical tab -->
+                <div class="tab-pane container fade" id="medical_tab">medical</div>
+                <!-- inventory tab -->
+                <div class="tab-pane container fade" id="inventory_tab">inventory</div>
+                <!-- incident tab -->
+                <div class="tab-pane container fade" id="incident_tab">incident</div>
+            </div>            
+        </div>
+        <br />
+    </div>        
+</div>    
+
+<!--Tank Details Modal -->
+<div id="tankDetailsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                Tank Details Modal Header
+            </div>
+            <div class="modal-body text-center">
+                Tank Details Modal Body
+            </div>
+            <div class="modal-footer text-center">
+                <button class="btn btn-sm btn-secondary" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>       
+</div>
+
+@section Scripts {
+
+<script type="text/javascript">
+
+    function HideCard(cardId) {
+        $(cardId).hide();
+        console.log(cardId);
+    }
+  
+</script>
+
+}
+
+@section Style {
+
+<style>
+    .tank-card {
+        margin-right: 15px;
+        padding: 0px;
+    }
+
+    .dry_header {
+        background-color: saddlebrown;
+    }
+</style>
+
+}
