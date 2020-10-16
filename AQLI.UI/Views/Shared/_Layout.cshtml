@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AQLI.UI</title>
+    <title>@ViewData["Title"] | Aquatic Life Inventory</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
@@ -26,6 +26,15 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tank" asp-action="Index">My Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Purchase" asp-action="Index">Purchases</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ListValues" asp-action="Index">List Values</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark disabled" asp-area="" asp-controller="" asp-action="Index">Admin</a>
                         </li>
                     </ul>
                 </div>
