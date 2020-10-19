@@ -76,7 +76,32 @@ namespace AQLI.DataServices
 
         public WebsiteUser Find_UserDetails(int id)
         {
-            return List_WebsiteUsers().Where(u => u.UserId == id).FirstOrDefault();
+            WebsiteUser FinalUserDetails = List_WebsiteUsers().Where(u => u.UserId == id).FirstOrDefault();
+            FinalUserDetails.AquaticTanks = List_Tanks().Where(o => o.Owner.UserId == id).ToList();
+            
+            return FinalUserDetails;
+        }
+
+        public AquaticTankModel Add_Tank(AquaticTankModel _dataModel)
+        {
+            _dataModel.TankId = _AllTanks.Select(t => t.TankId).Max() + 1;
+            _AllTanks.Add(_dataModel);
+
+            return _dataModel;
+        }
+
+        public AquaticTankModel Update_TankDetails(AquaticTankModel _dataModel)
+        {
+            var listEntry = _AllTanks.Where(t => t.TankId == _dataModel.TankId).FirstOrDefault();
+
+            if (listEntry != null)
+            {
+                _AllTanks.Remove(listEntry);
+            }
+
+            _AllTanks.Add(_dataModel);
+
+            return _dataModel;           
         }
 
         public void Remove_UserTank(int id)

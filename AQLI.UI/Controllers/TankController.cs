@@ -21,11 +21,8 @@ namespace AQLI.UI.Controllers
         {
             _logger = logger;
             DataSource = _dataFactory;
+            UserModel = DataSource.Find_UserDetails(1);
 
-            #region Test code area to populate user, tanks, and fish details
-                //var userModel = DataSource.CreateTankModel<AquaticTankModel>();
-                UserModel = DataSource.Find_UserDetails(1);
-            #endregion
         }
 
         public IActionResult Index()
@@ -34,21 +31,26 @@ namespace AQLI.UI.Controllers
         }
 
         [HttpPost]
+        public IActionResult SaveTank(AquaticTankModel _dataModel)
+        {
+            _ = _dataModel.TankId == 0 ? DataSource.Add_Tank(_dataModel) : DataSource.Update_TankDetails(_dataModel);
+            
+            return View("Index", UserModel);
+        }
+
+        [HttpPost]
         public IActionResult Remove(int id)
         {
-            var userModel = DataSource.Find_UserDetails(UserModel.UserId);
-
-            userModel.AquaticTanks.Remove(userModel.AquaticTanks.Where(t => t.TankId == id).First());
             DataSource.Remove_UserTank(id);
 
-            return View("Index", userModel);
+            return View("Index", UserModel);
         }
 
         [HttpPost]
         public IActionResult _Details(int Id)
         {
             return View(UserModel.AquaticTanks.Where(t => t.TankId == Id).FirstOrDefault());
-        }
+        }            
 
     }
 }
