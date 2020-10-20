@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@*@inject AQLI.DataServices.DataFactory DataSource*@ 
+@*@inject AQLI.DataServices.DataFactory DataSource*@
 @model AQLI.Data.Models.WebsiteUser;
 @using System.Linq;
 @using AQLI.Data.Models;
@@ -14,7 +14,7 @@
     </div>
     <div class="row">
         <div class="col-8 text-center">
-            <h2 class="display-9 col-8">Watched Tanks:</h2>            
+            <h2 class="display-9 col-8">Watched Tanks:</h2>
         </div>
         <hr class="col-8" />
     </div>
@@ -22,10 +22,10 @@
         @foreach (var item in Model.AquaticTanks)
         {
             <!-- Favorite tank cards -->
-            <div id="tankCard_@item.TankId" class="card tank-card col-2">
+            <div id="tankCard_@item.TankId" class="card tank-card col-2" data-id="@item.TankId">
                 <div class="card-header text-lg-center">
                     @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankId)
-                    <button type="button" class="close remove-card float-right align-top" onclick="HideCard('#tankCard_' + @(item.TankId))">&times;</button>
+                    <button type="button" class="close remove-card float-right align-top" onclick="Tank.HideCard('#tankCard_' + @(item.TankId))">&times;</button>
                 </div>
                 <div class="card-body text-left">
                     <div>Description: @(item.Description ?? item.Environment.ToString() + " tank") </div>
@@ -38,15 +38,15 @@
                     <form method="post" action="/Tank/Remove">
                         <input type="hidden" value="@item.TankId" name="id" data-id="@item.TankId" />
                         <input type="submit" class="btn btn-sm btn-danger float-right tank-remove-btn" value="Delete" />
-                    </form>                    
-                    <button data-toggle="modal" data-target="#tankDetailsModal" type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankId">Details</button>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankId" onclick="Tank.events.cardClicked(this)">Details</button>
                 </div>
             </div>
         }
         @if (Model.AquaticTanks.Count() < 4)
         {
             <!-- Add tank card -->
-            <div id="tankCard_addCard" class="card tank-card col-2">
+            <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
                 <div class="card-header text-center">
                     Add New Tank
                 </div>
@@ -114,7 +114,9 @@
                                     @foreach (var item in Model.AquaticTanks)
                                     {
                                         <tr class="user-tank-record" data-id="@item.TankId">
-                                            <td class="tank-selected"><input type="checkbox" data-id="" /></td>
+                                            <td class="tank-selected">
+                                                <input type="checkbox" data-id="" />
+                                            </td>
                                             <td>@item.TankId</td>
                                             <td>@item.Name</td>
                                             <td>@item.Description</td>
@@ -140,59 +142,108 @@
                 <div class="tab-pane container fade" id="inventory_tab">inventory</div>
                 <!-- incident tab -->
                 <div class="tab-pane container fade" id="incident_tab">incident</div>
-            </div>            
+            </div>
         </div>
         <br />
-    </div>        
-</div>    
-
-<!--Tank Details Modal -->
-<div id="tankDetailsModal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                Tank Details Modal Header
-            </div>
-            <div class="modal-body text-center">
-                Tank Details Modal Body
-            </div>
-            <div class="modal-footer text-center">
-                <button class="btn btn-sm btn-secondary" type="button" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>       
+    </div>
 </div>
 
-@section Scripts {
+@*@section Scripts {
 
-<script type="text/javascript">
+        <script type="text/javascript">
 
-    function HideCard(cardId) {
-        $(cardId).hide();
-        console.log(cardId);
-    }
-  
-</script>
+            function HideCard(cardId) {
+                $(cardId).hide();
+                console.log(cardId);
+            }
 
-}
+        </script>
+
+    }*@
 
 @section Style {
 
-<style>
-    .tank-card {
-        margin-right: 15px;
-        padding: 0px;
-    }
+    <style>
+        .tank-card {
+            margin-right: 15px;
+            padding: 0px;
+        }
 
-    .dry_header {
-        background-color: saddlebrown;
-    }
+        .dry_header {
+            background-color: saddlebrown;
+        }
 
-    .vertical-rule{
-        border: 2px solid black;
-        height: 100%;
-    }
-</style>
+        .vertical-rule {
+            border: 2px solid black;
+            height: 100%;
+        }
+    </style>
 
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        var Tank = {
+            init: function () {
+                Tank.bindtable(); // call this so we can have one code call once we get binding working
+            },
+            events: {
+                addTank_Clicked: function () {
+                    Tank.openModal(0);
+                },
+                cardClicked: function (e) {
+                    var card = $(e);
+                    //if (!$(row).is('tr')) {
+                    //    row = $(row).closest('tr');
+                    //}
+                    var id = $(card).attr("data-id");
+                    Tank.openModal(id);
+                }
+            },
+            openModal: function (id) {
+                openModal('@Url.Action("_Details")/?ID=' + id, Tank.modalLoaded)
+            },
+            modalLoaded: function (success) {
+                if (!success) {
+                    ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
+                }
+
+                $('#addEditForm').parsley().on('form:submit', function () {
+                    //Send the form data to the server ajax
+                    saveFormDataPost($('#addEditForm'),
+                        function (data) {
+                            //Success
+                            $('#modalAddEdit').modal('hide');
+                            if (data && data.View) {
+                                $('#resultsDiv').html(data.View).fadeIn();
+                                Tank.bindtable(); // call this so we can have one code call once we get binding working
+                            }
+                            else {
+                                ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
+                            }
+                        },
+                        function (data) {
+                            //Fail
+                            if (typeof data.clientError != "undefined") {
+                                ErrorMessage.show(data.clientError);
+                            } else {
+                                ErrorMessage.show(data.jsonResult);
+                            }
+                        }
+                    );
+                    //This return line is crucial to ensure the form does not do a regular(double) post
+                            return false;
+                });
+            },
+            HideCard: function (cardId) {
+                $(cardId).hide();
+                console.log(cardId);
+            },
+            bindtable: function () {
+                //$('#contactTypeTable').bindTablesorter();
+            }
+        }
+
+        $(Tank.init);
+    </script>
 }

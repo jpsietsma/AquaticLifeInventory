@@ -1,72 +1,62 @@
-﻿@model AQLI.Data.Models.AquaticTankModel
+﻿@using System.Collections.Generic;
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Http;
 
-<div>
-    <h4>AquaticTankModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TankId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TankId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Environment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Environment)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubEnvironment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SubEnvironment)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WaterType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WaterType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Temporment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Temporment)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatureType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatureType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Added)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Added)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to Dashboard</a>
+
+@model AquaticTankModel;
+@inject DataFactory DataSource;
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@(Model.TankId == 0 ? "<b>Add New Tank</b>" : "<b>Editing Details:</b> " + Model.Name)</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addEditForm" asp-area="Admin" asp-controller="Interest" asp-action="_SaveAsync" asp-antiforgery="true">
+                <input type="hidden" name="InterestID" value="@Model.TankId" />
+                <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Tank Name</label>
+                            <input type="text" class="form-control" name="InterestName" value="@Model.Name" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Tank Type</label>
+                            <select class="form-control" name="InterestTypeID" required>
+                                @if (DataSource.List_TankTypes().Count() > 0)
+                                {
+                                    <option value="">-- Select Tank Type --</option>
+
+                                    foreach (TankType tankType in DataSource.List_TankTypes())
+                                    {
+                                        <option value="@tankType.TankTypeID">@tankType.TypeName</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- No Tank Types --</option>
+                                }
+
+                            </select>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input" @(Model != null ? "checked" : "") disabled />New Model?</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer-netkinetix">
+            <button type="button" class="btn btn-primary on-new" onclick="$('#addEditForm').submit();">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
 </div>

@@ -74,6 +74,18 @@ namespace AQLI.DataServices
             return _AllTanks.Where(t => t.Owner.UserId == id).ToList();
         }
 
+        public List<TankType> List_TankTypes()
+        {
+            var finalList = new List<TankType>();
+
+            finalList.Add(new TankType { TankTypeID = 1, TypeName = "Aquatic Community" });
+            finalList.Add(new TankType { TankTypeID = 2, TypeName = "Aquatic Breeding" });
+            finalList.Add(new TankType { TankTypeID = 3, TypeName = "Aquatic Agressive" });
+
+
+            return finalList;
+        }
+
         public WebsiteUser Find_UserDetails(int id)
         {
             WebsiteUser FinalUserDetails = List_WebsiteUsers().Where(u => u.UserId == id).FirstOrDefault();

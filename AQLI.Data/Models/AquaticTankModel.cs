@@ -10,6 +10,7 @@ namespace AQLI.Data.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public double Capacity { get; set; }
+        public bool IsActive { get; set; }
         public TankEnvironment? Environment { get; set; }
         public TankSubEnvironment? SubEnvironment { get; set; }
         public AquariumWaterType? WaterType { get; set; }
@@ -25,6 +26,7 @@ namespace AQLI.Data.Models
             InventoryRecords = new List<TankInventoryRecordModel>();
             Environment = TankEnvironment.Aquatic;
             CreatureType = _tankCreatureType;
+            IsActive = true;
 
             FishPopulation = new List<FishCreatureModel>();
 

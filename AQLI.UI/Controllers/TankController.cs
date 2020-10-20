@@ -46,10 +46,17 @@ namespace AQLI.UI.Controllers
             return View("Index", UserModel);
         }
 
-        [HttpPost]
-        public IActionResult _Details(int Id)
+        [HttpGet]
+        public IActionResult _Details(int ID)
         {
-            return View(UserModel.AquaticTanks.Where(t => t.TankId == Id).FirstOrDefault());
+            var model = new AquaticTankModel();
+
+            if (ID != 0)
+            {
+                model = UserModel.AquaticTanks.Where(t => t.TankId == ID).FirstOrDefault();
+            }            
+
+            return PartialView(model);
         }            
 
     }

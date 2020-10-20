@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] | Aquatic Life Inventory</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css" />    
 
     @RenderSection("Style", required: false)
 </head>
@@ -52,6 +52,10 @@
             &copy; 2020 <a href="http://www.sietsmadevelopment.com/Legal/PrivacyPolicy.html">Sietsma Development</a> - All rights reserved.
         </div>
     </footer>
+
+    <!-- Modal Shell -->
+    <div class="modal fade" id="modalAddEdit" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
