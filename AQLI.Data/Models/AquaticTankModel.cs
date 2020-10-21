@@ -22,7 +22,7 @@ namespace AQLI.Data.Models
         public List<FishCreatureModel> FishPopulation { get; set; }
         public List<TankInventoryRecordModel> InventoryRecords { get; set; }
 
-        public AquaticTankModel(AquaticTankCreatureType _tankCreatureType = AquaticTankCreatureType.Unknown, WebsiteUser _tankOwner = null)
+        public AquaticTankModel(AquaticTankCreatureType _tankCreatureType = AquaticTankCreatureType.Other, WebsiteUser _tankOwner = null)
         {
             InventoryRecords = new List<TankInventoryRecordModel>();
             Environment = TankEnvironment.Aquatic;

@@ -57,7 +57,17 @@ namespace AQLI.UI.Controllers
             }            
 
             return PartialView(model);
-        }            
+        }
+        
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public IActionResult _Save(AquaticTankModel _dataModel)
+        {
+                DataSource.Add_Tank(_dataModel);
+                UserModel.AquaticTanks.Add(_dataModel);                
+
+            return RedirectToAction("Index");
+        }
 
     }
 }

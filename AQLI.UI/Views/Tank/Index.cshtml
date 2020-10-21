@@ -14,15 +14,6 @@
             margin-right: 15px;
             padding: 0px;
         }
-
-        .dry_header {
-            background-color: saddlebrown;
-        }
-
-        .vertical-rule {
-            border: 2px solid black;
-            height: 100%;
-        }
     </style>
 
 }
@@ -74,12 +65,20 @@
                 <div class="card-body text-left">
                     <p>Freshwater: Aquatic Freshwater fish </p>
                     <p>Saltwater: Marine Saltwater fish </p>
-                    <p>Others: Frogs, crabs, lizards, Plants </p>
+                    <p>Quarantine: Isolation Tank for sick or new fish, plants, and aquatics </p>
                 </div>
-                <div class="card-footer" style="font-size: 10px;">
-                    <input type="button" class="btn btn-sm btn-primary" value="Freshwater" />
-                    <input type="button" class="btn btn-sm btn-info" value="Saltwater" />
-                    <input type="button" class="btn btn-sm btn-success" value="Others" />
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="btn-group-sm col-4">
+                            <input type="button" class="btn btn-sm btn-primary" value="Freshwater" />
+                        </div>
+                        <div class="btn-group-sm col-4">
+                            <input type="button" class="btn btn-sm btn-info" value="Saltwater" />
+                        </div>
+                        <div class="btn-group-sm col-4">
+                            <input type="button" class="btn btn-sm btn-warning" style="margin-left: -10px;" value="Quarantine" />
+                        </div>                                           
+                    </div>                    
                 </div>
             </div>
         }

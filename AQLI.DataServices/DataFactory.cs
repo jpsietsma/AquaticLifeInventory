@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace AQLI.DataServices
 {
@@ -12,6 +13,8 @@ namespace AQLI.DataServices
         private List<FishCreatureModel> _AllFish;
         private List<TankInventoryRecordModel> _AllInventoryRecords;
         private List<MedicalRecord> _AllMedicalRecords;
+        private List<AquariumWaterType> _AllWaterTypes;
+        private List<AquariumTemporment> _AllAgressionLevels;
 
 
         public DataFactory()
@@ -19,6 +22,20 @@ namespace AQLI.DataServices
             _AllTanks = new List<AquaticTankModel>();
             _AllUsers = new List<WebsiteUser>();
             _AllFish = new List<FishCreatureModel>();
+
+            _AllWaterTypes = new List<AquariumWaterType>
+            {
+                AquariumWaterType.Brackish,
+                AquariumWaterType.Freshwater,
+                AquariumWaterType.Saltwater
+            };
+            _AllAgressionLevels = new List<AquariumTemporment>
+            {
+                AquariumTemporment.Agressive,
+                AquariumTemporment.Breeding,
+                AquariumTemporment.Community,
+                AquariumTemporment.Quarantine
+            };
 
             PopulateLists();
             UpdateUserTanks();
@@ -84,6 +101,16 @@ namespace AQLI.DataServices
 
 
             return finalList;
+        }
+
+        public List<AquariumWaterType> List_WaterTypes()
+        {
+            return _AllWaterTypes;
+        }
+
+        public List<AquariumTemporment> List_AgressionLevels()
+        {
+            return _AllAgressionLevels;
         }
 
         public WebsiteUser Find_UserDetails(int id)

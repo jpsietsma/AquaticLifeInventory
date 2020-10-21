@@ -39,16 +39,17 @@ namespace AQLI.Data.Models
 
     public enum AquariumWaterType
     {
-        Freshwater, 
-        Saltwater,
-        Brackish        
+        Freshwater = 1, 
+        Saltwater = 2,
+        Brackish = 3,
+        No_Water = 0
     }
     public enum AquariumTemporment
     {
         Agressive,
         Breeding,
         Community,
-        None
+        Quarantine
     }
     public enum AquaticTankCreatureType
     {
@@ -57,7 +58,8 @@ namespace AQLI.Data.Models
         Crab,
         Mixed_Community,
         Mixed_Agressive,
-        Unknown
+        Plants_only,
+        Other
     }
 
     public enum DryTankCreatureType
