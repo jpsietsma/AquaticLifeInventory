@@ -11,13 +11,13 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">@(Model.TankId == 0 ? "<b>Add New Tank</b>" : "<b>Editing Details:</b> " + Model.Name)</h5>
+            <h5 class="modal-title">@(Model.TankId == 0 ? "Add New Tank" : "Editing Details: " + Model.Name)</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
-            <form id="addEditForm" asp-area="Admin" asp-controller="Interest" asp-action="_SaveAsync" asp-antiforgery="true">
+            <form id="addEditForm" asp-controller="Tank" asp-action="_SaveAsync" asp-antiforgery="true">
                 <input type="hidden" name="InterestID" value="@Model.TankId" />
                 <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
 
@@ -25,18 +25,21 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label class="control-label">Tank Name</label>
-                            <input type="text" class="form-control" name="InterestName" value="@Model.Name" required />
+                            <input type="text" class="form-control" name="Name" value="@Model.Name" required />
                         </div>
                         <div class="form-group">
                             <label class="control-label">Tank Type</label>
-                            <select class="form-control" name="InterestTypeID" required>
+                            <select id="TankTypeID" class="form-control" name="TankTypeID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    <option value="">-- Select Tank Type --</option>
+                                    if (Model.TankId == 0)
+                                    {
+                                        <option value="">-- Select Tank Type --</option>
+                                    }
 
                                     foreach (TankType tankType in DataSource.List_TankTypes())
                                     {
-                                        <option value="@tankType.TankTypeID">@tankType.TypeName</option>
+                                        <option id="@("tankTypeOption_" + tankType.TankTypeID)" value="@tankType.TankTypeID" selected="@(Model.TankType.TankTypeID == tankType.TankTypeID)">@tankType.TypeName</option>
                                     }
                                 }
                                 else
@@ -47,16 +50,22 @@
                             </select>
                         </div>
                         <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" @(Model != null ? "checked" : "") disabled />New Model?</label>
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input" checked="@(Model.IsActive)" />Active?</label>
                         </div>
                     </div>
                 </div>
             </form>
 
         </div>
-        <div class="modal-footer-netkinetix">
-            <button type="button" class="btn btn-primary on-new" onclick="$('#addEditForm').submit();">Save</button>
+        <div class="modal-footer">
+            <button id="save_button" type="button" class="btn btn-primary on-new" onclick="$('#addEditForm').submit();">Save</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+
+</script>
+}

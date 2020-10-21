@@ -11,6 +11,7 @@ namespace AQLI.Data.Models
         public string Description { get; set; }
         public double Capacity { get; set; }
         public bool IsActive { get; set; }
+        public TankType TankType { get; set; }
         public TankEnvironment? Environment { get; set; }
         public TankSubEnvironment? SubEnvironment { get; set; }
         public AquariumWaterType? WaterType { get; set; }

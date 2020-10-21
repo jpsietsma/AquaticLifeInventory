@@ -49,7 +49,7 @@ namespace AQLI.UI.Controllers
         [HttpGet]
         public IActionResult _Details(int ID)
         {
-            var model = new AquaticTankModel();
+            var model = new AquaticTankModel { TankType = new TankType { TankTypeID = 0, TypeName = "Unknown" } };
 
             if (ID != 0)
             {

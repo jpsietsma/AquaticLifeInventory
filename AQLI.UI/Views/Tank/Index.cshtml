@@ -6,6 +6,27 @@
 @using System.Linq;
 @using AQLI.Data.Models;
 
+
+@section Style {
+
+    <style>
+        .tank-card {
+            margin-right: 15px;
+            padding: 0px;
+        }
+
+        .dry_header {
+            background-color: saddlebrown;
+        }
+
+        .vertical-rule {
+            border: 2px solid black;
+            height: 100%;
+        }
+    </style>
+
+}
+
 <div class="grid">
     <div class="row justify-content-center">
         <div id="AnnouncementsDiv" class="col-8 jumbotron">
@@ -65,7 +86,7 @@
     </div>
     <br />
 
-    <!-- Dashboard Pill Navigation -->
+    <!-- Dashboard Tab Navigation -->
     <div class="row justify-content-center">
         <div class="col-8 text-center">
             <ul class="nav nav-tabs nav-justified">
@@ -95,91 +116,37 @@
             <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
                 <!-- tanks tab -->
                 <div class="tab-pane container active" id="tanks_tab">
-                    <div class="row justify-content-center">
-                        <div class="col-12">
-                            <br />
-                            <table class="table-striped table-bordered table-hover col-12">
-                                <thead>
-                                    <tr>
-                                        <td></td>
-                                        <td>Id</td>
-                                        <td>Tank Name</td>
-                                        <td>Description</td>
-                                        <td>Tank Capacity</td>
-                                        <td>Tank Population</td>
-                                        <td>Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.AquaticTanks)
-                                    {
-                                        <tr class="user-tank-record" data-id="@item.TankId">
-                                            <td class="tank-selected">
-                                                <input type="checkbox" data-id="" />
-                                            </td>
-                                            <td>@item.TankId</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Description</td>
-                                            <td>@item.Capacity Gallons</td>
-                                            <td>@item.FishPopulation.Count()</td>
-                                            <td></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <partial name="tabs/_Tab_MyTanks" model="Model.AquaticTanks" />
                 </div>
                 <!-- fish tab -->
-                <div class="tab-pane container fade" id="fish_tab">Fish</div>
+                <div class="tab-pane container fade" id="fish_tab">
+                    <partial name="tabs/_Tab_Fish" model="Model" />
+                </div>
                 <!-- supplies tab -->
-                <div class="tab-pane container fade" id="supplies_tab">supplies</div>
+                <div class="tab-pane container fade" id="supplies_tab">
+                    <partial name="tabs/_Tab_SuppliesFood" model="Model" />
+                </div>
                 <!-- maintenance tab -->
-                <div class="tab-pane container fade" id="maintenance_tab">maintenance</div>
+                <div class="tab-pane container fade" id="maintenance_tab">
+                    <partial name="tabs/_Tab_Maintenance" model="Model" />
+                </div>
                 <!-- medical tab -->
-                <div class="tab-pane container fade" id="medical_tab">medical</div>
+                <div class="tab-pane container fade" id="medical_tab">
+                    <partial name="tabs/_Tab_MedicalRecords" model="Model" />
+                </div>
                 <!-- inventory tab -->
-                <div class="tab-pane container fade" id="inventory_tab">inventory</div>
+                <div class="tab-pane container fade" id="inventory_tab">
+                    <partial name="tabs/_Tab_Inventory" model="Model" />
+                </div>
                 <!-- incident tab -->
-                <div class="tab-pane container fade" id="incident_tab">incident</div>
+                <div class="tab-pane container fade" id="incident_tab">
+                    <partial name="tabs/_Tab_IncidentReports" model="Model" />
+                </div>
             </div>
         </div>
         <br />
     </div>
 </div>
-
-@*@section Scripts {
-
-        <script type="text/javascript">
-
-            function HideCard(cardId) {
-                $(cardId).hide();
-                console.log(cardId);
-            }
-
-        </script>
-
-    }*@
-
-@section Style {
-
-    <style>
-        .tank-card {
-            margin-right: 15px;
-            padding: 0px;
-        }
-
-        .dry_header {
-            background-color: saddlebrown;
-        }
-
-        .vertical-rule {
-            border: 2px solid black;
-            height: 100%;
-        }
-    </style>
-
-}
 
 @section Scripts{
     <script type="text/javascript">
