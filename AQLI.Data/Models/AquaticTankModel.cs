@@ -37,6 +37,19 @@ namespace AQLI.Data.Models
             }
         }
 
+        public AquaticTankModel()
+        {
+             CreatureType = AquaticTankCreatureType.Other;
+
+            InventoryRecords = new List<TankInventoryRecordModel>();
+            Environment = TankEnvironment.Aquatic;
+            IsActive = true;
+
+            FishPopulation = new List<FishCreatureModel>();
+
+            Owner = new WebsiteUser { UserId = 1 };
+        }               
+
     }
 
 }

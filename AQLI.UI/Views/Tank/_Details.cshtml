@@ -17,12 +17,13 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="addEditForm" asp-controller="Tank" asp-action="_Save" asp-antiforgery="true">
-                <input type="hidden" name="InterestID" value="@Model.TankId" />
+            <form id="addEditForm" method="post" asp-controller="Tank" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
+                <input type="hidden" name="TankId" value="@Model.TankId" />
+                <input type="hidden" name="Added" value="@(DateTime.Now)" />
                 <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
 
                 <div class="form-row">
-                    <div class="col-6">                        
+                    <div class="col-6">
                         <div class="form-group">
                             <label class="control-label">Tank Name</label>
                             <input type="text" class="form-control" name="Name" value="@Model.Name" required />
@@ -39,7 +40,7 @@
 
                                     foreach (TankType tankType in DataSource.List_TankTypes())
                                     {
-                                        <option value="@tankType.TankTypeID" selected="@(Model.TankType.TankTypeID == tankType.TankTypeID)">@tankType.TypeName</option>
+                                        <option value="@tankType" selected="@(tankType == Model.TankType)">@tankType.ToString()</option>
                                     }
                                 }
                                 else
@@ -94,7 +95,7 @@
                                 }
 
                             </select>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 <div class="form-row">

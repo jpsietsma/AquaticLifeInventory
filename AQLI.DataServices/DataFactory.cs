@@ -15,6 +15,7 @@ namespace AQLI.DataServices
         private List<MedicalRecord> _AllMedicalRecords;
         private List<AquariumWaterType> _AllWaterTypes;
         private List<AquariumTemporment> _AllAgressionLevels;
+        private List<TankType> _AllTankTypes;
 
 
         public DataFactory()
@@ -23,19 +24,14 @@ namespace AQLI.DataServices
             _AllUsers = new List<WebsiteUser>();
             _AllFish = new List<FishCreatureModel>();
 
-            _AllWaterTypes = new List<AquariumWaterType>
-            {
-                AquariumWaterType.Brackish,
-                AquariumWaterType.Freshwater,
-                AquariumWaterType.Saltwater
-            };
-            _AllAgressionLevels = new List<AquariumTemporment>
-            {
-                AquariumTemporment.Agressive,
-                AquariumTemporment.Breeding,
-                AquariumTemporment.Community,
-                AquariumTemporment.Quarantine
-            };
+            //populate water types
+            _AllWaterTypes = Enum.GetValues(typeof(AquariumWaterType)).Cast<AquariumWaterType>().ToList();
+
+            //populate aquarium temporments
+            _AllAgressionLevels = Enum.GetValues(typeof(AquariumTemporment)).Cast<AquariumTemporment>().ToList();
+
+            //populate tank types
+            _AllTankTypes = Enum.GetValues(typeof(TankType)).Cast<TankType>().ToList();
 
             PopulateLists();
             UpdateUserTanks();
@@ -93,14 +89,7 @@ namespace AQLI.DataServices
 
         public List<TankType> List_TankTypes()
         {
-            var finalList = new List<TankType>();
-
-            finalList.Add(new TankType { TankTypeID = 1, TypeName = "Aquatic Community" });
-            finalList.Add(new TankType { TankTypeID = 2, TypeName = "Aquatic Breeding" });
-            finalList.Add(new TankType { TankTypeID = 3, TypeName = "Aquatic Agressive" });
-
-
-            return finalList;
+            return _AllTankTypes;
         }
 
         public List<AquariumWaterType> List_WaterTypes()
@@ -188,7 +177,7 @@ namespace AQLI.DataServices
                     Name = "Glo Special",
                     Capacity = 10.00,
                     Description = "10 Gallon special fish",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 1).First(),
+                    TankType = TankType.Unknown,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater
@@ -234,7 +223,7 @@ namespace AQLI.DataServices
                     Name = "Work Tank",
                     Capacity = 15.00,
                     Description = "15 Gallon Work Tank",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 2).First(),
+                    TankType = TankType.Aquarium_freshwater_community,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater
@@ -275,7 +264,7 @@ namespace AQLI.DataServices
                     Name = "Home Natural Tank",
                     Capacity = 29.00,
                     Description = "29 Gallon Natural aquascaped tank.",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 3).First(),
+                    TankType = TankType.Aquarium_freshwater_community,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater
@@ -316,7 +305,7 @@ namespace AQLI.DataServices
                     Name = "Glo Special",
                     Capacity = 10.00,
                     Description = "10 Gallon special fish",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 1).First(),
+                    TankType = TankType.Aquarium_freshwater_community,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater
@@ -357,7 +346,7 @@ namespace AQLI.DataServices
                     Name = "Work Tank",
                     Capacity = 15.00,
                     Description = "15 Gallon Work Tank",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 1).First(),
+                    TankType = TankType.Aquarium_freshwater_community,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater
@@ -398,7 +387,7 @@ namespace AQLI.DataServices
                     Name = "Home Natural Tank",
                     Capacity = 29.00,
                     Description = "29 Gallon Natural aquascaped tank.",
-                    TankType = List_TankTypes().Where(t => t.TankTypeID == 1).First(),
+                    TankType = TankType.Aquarium_freshwater_community,
                     SubEnvironment = TankSubEnvironment.Community,
                     Temporment = AquariumTemporment.Community,
                     WaterType = AquariumWaterType.Freshwater

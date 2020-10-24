@@ -28,28 +28,12 @@ namespace AQLI.UI.Controllers
         public IActionResult Index()
         {
             return View(UserModel);
-        }
-
-        [HttpPost]
-        public IActionResult SaveTank(AquaticTankModel _dataModel)
-        {
-            _ = _dataModel.TankId == 0 ? DataSource.Add_Tank(_dataModel) : DataSource.Update_TankDetails(_dataModel);
-            
-            return View("Index", UserModel);
-        }
-
-        [HttpPost]
-        public IActionResult Remove(int id)
-        {
-            DataSource.Remove_UserTank(id);
-
-            return View("Index", UserModel);
-        }
+        }                
 
         [HttpGet]
         public IActionResult _Details(int ID)
         {
-            var model = new AquaticTankModel { TankType = new TankType { TankTypeID = 0, TypeName = "Unknown" } };
+            var model = new AquaticTankModel { TankType = TankType.Unknown };
 
             if (ID != 0)
             {
@@ -58,15 +42,31 @@ namespace AQLI.UI.Controllers
 
             return PartialView(model);
         }
-        
+
         [HttpPost]
         [AutoValidateAntiforgeryToken]
         public IActionResult _Save(AquaticTankModel _dataModel)
         {
+            if (_dataModel.TankId == 0)
+            {
+                _dataModel.Owner = DataSource.Find_UserDetails(_dataModel.Owner == null ? 1 : _dataModel.Owner.UserId);
+                _dataModel.TankId = DataSource.List_Tanks().Select(t => t.TankId).Max() + 1;
                 DataSource.Add_Tank(_dataModel);
-                UserModel.AquaticTanks.Add(_dataModel);                
+            }
+            else
+            {
+                DataSource.Update_TankDetails(_dataModel);
+            }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult Remove(int id)
+        {
+            DataSource.Remove_UserTank(id);
+
+            return View("Index", UserModel);
         }
 
     }
