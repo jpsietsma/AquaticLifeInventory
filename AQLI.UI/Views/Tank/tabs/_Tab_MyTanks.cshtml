@@ -2,9 +2,13 @@
 
 @model List<AQLI.Data.Models.AquaticTankModel>
 
-<div class="row justify-content-center">
-    <div class="col-12">
-        <br />
+<div class="justify-content-center">
+    <div class="row mx-auto">
+        <div class="col-lg-12 float-left">
+            <button type="button" class="btn btn-sm btn-success">Add Tank</button>
+        </div>         
+    </div>
+    <div class="row">
         <table class="table-striped table-bordered table-hover col-12">
             <thead>
                 <tr>
@@ -29,7 +33,11 @@
                         <td>@item.Description</td>
                         <td>@item.Capacity Gallons</td>
                         <td>@item.FishPopulation.Count()</td>
-                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary">Details</button>
+                            <button type="button" class="btn btn-sm btn-warning">Edit</button>
+                            <button type="button" class="btn btn-sm btn-danger">Remove</button>
+                        </td>
                     </tr>
                 }
             </tbody>

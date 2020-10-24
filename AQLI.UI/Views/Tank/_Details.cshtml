@@ -11,7 +11,7 @@
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title text-center">@(Model.TankId == 0 ? "Add New Tank" : "Editing Details: " + Model.Name)</h5>
+            <h5 class="modal-title">@(Model.TankId == 0 ? "Add New Tank" : "Editing Details: " + Model.Name)</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -21,7 +21,12 @@
                 <input type="hidden" name="TankId" value="@Model.TankId" />
                 <input type="hidden" name="Added" value="@(DateTime.Now)" />
                 <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
-
+                <div class="form-row">
+                    <div class="col-md-12 form-group">
+                        <label class="control-label">Description</label>
+                        <textarea class="form-control" name="Description" rows="3" placeholder="Enter a friendly description for the tank..">@(Model.Description ?? null)</textarea>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col-6">
                         <div class="form-group">
@@ -97,6 +102,9 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                <div class="form-row">
+
                 </div>
                 <div class="form-row">
                     <div class="col-4">

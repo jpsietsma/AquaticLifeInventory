@@ -149,6 +149,10 @@
 
 @section Scripts{
     <script type="text/javascript">
+        $('#modalAddEdit').on('hidden.bs.modal', function () {
+            location.reload();
+        })
+
         var Tank = {
             init: function () {
                 Tank.bindtable(); // call this so we can have one code call once we get binding working
@@ -183,8 +187,7 @@
                             if (data && data.View) {
                                 $('#resultsDiv').html(data.View).fadeIn();
                                 Tank.bindtable(); // call this so we can have one code call once we get binding working
-                            }
-                            else {
+                            }else {
                                 ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
                             }
                         },
