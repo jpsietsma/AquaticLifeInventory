@@ -19,11 +19,6 @@
 }
 
 <div class="grid">
-    <div class="row justify-content-center">
-        <div id="AnnouncementsDiv" class="col-8 jumbotron">
-            <b>Notifications &amp; Announcements</b>
-        </div>
-    </div>
     <div class="row">
         <div class="col-8 text-center">
             <h2 class="display-9 col-8">Watched Tanks:</h2>
@@ -87,7 +82,7 @@
 
     <!-- Dashboard Tab Navigation -->
     <div class="row justify-content-center">
-        <div class="col-8 text-center">
+        <div class="col-9 text-center">
             <ul class="nav nav-tabs nav-justified">
                 <li class="nav-item">
                     <a href="#tanks_tab" class="nav-link active" data-toggle="tab">My Tanks</a>
@@ -96,7 +91,7 @@
                     <a href="#fish_tab" class="nav-link" data-toggle="tab">Fish</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#supplies_tab" class="nav-link" data-toggle="tab">Supplies &amp; Food</a>
+                    <a href="#supplies_tab" class="nav-link" data-toggle="tab">Supplies</a>
                 </li>
                 <li class="nav-item">
                     <a href="#maintenance_tab" class="nav-link" data-toggle="tab">Maintenance</a>
@@ -109,6 +104,9 @@
                 </li>
                 <li class="nav-item">
                     <a href="#incident_tab" class="nav-link" data-toggle="tab">Incident Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#notifications_tab" class="nav-link" data-toggle="tab">Notifications <i class="badge badge-pill badge-info">23</i></a>
                 </li>
             </ul>
 
@@ -141,6 +139,10 @@
                 <div class="tab-pane container fade" id="incident_tab">
                     <partial name="tabs/_Tab_IncidentReports" model="Model" />
                 </div>
+                <!-- alerts tab -->
+                <div class="tab-pane container fade" id="notifications_tab">
+                    <partial name="tabs/_Tab_Notifications" model="Model" />
+                </div>
             </div>
         </div>
         <br />
@@ -149,6 +151,7 @@
 
 @section Scripts{
     <script type="text/javascript">
+        //Reload page on modal closing
         $('#modalAddEdit').on('hidden.bs.modal', function () {
             location.reload();
         })
@@ -163,9 +166,6 @@
                 },
                 cardClicked: function (e) {
                     var card = $(e);
-                    //if (!$(row).is('tr')) {
-                    //    row = $(row).closest('tr');
-                    //}
                     var id = $(card).attr("data-id");
                     Tank.openModal(id);
                 }

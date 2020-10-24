@@ -34,8 +34,8 @@
                         <td>@item.Capacity Gallons</td>
                         <td>@item.FishPopulation.Count()</td>
                         <td>
-                            <button type="button" class="btn btn-sm btn-primary">Details</button>
-                            <button type="button" class="btn btn-sm btn-warning">Edit</button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(@item.TankId)">Details</button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="Tank.openModal(@item.TankId)">Edit</button>
                             <button type="button" class="btn btn-sm btn-danger">Remove</button>
                         </td>
                     </tr>
