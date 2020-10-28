@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AQLI.DataServices;
+using AQLI.DataServices.context;
 
 namespace AQLI.UI
 {
@@ -28,16 +29,18 @@ namespace AQLI.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<DatabaseContext>();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             //inject our fake data service for testing
-            services.AddSingleton<DataFactory>();
+            services.AddTransient<DataFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

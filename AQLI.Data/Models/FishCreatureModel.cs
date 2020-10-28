@@ -6,27 +6,26 @@ namespace AQLI.Data.Models
 {
     public class FishCreatureModel : CreatureModel
     {
-        public AquaticTankCreatureType CreatureType { get; private set; }
-        public AquaticFishSpecies FishSpecies { get; private set; }
+        public CreatureTypeModel CreatureType { get; private set; }
 
-        public FishCreatureModel(string _name = null, AquaticFishSpecies _species = AquaticFishSpecies.UNKNOWN)
+        public FishCreatureModel(string _name = null)
         {
-            SetEcosystem(CreatureEcosystemType.AQUATIC);
-            FishSpecies = _species;
+            SetEnvironment(new EnvironmentModel { EnvironmentID = 1, EnvironmentName = "Aquatic Community" });
             SetName(_name);
 
             CreatedOn = DateTime.Now;
         }
 
-        public void SetCreatureType(AquaticTankCreatureType _creatureType)
+        public FishCreatureModel()
+        {
+
+        }
+
+        public void SetCreatureType(CreatureTypeModel _creatureType)
         {
             CreatureType = _creatureType;
         }
 
-        public void SetFishSpecies(AquaticFishSpecies _species)
-        {
-            FishSpecies = _species;
-        }
     }
 
     public enum AquaticFishSpecies

@@ -29,24 +29,24 @@
         @foreach (var item in Model.AquaticTanks)
         {
             <!-- Favorite tank cards -->
-            <div id="tankCard_@item.TankId" class="card tank-card col-2" data-id="@item.TankId">
+            <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
                 <div class="card-header text-lg-center">
-                    @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankId)
-                    <button type="button" class="close remove-card float-right align-top" onclick="Tank.HideCard('#tankCard_' + @(item.TankId))">&times;</button>
+                    @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankID)
+                    <button type="button" class="close remove-card float-right align-top" onclick="Tank.HideCard('#tankCard_' + @(item.TankID))">&times;</button>
                 </div>
                 <div class="card-body text-left">
                     <div>Description: @(item.Description ?? item.Environment.ToString() + " tank") </div>
                     <div>Tank Size: @item.Capacity gallons</div>
-                    <div>Environment: @item.Environment.ToString()</div>
-                    <div>Water Type: @item.WaterType</div>
+                    <div>Environment: @item.Environment.EnvironmentName</div>
+                    <div>Water Type: @item.WaterType.WaterTypeName</div>
                     <div class="align-content-center align-bottom">Added @item.Added</div>
                 </div>
                 <div class="card-footer" style="font-size: 10px;">
                     <form method="post" action="/Tank/Remove">
-                        <input type="hidden" value="@item.TankId" name="id" data-id="@item.TankId" />
+                        <input type="hidden" value="@item.TankID" name="id" data-id="@item.TankID" />
                         <input type="submit" class="btn btn-sm btn-danger float-right tank-remove-btn" value="Delete" />
                     </form>
-                    <button type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankId" onclick="Tank.events.cardClicked(this)">Details</button>
+                    <button type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankID" onclick="Tank.events.cardClicked(this)">Details</button>
                 </div>
             </div>
         }
@@ -106,7 +106,7 @@
                     <a href="#incident_tab" class="nav-link" data-toggle="tab">Incident Reports</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#notifications_tab" class="nav-link" data-toggle="tab">Notifications <i class="badge badge-pill badge-info">23</i></a>
+                    <a href="#notifications_tab" class="nav-link" data-toggle="tab">Notifications <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i></a>
                 </li>
             </ul>
 
@@ -151,14 +151,13 @@
 
 @section Scripts{
     <script type="text/javascript">
-        //Reload page on modal closing
-        $('#modalAddEdit').on('hidden.bs.modal', function () {
-            location.reload();
-        })
-
         var Tank = {
             init: function () {
-                Tank.bindtable(); // call this so we can have one code call once we get binding working
+                //Reload page on modal closing
+                $('#modalAddEdit').on('hidden.bs.modal', function () {
+                    location.reload();
+                });                               
+                                
             },
             events: {
                 addTank_Clicked: function () {
@@ -178,6 +177,9 @@
                     ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
                 }
 
+                
+                Tank.CreateCapacitySlider();
+
                 $('#addEditForm').parsley().on('form:submit', function () {
                     //Send the form data to the server ajax
                     saveFormDataPost($('#addEditForm'),
@@ -185,8 +187,7 @@
                             //Success
                             $('#modalAddEdit').modal('hide');
                             if (data && data.View) {
-                                $('#resultsDiv').html(data.View).fadeIn();
-                                Tank.bindtable(); // call this so we can have one code call once we get binding working
+                                
                             }else {
                                 ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
                             }
@@ -208,8 +209,25 @@
                 $(cardId).hide();
                 console.log(cardId);
             },
-            bindtable: function () {
-                //$('#contactTypeTable').bindTablesorter();
+            CreateCapacitySlider: function () {
+
+                var $slider = $("#slider").slider({
+                    value: 0,
+                    min: 5,
+                    max: 125,
+                    step: 5,
+                    slide: function (event, ui) {
+
+                    }
+                });
+
+                var max = $slider.slider("option", "max");
+                var spacing = 100 / (max - 1);
+
+                $slider.find('.ui-slider-tick-mark').remove();
+                for (var i = 0; i < max; i++) {
+                    $('<span class="ui-slider-tick-mark"></span>').css('left', (spacing * i) + '%').appendTo($slider);
+                }
             }
         }
 

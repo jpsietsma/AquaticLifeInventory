@@ -1,26 +1,40 @@
 ﻿@using System.Collections.Generic;
 @using AQLI.Data.Models;
 @using AQLI.DataServices;
+@using AQLI.DataServices.context;
 @using Microsoft.AspNetCore.Mvc;
 @using Microsoft.AspNetCore.Http;
 
 
 @model AquaticTankModel;
 @inject DataFactory DataSource;
+@inject DatabaseContext Database;
+
+<style>
+    #custom-handle {
+        width: 2em;
+        height: 1.6em;
+        top: 50%;
+        margin-top: -.8em;
+        text-align: center;
+        line-height: 1.6em;
+    }
+</style>
 
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">@(Model.TankId == 0 ? "Add New Tank" : "Editing Details: " + Model.Name)</h5>
+            <h5 class="modal-title">@(Model.TankID == 0 ? "Add New Tank" : "Editing Details: " + Model.Name)</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
             <form id="addEditForm" method="post" asp-controller="Tank" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
-                <input type="hidden" name="TankId" value="@Model.TankId" />
+                <input type="hidden" name="TankId" value="@Model.TankID" />
                 <input type="hidden" name="Added" value="@(DateTime.Now)" />
                 <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
+                <input type="hidden" id="Capacity" name="Capacity" value="@Model.Capacity" />
                 <div class="form-row">
                     <div class="col-md-12 form-group">
                         <label class="control-label">Description</label>
@@ -38,14 +52,14 @@
                             <select id="TankTypeID" class="form-control" name="TankTypeID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    if (Model.TankId == 0)
+                                    if (Model.TankID == 0)
                                     {
                                         <option value="">-- Tank Type --</option>
                                     }
 
-                                    foreach (TankType tankType in DataSource.List_TankTypes())
+                                    foreach (TankTypeModel tankType in Database.TankType.ToList())
                                     {
-                                        <option value="@tankType" selected="@(tankType == Model.TankType)">@tankType.ToString()</option>
+                                        <option value="@(tankType.TypeID)" selected="@(tankType.TypeName == Model.TankType.TypeName)">@tankType.TypeName</option>
                                     }
                                 }
                                 else
@@ -62,14 +76,14 @@
                             <select id="WaterType" class="form-control" name="WaterType" required>
                                 @if (DataSource.List_WaterTypes().Count() > 0)
                                 {
-                                    @if (Model.TankId == 0)
+                                    @if (Model.TankID == 0)
                                     {
                                         <option value="">-- Water Type --</option>
                                     }
 
-                                    foreach (var waterType in DataSource.List_WaterTypes())
+                                    foreach (WaterTypeModel waterType in Database.WaterType.ToList())
                                     {
-                                        <option value="@waterType" selected="@(Model.WaterType == waterType)">@waterType.ToString()</option>
+                                        <option value="@waterType" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@waterType.WaterTypeName</option>
                                     }
                                 }
                                 else
@@ -84,14 +98,14 @@
                             <select id="Temporment" class="form-control" name="Temporment" required>
                                 @if (DataSource.List_AgressionLevels().Count() > 0)
                                 {
-                                    @if (Model.TankId == 0)
+                                    @if (Model.TankID == 0)
                                     {
                                         <option value="">-- Tank Agression Level --</option>
                                     }
 
-                                    foreach (var agressionLevel in DataSource.List_AgressionLevels())
+                                    foreach (TempormentModel agressionLevel in DataSource.List_AgressionLevels())
                                     {
-                                        <option value="@agressionLevel" selected="@(Model.Temporment == agressionLevel)">@agressionLevel.ToString()</option>
+                                        <option value="@agressionLevel" selected="@(Model.Temporment.TempormentID == agressionLevel.TempormentID)">@agressionLevel.ToString()</option>
                                     }
                                 }
                                 else
@@ -104,7 +118,10 @@
                     </div>
                 </div>
                 <div class="form-row">
-
+                    <div class="form-group">
+                        <label class="control-label">Tank Capacity</label>
+                        <div id="slider"></div>
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="col-4">
