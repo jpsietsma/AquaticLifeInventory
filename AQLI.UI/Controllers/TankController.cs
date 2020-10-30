@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using AQLI.Data.Models;
 using AQLI.DataServices;
 using AQLI.DataServices.context;
+using Microsoft.EntityFrameworkCore;
 
 namespace AQLI.UI.Controllers
 {
@@ -23,7 +24,7 @@ namespace AQLI.UI.Controllers
             _logger = logger;
             Database = _efContext;
             DataSource = _dataFactory;
-            UserModel = DataSource.Find_UserDetails(1);
+            UserModel = new WebsiteUser { OwnerID = 1, FirstName = "Jimmy", LastName = "Sietsma", EmailAddress = "jpsietsma@gmail.com", UserName = "jpsietsma" };
         }
 
         public IActionResult Index()
@@ -34,12 +35,19 @@ namespace AQLI.UI.Controllers
         [HttpGet]
         public IActionResult _Details(int ID)
         {
-            var model = new AquaticTankModel { TankType = new TankTypeModel { TankTypeName = "Unknown" } };
+            AquaticTankModel model = Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Where(t => t.TankID == ID)
+                    .FirstOrDefault();
 
-            //if (ID != 0)
-            //{
-            //    model = UserModel.AquaticTanks.Where(t => t.TankId == ID).FirstOrDefault();
-            //}            
+            if (model == null)
+            {
+                model = new AquaticTankModel { TankID = 0 };
+            }
 
             return PartialView(model);
         }
@@ -50,10 +58,7 @@ namespace AQLI.UI.Controllers
         {
             if (_dataModel.TankID == 0)
             {
-                //Database.Add(_dataModel);
-                //Database.SaveChanges();
-
-                _dataModel.Owner = DataSource.Find_UserDetails(_dataModel.Owner == null ? 1 : _dataModel.Owner.ID);
+                _dataModel.Owner = UserModel;
                 _dataModel.TankID = DataSource.List_Tanks().Select(t => t.TankID).Max() + 1;
                 DataSource.Add_Tank(_dataModel);
             }

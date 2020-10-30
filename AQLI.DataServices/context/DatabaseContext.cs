@@ -14,7 +14,8 @@ namespace AQLI.DataServices.context
         public DbSet<CreatureTypeModel> CreatureType { get; set; }
         public DbSet<EnvironmentModel> Environment { get; set; }
         public DbSet<TempormentModel> Temporment { get; set; }
-
+       
+        public DbSet<MedicalRecordModel> MedicalRecord { get; set; }
         public DbSet<AquaticTankModel> Tank { get; set; }
         //public DbSet<FishCreatureModel> Fish { get; set; }
 
@@ -28,6 +29,8 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<CreatureTypeModel>().HasKey("CreatureTypeID");
             modelBuilder.Entity<TempormentModel>().HasKey("TempormentID");
             modelBuilder.Entity<EnvironmentModel>().HasKey("EnvironmentID");
+            modelBuilder.Entity<TankTypeModel>().HasKey("TankTypeID");
+            modelBuilder.Entity<MedicalRecordModel>().HasKey("MedicalRecordID");
 
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(wt => wt.WaterType)
@@ -41,7 +44,9 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(e => e.Environment)
                 .WithMany(t => t.Tanks);
-
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(tt => tt.TankType)
+                .WithMany(t => t.Tanks);
 
 
         }

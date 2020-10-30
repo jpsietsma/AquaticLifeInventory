@@ -1,5 +1,6 @@
 ﻿using AQLI.Data.Models;
 using AQLI.DataServices.context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,75 +12,97 @@ namespace AQLI.DataServices
     {
         private readonly DatabaseContext Database;
 
-        private List<WebsiteUser> _AllUsers;
-        private List<FishCreatureModel> _AllFish;
-
-
         public DataFactory(DatabaseContext _context)
         {
-            Database = _context;
-            _AllUsers = new List<WebsiteUser>();
-            _AllFish = new List<FishCreatureModel>();            
-
-        }       
-
-        public List<WebsiteUser> List_WebsiteUsers()
-        {
-            return _AllUsers;
+            Database = _context;      
         }
 
-        public List<AquaticTankModel> List_Tanks()
-        {            
-            return Database.Tank.ToList();               
-        }
-
-        public List<FishCreatureModel> List_Fish()
-        {
-            return _AllFish;
-        }
-
-        public List<TankInventoryRecordModel> List_InventoryRecords()
-        {
-            return new List<TankInventoryRecordModel>();
-        }
-
-        public List<MedicalRecord> List_MedicalRecords()
-        {
-            return new List<MedicalRecord>();
-        }
-
+        /// <summary>
+        /// Find the details for a particular tank with loaded dependents
+        /// </summary>
+        /// <param name="id">Id of the tank for retrieving details</param>
         public AquaticTankModel Find_TankDetails(int id)
         {
-            return List_Tanks().Where(t => t.TankID == id).FirstOrDefault();
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Where(t => t.TankID == id)
+                    .FirstOrDefault();
         }
 
+        /// <summary>
+        /// List tanks with loaded dependent entities
+        /// </summary>
+        public List<AquaticTankModel> List_Tanks()
+        {            
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .ToList();
+        }
+
+        /// <summary>
+        /// Return all system medical records
+        /// </summary>
+        public List<MedicalRecordModel> List_MedicalRecords()
+        {
+            return Database.MedicalRecord
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all tanks owned by a user
+        /// </summary>
+        /// <param name="id">Id of the user to retrieve tanks</param>
         public List<AquaticTankModel> List_UserTanks(int id)
         {
-            return List_Tanks().Where(t => t.Owner.ID == id).ToList();
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Where(t => t.OwnerID == id)
+                    .ToList();
         }
 
+        /// <summary>
+        /// List types of tanks
+        /// </summary>
         public List<TankTypeModel> List_TankTypes()
         {
-            return Database.TankType.ToList();
+            return Database.TankType
+                .ToList();
         }
 
+        /// <summary>
+        /// List types of water
+        /// </summary>
         public List<WaterTypeModel> List_WaterTypes()
         {
-            return Database.WaterType.ToList();
+            return Database.WaterType
+                .ToList();
         }
 
-        public List<TempormentModel> List_AgressionLevels()
+        /// <summary>
+        /// List temporment levels of fish
+        /// </summary>
+        public List<TempormentModel> List_TempormentLevels()
         {
-            return Database.Temporment.ToList();
+            return Database.Temporment
+                .ToList();
         }
 
-        public WebsiteUser Find_UserDetails(int id)
-        {
-            WebsiteUser FinalUserDetails = List_WebsiteUsers().Where(u => u.ID == id).FirstOrDefault();
-            
-            return FinalUserDetails;
-        }
-
+        /// <summary>
+        /// Add a new tank to the database
+        /// </summary>
+        /// <param name="_dataModel">Data Model representing the tank to add</param>
         public AquaticTankModel Add_Tank(AquaticTankModel _dataModel)
         {
             Database.Tank.Add(_dataModel);
@@ -88,6 +111,10 @@ namespace AQLI.DataServices
             return _dataModel;
         }
 
+        /// <summary>
+        /// Update the details for a tank, or add a new tank if model TankID doesnt exist
+        /// </summary>
+        /// <param name="_dataModel">Data model to update/add to the database</param>
         public AquaticTankModel Update_TankDetails(AquaticTankModel _dataModel)
         {
             var listEntry = Database.Tank.Where(t => t.TankID == _dataModel.TankID).FirstOrDefault();
@@ -113,9 +140,16 @@ namespace AQLI.DataServices
             }                         
         }
 
+        /// <summary>
+        /// Remove a Tank from the database.
+        /// </summary>
+        /// <param name="id">ID of the tank to remove</param>
         public void Remove_UserTank(int id)
         {
-            List_Tanks().Remove(List_Tanks().Where(t => t.TankID == id).First());            
+            var model = Database.Tank.Where(t => t.TankID == id).First();
+            
+            Database.Tank.Remove(model);
+            Database.SaveChanges();
         }
 
     }

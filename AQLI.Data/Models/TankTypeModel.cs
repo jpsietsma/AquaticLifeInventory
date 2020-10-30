@@ -10,5 +10,7 @@ namespace AQLI.Data.Models
         [Key]
         public int TankTypeID { get; set; }
         public string TankTypeName { get; set; }
+
+        public List<AquaticTankModel> Tanks { get; set; }
     }
 }

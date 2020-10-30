@@ -8,6 +8,7 @@ namespace AQLI.Data.Models
 {
     public class WaterTypeModel
     {
+        [Key]
         public int WaterTypeID { get; set; }
         public string WaterTypeName { get; set; }
 

@@ -41,14 +41,18 @@
                             <select id="TankTypeID" class="form-control" name="TankTypeID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    if (Model.TankTypeID == 0)
-                                    {
-                                        <option value="">-- Tank Type --</option>
-                                    }
+                                    <option value="">-- Tank Type --</option>
 
                                     foreach (TankTypeModel tankType in Database.TankType.ToList())
                                     {
-                                        <option value="@(tankType.TankTypeID)" selected="@(tankType.TankTypeName == Model.TankType.TankTypeName)">@tankType.TankTypeName</option>
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@(tankType.TankTypeID)" selected="@(tankType.TankTypeName == Model.TankType.TankTypeName)">@tankType.TankTypeName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(tankType.TankTypeID)">@tankType.TankTypeName</option>
+                                        }
                                     }
                                 }
                                 else
@@ -65,14 +69,18 @@
                             <select id="WaterType" class="form-control" name="WaterTypeID" required>
                                 @if (DataSource.List_WaterTypes().Count() > 0)
                                 {
-                                    @if (Model.TankID == 0)
-                                    {
-                                        <option value="">-- Water Type --</option>
-                                    }
+                                    <option value="">-- Water Type --</option>
 
                                     foreach (WaterTypeModel waterType in Database.WaterType.ToList())
                                     {
-                                        <option value="@waterType" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@waterType.WaterTypeName</option>
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@waterType" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(waterType)">@(waterType.WaterTypeName)</option>
+                                        }
                                     }
                                 }
                                 else
@@ -85,16 +93,20 @@
                         <div class="form-group">
                             <label class="control-label">Tank Temporment</label> 
                             <select id="Temporment" class="form-control" name="TempormentID" required>
-                                @if (DataSource.List_AgressionLevels().Count() > 0)
+                                @if (DataSource.List_TempormentLevels().Count() > 0)
                                 {
-                                    @if (Model.TankID == 0)
-                                    {
-                                        <option value="">-- Tank Agression Level --</option>
-                                    }
+                                    <option value="">-- Tank Agression Level --</option>
 
-                                    foreach (TempormentModel agressionLevel in DataSource.List_AgressionLevels())
+                                    foreach (TempormentModel agressionLevel in DataSource.List_TempormentLevels())
                                     {
-                                        <option value="@agressionLevel.TempormentID" selected="@(Model.Temporment.TempormentID == agressionLevel.TempormentID)">@agressionLevel.TempormentName</option>
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@(agressionLevel.TempormentID)" selected="@(Model.Temporment.TempormentID == agressionLevel.TempormentID)">@(agressionLevel.TempormentName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(agressionLevel.TempormentID)">@(agressionLevel.TempormentName)</option>
+                                        }
                                     }
                                 }
                                 else

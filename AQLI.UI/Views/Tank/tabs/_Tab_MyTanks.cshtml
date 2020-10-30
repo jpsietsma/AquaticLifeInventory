@@ -1,6 +1,8 @@
 ﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
 
-@model List<AQLI.Data.Models.AquaticTankModel>
+@model WebsiteUser;
+@inject DataFactory DataSource;
 
 <div class="justify-content-center">
     <div class="row mx-auto">
@@ -21,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.OwnerID))
                 {
                     <tr class="user-tank-record" data-id="@item.TankID">
                         <td class="tank-selected">

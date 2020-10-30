@@ -5,17 +5,13 @@ using System.Text;
 
 namespace AQLI.Data.Models
 {
-    public abstract class MedicalRecord
+    public class MedicalRecordModel
     {
         [Key]
-        public int Id { get; set; }
+        public int MedicalRecordID { get; set; }
         public DateTime CreatedOn { get; set; }
-        
-    }
-
-    public enum MedicalRecordType
-    {
-        ROUTINE,
+        public int TankID { get; set; }
 
     }
+
 }

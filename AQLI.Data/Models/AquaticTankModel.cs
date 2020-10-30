@@ -31,6 +31,7 @@ namespace AQLI.Data.Models
         public int EnvironmentID { get; set; }
         public EnvironmentModel Environment { get; set; }
 
+        public int OwnerID { get; set; }
         public WebsiteUser Owner { get; set; }
 
         public List<FishCreatureModel> FishPopulation { get; set; }

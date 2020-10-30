@@ -1,25 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@*@inject AQLI.DataServices.DataFactory DataSource*@
-@model AQLI.Data.Models.WebsiteUser;
+@model WebsiteUser;
+
 @using System.Linq;
 @using AQLI.Data.Models;
 @using AQLI.DataServices;
 
 @inject DataFactory DataSource
-
-
-@section Style {
-
-    <style>
-        .tank-card {
-            margin-right: 15px;
-            padding: 0px;
-        }
-    </style>
-
-}
 
 <div class="grid">
     <div class="row">
@@ -29,7 +17,7 @@
         <hr class="col-8" />
     </div>
     <div name="tankCards" class="row justify-content-center">
-        @foreach (var item in DataSource.List_Tanks())
+        @foreach (var item in DataSource.List_UserTanks(Model.OwnerID))
         {
             <!-- Favorite tank cards -->
             <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
@@ -53,7 +41,7 @@
                 </div>
             </div>
         }
-        @if (Model.AquaticTanks.Count() < 4)
+        @if (DataSource.List_UserTanks(Model.OwnerID).Count() < 4)
         {
             <!-- Add tank card -->
             <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
@@ -75,8 +63,8 @@
                         </div>
                         <div class="btn-group-sm col-4">
                             <input type="button" class="btn btn-sm btn-warning" style="margin-left: -10px;" value="Quarantine" />
-                        </div>                                           
-                    </div>                    
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -116,7 +104,7 @@
             <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
                 <!-- tanks tab -->
                 <div class="tab-pane container active" id="tanks_tab">
-                    <partial name="tabs/_Tab_MyTanks" model="Model.AquaticTanks" />
+                    <partial name="tabs/_Tab_MyTanks" model="Model" />
                 </div>
                 <!-- fish tab -->
                 <div class="tab-pane container fade" id="fish_tab">
@@ -159,8 +147,8 @@
                 //Reload page on modal closing
                 $('#modalAddEdit').on('hidden.bs.modal', function () {
                     location.reload();
-                });                               
-                                
+                });
+
             },
             events: {
                 addTank_Clicked: function () {
@@ -180,7 +168,7 @@
                     ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
                 }
 
-                
+
                 Tank.CreateCapacitySlider();
 
                 $('#addEditForm').parsley().on('form:submit', function () {
@@ -190,7 +178,7 @@
                             //Success
                             $('#modalAddEdit').modal('hide');
                             if (data && data.View) {
-                                
+
                             }else {
                                 ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
                             }
