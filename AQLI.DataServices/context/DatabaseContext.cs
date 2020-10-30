@@ -1,5 +1,5 @@
 ﻿using AQLI.Data.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,35 @@ namespace AQLI.DataServices.context
         public DbSet<EnvironmentModel> Environment { get; set; }
         public DbSet<TempormentModel> Temporment { get; set; }
 
-        public DbSet<TankModel> Tank { get; set; }
+        public DbSet<AquaticTankModel> Tank { get; set; }
         //public DbSet<FishCreatureModel> Fish { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {            
+            modelBuilder.Entity<WaterTypeModel>().HasKey("WaterTypeID");
+            modelBuilder.Entity<CreatureTypeModel>().HasKey("CreatureTypeID");
+            modelBuilder.Entity<TempormentModel>().HasKey("TempormentID");
+            modelBuilder.Entity<EnvironmentModel>().HasKey("EnvironmentID");
+
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(wt => wt.WaterType)
+                .WithMany(t => t.Tanks);           
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(ct => ct.CreatureType)
+                .WithMany(t => t.Tanks);            
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(tem => tem.Temporment)
+                .WithMany(t => t.Tanks);
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(e => e.Environment)
+                .WithMany(t => t.Tanks);
+
+
+
+        }
     }
 }

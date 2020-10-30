@@ -10,17 +10,6 @@
 @inject DataFactory DataSource;
 @inject DatabaseContext Database;
 
-<style>
-    #custom-handle {
-        width: 2em;
-        height: 1.6em;
-        top: 50%;
-        margin-top: -.8em;
-        text-align: center;
-        line-height: 1.6em;
-    }
-</style>
-
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
@@ -52,14 +41,14 @@
                             <select id="TankTypeID" class="form-control" name="TankTypeID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    if (Model.TankID == 0)
+                                    if (Model.TankTypeID == 0)
                                     {
                                         <option value="">-- Tank Type --</option>
                                     }
 
                                     foreach (TankTypeModel tankType in Database.TankType.ToList())
                                     {
-                                        <option value="@(tankType.TypeID)" selected="@(tankType.TypeName == Model.TankType.TypeName)">@tankType.TypeName</option>
+                                        <option value="@(tankType.TankTypeID)" selected="@(tankType.TankTypeName == Model.TankType.TankTypeName)">@tankType.TankTypeName</option>
                                     }
                                 }
                                 else
@@ -73,7 +62,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="control-label">Water Type</label>
-                            <select id="WaterType" class="form-control" name="WaterType" required>
+                            <select id="WaterType" class="form-control" name="WaterTypeID" required>
                                 @if (DataSource.List_WaterTypes().Count() > 0)
                                 {
                                     @if (Model.TankID == 0)
@@ -94,8 +83,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Tank Temporment</label>
-                            <select id="Temporment" class="form-control" name="Temporment" required>
+                            <label class="control-label">Tank Temporment</label> 
+                            <select id="Temporment" class="form-control" name="TempormentID" required>
                                 @if (DataSource.List_AgressionLevels().Count() > 0)
                                 {
                                     @if (Model.TankID == 0)
@@ -105,7 +94,7 @@
 
                                     foreach (TempormentModel agressionLevel in DataSource.List_AgressionLevels())
                                     {
-                                        <option value="@agressionLevel" selected="@(Model.Temporment.TempormentID == agressionLevel.TempormentID)">@agressionLevel.ToString()</option>
+                                        <option value="@agressionLevel.TempormentID" selected="@(Model.Temporment.TempormentID == agressionLevel.TempormentID)">@agressionLevel.TempormentName</option>
                                     }
                                 }
                                 else

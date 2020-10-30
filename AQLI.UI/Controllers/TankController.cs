@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AQLI.UI.Models;
 using AQLI.Data.Models;
 using AQLI.DataServices;
 using AQLI.DataServices.context;
@@ -35,7 +34,7 @@ namespace AQLI.UI.Controllers
         [HttpGet]
         public IActionResult _Details(int ID)
         {
-            var model = new AquaticTankModel { TankType = new TankTypeModel { TypeName = "Unknown" } };
+            var model = new AquaticTankModel { TankType = new TankTypeModel { TankTypeName = "Unknown" } };
 
             //if (ID != 0)
             //{
@@ -54,7 +53,7 @@ namespace AQLI.UI.Controllers
                 //Database.Add(_dataModel);
                 //Database.SaveChanges();
 
-                _dataModel.Owner = DataSource.Find_UserDetails(_dataModel.Owner == null ? 1 : _dataModel.Owner.UserId);
+                _dataModel.Owner = DataSource.Find_UserDetails(_dataModel.Owner == null ? 1 : _dataModel.Owner.ID);
                 _dataModel.TankID = DataSource.List_Tanks().Select(t => t.TankID).Max() + 1;
                 DataSource.Add_Tank(_dataModel);
             }

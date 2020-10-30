@@ -5,6 +5,9 @@
 @model AQLI.Data.Models.WebsiteUser;
 @using System.Linq;
 @using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@inject DataFactory DataSource
 
 
 @section Style {
@@ -26,7 +29,7 @@
         <hr class="col-8" />
     </div>
     <div name="tankCards" class="row justify-content-center">
-        @foreach (var item in Model.AquaticTanks)
+        @foreach (var item in DataSource.List_Tanks())
         {
             <!-- Favorite tank cards -->
             <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">

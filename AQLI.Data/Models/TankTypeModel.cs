@@ -8,7 +8,7 @@ namespace AQLI.Data.Models
     public class TankTypeModel
     {
         [Key]
-        public int TypeID { get; set; }
-        public string TypeName { get; set; }
+        public int TankTypeID { get; set; }
+        public string TankTypeName { get; set; }
     }
 }
