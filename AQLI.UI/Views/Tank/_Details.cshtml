@@ -24,24 +24,58 @@
                 <input type="hidden" name="Added" value="@(DateTime.Now)" />
                 <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
                 <input type="hidden" id="Capacity" name="Capacity" value="@Model.Capacity" />
+                <!-- Tank Name, Capacity, and Water Type form row -->
                 <div class="form-row">
-                    <div class="col-md-12 form-group">
-                        <label class="control-label">Description</label>
-                        <textarea class="form-control" name="Description" rows="3" placeholder="Enter a friendly description for the tank..">@(Model.Description ?? null)</textarea>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="form-group">
                             <label class="control-label">Tank Name</label>
-                            <input type="text" class="form-control" name="Name" value="@Model.Name" required />
+                            <input type="text" class="form-control" name="Name" placeholder="Enter Tank Display Name..." value="@Model.Name" required />
                         </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="control-label">Tank Capacity</label>
+                            <div id="slider"></div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="control-label">Water Type</label>
+                            <select id="WaterType" class="form-control" name="WaterTypeID" required>
+                                @if (DataSource.List_WaterTypes().Count() > 0)
+                                {
+                                    <option value="">-- Choose Water Type --</option>
+
+                                    foreach (WaterTypeModel waterType in DataSource.List_WaterTypes())
+                                    {
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@(waterType.WaterTypeID)" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- No Water Types --</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Environment and Temporment form row -->
+                <div class="form-row">
+                    <div class="col-6">
                         <div class="form-group">
                             <label class="control-label">Environment</label>
                             <select id="EnvironmentID" class="form-control" name="EnvironmentID" required>
                                 @if (DataSource.List_Environments().Count() > 0)
                                 {
-                                    <option value="">-- Environment Type --</option>
+                                    <option value="">-- Choose Environment Type --</option>
 
                                     foreach (EnvironmentModel environmentModel in DataSource.List_Environments())
                                     {
@@ -65,37 +99,11 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="control-label">Water Type</label>
-                            <select id="WaterType" class="form-control" name="WaterTypeID" required>
-                                @if (DataSource.List_WaterTypes().Count() > 0)
-                                {
-                                    <option value="">-- Water Type --</option>
-
-                                    foreach (WaterTypeModel waterType in DataSource.List_WaterTypes())
-                                    {
-                                        if (Model.TankID != default)
-                                        {
-                                            <option value="@(waterType.WaterTypeID)" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@(waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    <option value="">-- No Water Types --</option>
-                                }
-
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label class="control-label">Tank Temporment</label>
                             <select id="Temporment" class="form-control" name="TempormentID" required>
                                 @if (DataSource.List_TempormentLevels().Count() > 0)
                                 {
-                                    <option value="">-- Tank Agression Level --</option>
+                                    <option value="">-- Choose Tank Temporment --</option>
 
                                     foreach (TempormentModel agressionLevel in DataSource.List_TempormentLevels())
                                     {
@@ -113,11 +121,11 @@
                                 {
                                     <option value="">-- No Agression Levels --</option>
                                 }
-
                             </select>
                         </div>
                     </div>
                 </div>
+                <!-- Tank Type and Creature Type form row -->
                 <div class="form-row">
                     <div class="col-6">
                         <div class="form-group">
@@ -125,7 +133,7 @@
                             <select id="TankTypeID" class="form-control" name="TankTypeID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    <option value="">-- Tank Type --</option>
+                                    <option value="">-- Choose Tank Type --</option>
 
                                     foreach (TankTypeModel tankType in DataSource.List_TankTypes())
                                     {
@@ -153,7 +161,7 @@
                             <select id="CreatureType" class="form-control" name="CreatureTypeID" required>
                                 @if (DataSource.List_CreatureTypes().Count() > 0)
                                 {
-                                    <option value="">-- Creature Type --</option>
+                                    <option value="">-- Choose Creature Type --</option>
 
                                     foreach (CreatureTypeModel creatureType in DataSource.List_CreatureTypes())
                                     {
@@ -173,15 +181,19 @@
                                 }
 
                             </select>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
+                <!-- Tank Description form row -->
                 <div class="form-row">
-                    <div class="form-group">
-                        <label class="control-label">Tank Capacity</label>
-                        <div id="slider"></div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="control-label">Description</label>
+                            <textarea class="form-control" name="Description" rows="3" placeholder="Enter a friendly description for the tank..">@(Model.Description ?? null)</textarea>
+                        </div>
                     </div>
                 </div>
+                <!-- Status Checkboxes form group form row -->
                 <div class="form-row">
                     <div class="col-4">
                         <div class="form-check">
@@ -190,21 +202,23 @@
                     </div>
                     <div class="col-4">
                         <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Maintenance Mode</label>
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Maintenance</label>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Quarantined</label>
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Quarantine</label>
                         </div>
                     </div>
                 </div>
             </form>
-
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success mr-auto">Transfer Ownership</button>
-            <button type="button" class="btn btn-primary on-new" onclick="$('#addEditForm').submit();">Save</button>
+            @if (Model.TankID != 0)
+            {
+                <button type="button" class="btn btn-success mr-auto">Transfer Ownership</button>
+            }
+            <button type="button" class="btn btn-success on-new" onclick="$('#addEditForm').submit();">Save</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
     </div>
