@@ -75,7 +75,7 @@ namespace AQLI.UI.Controllers
         {
             DataSource.Remove_UserTank(id);
 
-            return View("Index", UserModel);
+            return RedirectToAction("Index");
         }
 
     }
