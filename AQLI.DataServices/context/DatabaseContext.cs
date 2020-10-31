@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace AQLI.DataServices.context
@@ -47,8 +48,8 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(tt => tt.TankType)
                 .WithMany(t => t.Tanks);
-
-
+            modelBuilder.Entity<AquaticTankModel>()
+                .Property(x => x.TankID).ValueGeneratedOnAdd();
         }
     }
 }

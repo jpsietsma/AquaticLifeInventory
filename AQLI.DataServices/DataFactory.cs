@@ -100,6 +100,24 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// List types of tank environments
+        /// </summary>
+        public List<EnvironmentModel> List_Environments()
+        {
+            return Database.Environment
+                .ToList();
+        }
+
+        /// <summary>
+        /// List creature types
+        /// </summary>
+        public List<CreatureTypeModel> List_CreatureTypes()
+        {
+            return Database.CreatureType
+                .ToList();
+        }
+
+        /// <summary>
         /// Add a new tank to the database
         /// </summary>
         /// <param name="_dataModel">Data Model representing the tank to add</param>

@@ -38,20 +38,20 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">Environment</label>
-                            <select id="TankTypeID" class="form-control" name="TankTypeID" required>
-                                @if (DataSource.List_TankTypes().Count() > 0)
+                            <select id="EnvironmentID" class="form-control" name="EnvironmentID" required>
+                                @if (DataSource.List_Environments().Count() > 0)
                                 {
-                                    <option value="">-- Tank Type --</option>
+                                    <option value="">-- Environment Type --</option>
 
-                                    foreach (TankTypeModel tankType in Database.TankType.ToList())
+                                    foreach (EnvironmentModel environmentModel in DataSource.List_Environments())
                                     {
                                         if (Model.TankID != default)
                                         {
-                                            <option value="@(tankType.TankTypeID)" selected="@(tankType.TankTypeName == Model.TankType.TankTypeName)">@tankType.TankTypeName</option>
+                                            <option value="@(environmentModel.EnvironmentID)" selected="@(environmentModel.EnvironmentID == Model.WaterTypeID)">@(environmentModel.EnvironmentName)</option>
                                         }
                                         else
                                         {
-                                            <option value="@(tankType.TankTypeID)">@tankType.TankTypeName</option>
+                                            <option value="@(environmentModel.EnvironmentID)">@(environmentModel.EnvironmentName)</option>
                                         }
                                     }
                                 }
@@ -71,15 +71,15 @@
                                 {
                                     <option value="">-- Water Type --</option>
 
-                                    foreach (WaterTypeModel waterType in Database.WaterType.ToList())
+                                    foreach (WaterTypeModel waterType in DataSource.List_WaterTypes())
                                     {
                                         if (Model.TankID != default)
                                         {
-                                            <option value="@waterType" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
+                                            <option value="@(waterType.WaterTypeID)" selected="@(Model.WaterType.WaterTypeID == waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
                                         }
                                         else
                                         {
-                                            <option value="@(waterType)">@(waterType.WaterTypeName)</option>
+                                            <option value="@(waterType.WaterTypeID)">@(waterType.WaterTypeName)</option>
                                         }
                                     }
                                 }
@@ -91,7 +91,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Tank Temporment</label> 
+                            <label class="control-label">Tank Temporment</label>
                             <select id="Temporment" class="form-control" name="TempormentID" required>
                                 @if (DataSource.List_TempormentLevels().Count() > 0)
                                 {
@@ -116,6 +116,64 @@
 
                             </select>
                         </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="control-label">Tank Type</label>
+                            <select id="TankTypeID" class="form-control" name="TankTypeID" required>
+                                @if (DataSource.List_TankTypes().Count() > 0)
+                                {
+                                    <option value="">-- Tank Type --</option>
+
+                                    foreach (TankTypeModel tankType in DataSource.List_TankTypes())
+                                    {
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@(tankType.TankTypeID)" selected="@(tankType.TankTypeID == Model.WaterTypeID)">@(tankType.TankTypeName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(tankType.TankTypeID)">@(tankType.TankTypeName)</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- No Tank Types --</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="control-label">Creature Type</label>
+                            <select id="CreatureType" class="form-control" name="CreatureTypeID" required>
+                                @if (DataSource.List_CreatureTypes().Count() > 0)
+                                {
+                                    <option value="">-- Creature Type --</option>
+
+                                    foreach (CreatureTypeModel creatureType in DataSource.List_CreatureTypes())
+                                    {
+                                        if (Model.TankID != default)
+                                        {
+                                            <option value="@(creatureType.CreatureTypeID)" selected="@(Model.CreatureTypeID == creatureType.CreatureTypeID)">@(creatureType.CreatureTypeName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@(creatureType.CreatureTypeID)">@(creatureType.CreatureTypeName)</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- No Creature Types --</option>
+                                }
+
+                            </select>
+                        </div>                        
                     </div>
                 </div>
                 <div class="form-row">

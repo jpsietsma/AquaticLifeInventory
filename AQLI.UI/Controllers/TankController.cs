@@ -59,7 +59,7 @@ namespace AQLI.UI.Controllers
             if (_dataModel.TankID == 0)
             {
                 _dataModel.Owner = UserModel;
-                _dataModel.TankID = DataSource.List_Tanks().Select(t => t.TankID).Max() + 1;
+                _dataModel.OwnerID = UserModel.OwnerID;
                 DataSource.Add_Tank(_dataModel);
             }
             else

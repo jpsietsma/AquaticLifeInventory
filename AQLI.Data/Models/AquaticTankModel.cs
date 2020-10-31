@@ -32,6 +32,7 @@ namespace AQLI.Data.Models
         public EnvironmentModel Environment { get; set; }
 
         public int OwnerID { get; set; }
+        [NotMapped]
         public WebsiteUser Owner { get; set; }
 
         public List<FishCreatureModel> FishPopulation { get; set; }
