@@ -10,7 +10,9 @@ namespace AQLI.Data.Models
         [Key]
         public int NotificationID { get; set; }
         public string Message { get; set; }
-        public int PriorityLevel { get; set; }
+
+        public int NotificationPriorityLevelID { get; set; }
+        public NotificationPriorityLevelModel PriorityLevel { get; set; }
 
         public NotificationModel()
         {

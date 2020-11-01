@@ -24,7 +24,7 @@ namespace AQLI.UI.Controllers
             _logger = logger;
             Database = _efContext;
             DataSource = _dataFactory;
-            UserModel = new WebsiteUser { OwnerID = 1, FirstName = "Jimmy", LastName = "Sietsma", EmailAddress = "jpsietsma@gmail.com", UserName = "jpsietsma" };
+            UserModel = new WebsiteUser { UserId = 1, FirstName = "Jimmy", LastName = "Sietsma", Email = "jpsietsma@gmail.com", UserName = "jpsietsma" };
         }
 
         public IActionResult Index()
@@ -59,7 +59,7 @@ namespace AQLI.UI.Controllers
             if (_dataModel.TankID == 0)
             {
                 _dataModel.Owner = UserModel;
-                _dataModel.OwnerID = UserModel.OwnerID;
+                _dataModel.OwnerID = UserModel.UserId;
                 DataSource.Add_Tank(_dataModel);
             }
             else

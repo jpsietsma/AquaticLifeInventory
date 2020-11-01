@@ -1,6 +1,8 @@
 ﻿using AQLI.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,6 +22,13 @@ namespace AQLI.DataServices.context
         public DbSet<AquaticTankModel> Tank { get; set; }
         //public DbSet<FishCreatureModel> Fish { get; set; }
 
+        public DbSet<WebsiteUser> AspNetUsers { get; set; }
+        public DbSet<IdentityUserClaim<string>> AspNetUserClaims { get; set; }
+        public DbSet<IdentityUserRole<string>> AspNetUserRoles { get; set; }
+        public DbSet<IdentityUserLogin<string>> AspNetUserLogins { get; set; }
+
+        public DbSet<NotificationModel> Notification { get; set; }
+        
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         { }
@@ -35,21 +44,32 @@ namespace AQLI.DataServices.context
 
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(wt => wt.WaterType)
-                .WithMany(t => t.Tanks);           
+                .WithMany(t => t.Tanks)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(ct => ct.CreatureType)
-                .WithMany(t => t.Tanks);            
+                .WithMany(t => t.Tanks)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(tem => tem.Temporment)
-                .WithMany(t => t.Tanks);
+                .WithMany(t => t.Tanks)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(e => e.Environment)
-                .WithMany(t => t.Tanks);
+                .WithMany(t => t.Tanks)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(tt => tt.TankType)
-                .WithMany(t => t.Tanks);
+                .WithMany(t => t.Tanks)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();
+
+            //Ignore numeric User ID identity column when updating or inserting
+            modelBuilder.Entity<WebsiteUser>().Property(u => u.UserId).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
         }
     }
 }

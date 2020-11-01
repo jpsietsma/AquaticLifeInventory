@@ -17,7 +17,7 @@
         <hr class="col-8" />
     </div>
     <div name="tankCards" class="row justify-content-center">
-        @foreach (var item in DataSource.List_UserTanks(Model.OwnerID))
+        @foreach (var item in DataSource.List_UserTanks(Model.UserId))
         {
             <!-- Favorite tank cards -->
             <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
@@ -41,7 +41,7 @@
                 </div>
             </div>
         }
-        @if (DataSource.List_UserTanks(Model.OwnerID).Count() < 4)
+        @if (DataSource.List_UserTanks(Model.UserId).Count() < 4)
         {
             <!-- Add tank card -->
             <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">

@@ -1,18 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace AQLI.Data.Models
 {
-    public class WebsiteUser
+    public class WebsiteUser : IdentityUser
     {
-        [Key]
-        public int OwnerID { get; set; }
-        public string UserName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string EmailAddress { get; set; }
 
         public List<NotificationModel> Notifications { get; set; }
 

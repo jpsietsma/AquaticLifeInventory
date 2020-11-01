@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.OwnerID))
+                @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId))
                 {
                     <tr class="user-tank-record" data-id="@item.TankID">
                         <td class="tank-selected">

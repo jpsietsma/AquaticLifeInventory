@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using AQLI.UI.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AQLI.DataServices;
 using AQLI.DataServices.context;
+using AQLI.Data.Models;
 
 namespace AQLI.UI
 {
@@ -33,13 +33,13 @@ namespace AQLI.UI
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<WebsiteUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<DatabaseContext>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            //inject our fake data service for testing
+            //inject EF context wrapper factory class
             services.AddTransient<DataFactory>();
         }
 
