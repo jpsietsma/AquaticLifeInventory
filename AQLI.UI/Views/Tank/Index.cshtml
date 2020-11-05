@@ -33,12 +33,15 @@
                     <div class="align-content-center align-bottom">Added @item.Added</div>
                 </div>
                 <div class="card-footer" style="font-size: 10px;">
-                    <button type="button" class="btn btn-sm btn-danger float-right tank-remove-btn" data-id="@item.TankID" onclick="Tank.openConfirmDeleteModal(@item.TankID)">Delete</button>
+                    <form method="post" action="/Tank/Remove">
+                        <input type="hidden" value="@item.TankID" name="id" data-id="@item.TankID" />
+                        <input type="submit" class="btn btn-sm btn-danger float-right tank-remove-btn" value="Delete" />
+                    </form>
                     <button type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankID" onclick="Tank.events.cardClicked(this)">Details</button>
                 </div>
             </div>
         }
-        @if (DataSource.List_UserTanks(Model.UserId).Count() == 0)
+        @if (DataSource.List_UserTanks(Model.UserId).Count() < 4)
         {
             <!-- Add tank card -->
             <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
@@ -145,6 +148,7 @@
                 $('#modalAddEdit').on('hidden.bs.modal', function () {
                     location.reload();
                 });
+
             },
             events: {
                 addTank_Clicked: function () {
@@ -154,24 +158,10 @@
                     var card = $(e);
                     var id = $(card).attr("data-id");
                     Tank.openModal(id);
-                },
-                confirmDelete_Clicked: function () {
-
                 }
             },
             openModal: function (id) {
                 openModal('@Url.Action("_Details")/?ID=' + id, Tank.modalLoaded)
-            },
-            openConfirmDeleteModal: function (id) {
-                openModal('@Url.Action("_ConfirmDeleteTank")/?ID=' + id, Tank.confirmModalLoaded)
-            },
-            confirmModalLoaded: function (success) {
-                if (!success) {
-                    ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
-                }
-            },
-            confirmModalLoaded: function (success) {
-
             },
             modalLoaded: function (success) {
                 if (!success) {

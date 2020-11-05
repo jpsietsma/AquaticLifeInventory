@@ -9,20 +9,20 @@ using AQLI.Data.Models;
 using AQLI.DataServices;
 using AQLI.DataServices.context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace AQLI.UI.Controllers
 {
-    [Authorize]
     public class TankController : Controller
     {
         private readonly ILogger<TankController> _logger;
+        private readonly DatabaseContext Database;
         private DataFactory DataSource;
         private WebsiteUser UserModel;
 
         public TankController(ILogger<TankController> logger, DataFactory _dataFactory, DatabaseContext _efContext)
         {
             _logger = logger;
+            Database = _efContext;
             DataSource = _dataFactory;
             UserModel = new WebsiteUser { UserId = 1, FirstName = "Jimmy", LastName = "Sietsma", Email = "jpsietsma@gmail.com", UserName = "jpsietsma" };
         }
@@ -35,7 +35,14 @@ namespace AQLI.UI.Controllers
         [HttpGet]
         public IActionResult _Details(int ID)
         {
-            AquaticTankModel model = DataSource.Find_TankDetails(ID);
+            AquaticTankModel model = Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Where(t => t.TankID == ID)
+                    .FirstOrDefault();
 
             if (model == null)
             {
@@ -64,17 +71,11 @@ namespace AQLI.UI.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
-        public IActionResult _Delete(int ID)
+        public IActionResult Remove(int id)
         {
-            DataSource.Remove_UserTank(ID);
+            DataSource.Remove_UserTank(id);
 
             return RedirectToAction("Index");
-        }
-
-        public IActionResult _ConfirmDeleteTank(int ID)
-        {
-            return PartialView("_ConfirmDeleteTank", DataSource.Find_TankDetails(ID));
         }
 
     }
