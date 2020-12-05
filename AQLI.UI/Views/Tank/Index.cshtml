@@ -9,10 +9,20 @@
 
 @inject DataFactory DataSource
 
+@section Style {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
+}
+
+<style>
+    .dataTables_length {
+        display: none;
+    }
+</style>
+
 <div class="grid">
     <div class="row">
         <div class="col-8 text-center">
-            <h2 class="display-9 col-8">Watched Tanks:</h2>
+            <h2 class="display-9 col-8">Established Tanks:</h2>
         </div>
         <hr class="col-8" />
     </div>
@@ -88,7 +98,7 @@
                     <a href="#medical_tab" class="nav-link" data-toggle="tab">Medical Records</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#inventory_tab" class="nav-link" data-toggle="tab">Inventory</a>
+                    <a href="#inventory_tab" class="nav-link" data-toggle="tab">Equipment</a>
                 </li>
                 <li class="nav-item">
                     <a href="#incident_tab" class="nav-link" data-toggle="tab">Incident Reports</a>
@@ -104,11 +114,11 @@
                     <partial name="tabs/_Tab_MyTanks" model="Model" />
                 </div>
                 <!-- fish tab -->
-                <div class="tab-pane container fade" id="fish_tab">
+                <div class="tab-pane container-fluid justify-content-center fade" id="fish_tab">
                     <partial name="tabs/_Tab_Fish" model="Model" />
                 </div>
                 <!-- supplies tab -->
-                <div class="tab-pane container fade" id="supplies_tab">
+                <div class="tab-pane container-fluid justify-content-center fade" id="supplies_tab">
                     <partial name="tabs/_Tab_SuppliesFood" model="Model" />
                 </div>
                 <!-- maintenance tab -->
@@ -119,8 +129,8 @@
                 <div class="tab-pane container fade" id="medical_tab">
                     <partial name="tabs/_Tab_MedicalRecords" model="Model" />
                 </div>
-                <!-- inventory tab -->
-                <div class="tab-pane container fade" id="inventory_tab">
+                <!-- Equipment tab -->
+                <div class="tab-pane container-fluid fade" id="inventory_tab">
                     <partial name="tabs/_Tab_Inventory" model="Model" />
                 </div>
                 <!-- incident tab -->
@@ -138,100 +148,17 @@
 </div>
 
 @section Scripts{
+    <script type="text/javascript" src="~/js/Purchases/Purchases.js"></script>
+    <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
     <script type="text/javascript">
-        var Tank = {
-            init: function () {
-                //Reload page on modal closing
-                $('#modalAddEdit').on('hidden.bs.modal', function () {
-                    location.reload();
-                });
-            },
-            events: {
-                addTank_Clicked: function () {
-                    Tank.openModal(0);
-                },
-                cardClicked: function (e) {
-                    var card = $(e);
-                    var id = $(card).attr("data-id");
-                    Tank.openModal(id);
-                },
-                confirmDelete_Clicked: function () {
+        $(document).ready(function () {
 
-                }
-            },
-            openModal: function (id) {
-                openModal('@Url.Action("_Details")/?ID=' + id, Tank.modalLoaded)
-            },
-            openConfirmDeleteModal: function (id) {
-                openModal('@Url.Action("_ConfirmDeleteTank")/?ID=' + id, Tank.confirmModalLoaded)
-            },
-            confirmModalLoaded: function (success) {
-                if (!success) {
-                    ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
-                }
-            },
-            confirmModalLoaded: function (success) {
-
-            },
-            modalLoaded: function (success) {
-                if (!success) {
-                    ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
-                }
-
-
-                Tank.CreateCapacitySlider();
-
-                $('#addEditForm').parsley().on('form:submit', function () {
-                    //Send the form data to the server ajax
-                    saveFormDataPost($('#addEditForm'),
-                        function (data) {
-                            //Success
-                            $('#modalAddEdit').modal('hide');
-                            if (data && data.View) {
-
-                            }else {
-                                ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
-                            }
-                        },
-                        function (data) {
-                            //Fail
-                            if (typeof data.clientError != "undefined") {
-                                ErrorMessage.show(data.clientError);
-                            } else {
-                                ErrorMessage.show(data.jsonResult);
-                            }
-                        }
-                    );
-                    //This return line is crucial to ensure the form does not do a regular(double) post
-                            return false;
-                });
-            },
-            HideCard: function (cardId) {
-                $(cardId).hide();
-                console.log(cardId);
-            },
-            CreateCapacitySlider: function () {
-
-                var $slider = $("#slider").slider({
-                    value: 0,
-                    min: 5,
-                    max: 125,
-                    step: 5,
-                    slide: function (event, ui) {
-
-                    }
-                });
-
-                var max = $slider.slider("option", "max");
-                var spacing = 100 / (max - 1);
-
-                $slider.find('.ui-slider-tick-mark').remove();
-                for (var i = 0; i < max; i++) {
-                    $('<span class="ui-slider-tick-mark"></span>').css('left', (spacing * i) + '%').appendTo($slider);
-                }
-            }
-        }
-
-        $(Tank.init);
+        });
     </script>
 }
+
+<!-- Use this for loading/reloading partial pages into a div -->
+<!-- $('#divPartial').load('/Tank/'); -->

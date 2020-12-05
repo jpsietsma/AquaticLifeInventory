@@ -7,40 +7,44 @@
 <div class="justify-content-center">
     <div class="row mx-auto">
         <div class="col-lg-12 float-left">
-            <button type="button" class="btn btn-sm btn-success" onclick="Tank.openModal(0)">Add Tank</button>
-        </div>         
+            <button type="button" class="btn btn-sm btn-warning" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> Add Invoice</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(0)"><i class="fas fa-fish text-white"></i> Establish Tank</button>
+        </div>
     </div>
-    <div class="row">
-        <table class="table-striped table-bordered table-hover col-12">
-            <thead>
-                <tr>
-                    <td><input type="checkbox" data-id="all" /></td>
-                    <td>Tank Name</td>
-                    <td>Description</td>
-                    <td>Tank Capacity</td>
-                    <td>Tank Population</td>
-                    <td>Actions</td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId))
-                {
-                    <tr class="user-tank-record" data-id="@item.TankID">
-                        <td class="tank-selected">
-                            <input type="checkbox" data-id="@item.TankID" />
-                        </td>
-                        <td>@item.Name</td>
-                        <td>@item.Description</td>
-                        <td>@item.Capacity Gallons</td>
-                        <td>@item.FishPopulation.Count()</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(@item.TankID)">Details</button>
-                            <button type="button" class="btn btn-sm btn-warning" onclick="Tank.openModal(@item.TankID)">Edit</button>
-                            <button type="button" class="btn btn-sm btn-danger">Remove</button>
-                        </td>
+    @if (DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId).Count() > 0)
+    {
+        <div class="row">
+            <table class="table-striped table-bordered table-hover col-12">
+                <thead>
+                    <tr>
+                        <td><input type="checkbox" data-id="all" /></td>
+                        <td>Tank Name</td>
+                        <td>Description</td>
+                        <td>Tank Capacity</td>
+                        <td>Tank Population</td>
+                        <td>Actions</td>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId))
+                    {
+                        <tr class="user-tank-record" data-id="@item.TankID">
+                            <td class="tank-selected">
+                                <input type="checkbox" data-id="@item.TankID" />
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>@item.Capacity Gallons</td>
+                            <td>@item.FishPopulation.Count()</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(@item.TankID)">Details</button>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="Tank.openModal(@item.TankID)">Edit</button>
+                                <button type="button" class="btn btn-sm btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>

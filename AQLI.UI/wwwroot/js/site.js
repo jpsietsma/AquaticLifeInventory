@@ -817,6 +817,88 @@ function openModal(modalURL, callback) {
 
 }
 
+//This is used to open a confirmation modal where the layout is to be parsed on the server using razor.
+//Use the callback to set up form validation or any other after action setup
+function openConfirmModal(modalURL, callback) {
+	var success = false;
+	var
+		jqxhr = $.ajax({
+			url: modalURL,
+			type: 'get',
+			cache: false
+		})
+			.done(function (data, textStatus) {
+				$("#modalConfirm").html(data); //replace the modal with received content
+				addRequiredMarks();
+				success = true;
+			})
+			.fail(function (jqXHR, textStatus, errorThrown) {
+				var jsonError = "";
+				try {
+					jsonError = JSON.parse(jqXHR.responseText);
+				} catch (err) {
+					console.error("Unable to parse ajax error response as JSON", err.message);
+					ErrorMessage.show('There was an error retrieving your data!: ' + err.message);
+					return;
+				}
+				if (typeof jsonError !== 'undefined' && jsonError.JsonResult) {
+					ErrorMessage.show(jsonError.JsonResult);
+					return;
+				}
+				else {
+					alert('There was an error retrieving your data!');
+				}
+			})
+			.always(function (data, textStatus) {
+				if (textStatus !== "error") {
+					$('#modalConfirm').modal();
+					if (callback) { callback(success); }
+				}
+			});
+
+}
+
+//This is used to open a modal, nested inside of another modal, where the layout is to be parsed on the server using razor.
+//Use the callback to set up form validation or any other after action setup
+function openNestedModal(modalURL, callback) {
+	var success = false;
+	var
+		jqxhr = $.ajax({
+			url: modalURL,
+			type: 'get',
+			cache: false
+		})
+			.done(function (data, textStatus) {
+				$("#modalAddEditNested").html(data); //replace the modal with received content
+				addRequiredMarks();
+				success = true;
+			})
+			.fail(function (jqXHR, textStatus, errorThrown) {
+				var jsonError = "";
+				try {
+					jsonError = JSON.parse(jqXHR.responseText);
+				} catch (err) {
+					console.error("Unable to parse ajax error response as JSON", err.message);
+					ErrorMessage.show('There was an error retrieving your data!: ' + err.message);
+					return;
+				}
+				if (typeof jsonError !== 'undefined' && jsonError.JsonResult) {
+					ErrorMessage.show(jsonError.JsonResult);
+					return;
+				}
+				else {
+					alert('There was an error retrieving your data!');
+				}
+			})
+			.always(function (data, textStatus) {
+				if (textStatus !== "error") {
+					$('#modalAddEditNested').modal();
+					if (callback) { callback(success); }
+				}
+			});
+
+}
+
 //This is names poorly since any message can be sent to is. It does not need to be an error.
 var ErrorMessage = {
 	show: function (message, title, closeCallback) {

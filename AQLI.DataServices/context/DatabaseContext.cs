@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using AQLI.Data.Models;
+using AQLI.Data.Models.ListModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -16,14 +17,23 @@ namespace AQLI.DataServices.context
         public DbSet<EnvironmentModel> Environment { get; set; }
         public DbSet<TempormentModel> Temporment { get; set; }
        
+        public DbSet<PurchaseModel> Purchases { get; set; }
+        public DbSet<PurchaseCategoryModel> PurchaseCategory { get; set; }
+        public DbSet<StoreModel> Stores { get; set; }
+
         public DbSet<MedicalRecordModel> MedicalRecord { get; set; }
         public DbSet<AquaticTankModel> Tank { get; set; }
-        //public DbSet<FishCreatureModel> Fish { get; set; }
+        public DbSet<FishTypeModel> FishTypes { get; set; }
+        public DbSet<FishFamilyModel> FishFamilyTypes { get; set; }
+        public DbSet<FishFeedingTypeModel> FishFeedingTypes { get; set; }
+        public DbSet<BirthingTypeModel> BirthingTypes { get; set; }
+        public DbSet<TerritorialLevelModel> TerritorialLevels { get; set; }
 
         public DbSet<WebsiteUser> AspNetUsers { get; set; }
         public DbSet<IdentityUserClaim<string>> AspNetUserClaims { get; set; }
         public DbSet<IdentityUserRole<string>> AspNetUserRoles { get; set; }
         public DbSet<IdentityUserLogin<string>> AspNetUserLogins { get; set; }
+        public DbSet<IdentityUserToken<string>> AspNetUserTokens { get; set; }
 
         public DbSet<NotificationModel> Notification { get; set; }
         
@@ -39,6 +49,9 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<EnvironmentModel>().HasKey("EnvironmentID");
             modelBuilder.Entity<TankTypeModel>().HasKey("TankTypeID");
             modelBuilder.Entity<MedicalRecordModel>().HasKey("MedicalRecordID");
+            modelBuilder.Entity<PurchaseModel>().HasKey("PurchaseID");
+            modelBuilder.Entity<PurchaseCategoryModel>().HasKey("PurchaseCategoryID");
+            modelBuilder.Entity<StoreModel>().HasKey("StoreID");
 
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(wt => wt.WaterType)
@@ -63,11 +76,21 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();
 
+            modelBuilder.Entity<PurchaseModel>()
+                .HasOne(pt => pt.PurchaseCategory)
+                .WithMany(p => p.Purchases)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<PurchaseModel>()
+                .HasOne(st => st.Store)
+                .WithMany(p => p.Purchases)
+                .OnDelete(DeleteBehavior.SetNull);
+
             //Ignore numeric User ID identity column when updating or inserting
             modelBuilder.Entity<WebsiteUser>().Property(u => u.UserId).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
         }
     }
 }

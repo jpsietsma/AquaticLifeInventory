@@ -73,6 +73,36 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// List all purchases from the database
+        /// </summary>
+        /// <returns>List of purchases</returns>
+        public List<PurchaseModel> List_Purchases()
+        {
+            return Database.Purchases
+                .Include(pc => pc.PurchaseCategory)
+                .Include(st => st.Store)
+                .ToList();
+        }
+
+        public List<PurchaseCategoryModel> List_PurchaseCategories()
+        {
+            return Database.PurchaseCategory
+                .ToList();
+        }
+
+        public List<WebsiteUser> List_Users()
+        {
+            return Database.AspNetUsers
+                .ToList();
+        }
+
+        public List<StoreModel> List_Stores()
+        {
+            return Database.Stores
+                .ToList();
+        }
+
+        /// <summary>
         /// List types of tanks
         /// </summary>
         public List<TankTypeModel> List_TankTypes()
@@ -130,6 +160,18 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// Add a new purchase to the database
+        /// </summary>
+        /// <param name="_dataModel">Data model representing the purchase to add</param>
+        public PurchaseModel Add_Purchase(PurchaseModel _dataModel)
+        {
+            Database.Purchases.Add(_dataModel);
+            Database.SaveChanges();
+
+            return _dataModel;
+        }
+
+        /// <summary>
         /// Update the details for a tank, or add a new tank if model TankID doesnt exist
         /// </summary>
         /// <param name="_dataModel">Data model to update/add to the database</param>
@@ -156,6 +198,35 @@ namespace AQLI.DataServices
             {
                 return Add_Tank(_dataModel);
             }                         
+        }
+
+        public PurchaseModel Update_Purchase(PurchaseModel _dataModel)
+        {
+            var listEntry = Database.Purchases.Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
+
+            if (listEntry != null)
+            {
+                listEntry.Description = _dataModel.Description;
+                listEntry.Quantity = _dataModel.Quantity;
+                listEntry.Cost = _dataModel.Cost;
+                listEntry.OwnerID = _dataModel.OwnerID;
+                listEntry.CreatureID = _dataModel.CreatureID;
+                listEntry.PlantID = _dataModel.PlantID;
+                listEntry.DecorationID = _dataModel.DecorationID;
+                listEntry.SupplyID = _dataModel.SupplyID;
+                listEntry.StoreID = _dataModel.StoreID;
+                listEntry.TankID = _dataModel.TankID;
+                listEntry.PurchaseCategoryID = _dataModel.PurchaseCategoryID;
+                listEntry.Date = _dataModel.Date;
+
+                Database.SaveChanges();
+
+                return _dataModel;
+            }
+            else
+            {
+                return Add_Purchase(_dataModel);
+            }
         }
 
         /// <summary>

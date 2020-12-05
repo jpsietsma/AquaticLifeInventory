@@ -1,0 +1,302 @@
+﻿@using AQLI.DataServices;
+
+@inject DataFactory DataSource;
+
+<div class="container">
+
+    <div class="row mt-3">
+        <h2>
+            <i class="far fa-caret-square-down"></i> Dropdown List Values
+        </h2>
+        <hr class="w-100" />
+    </div>
+
+    <!-- Dropdown Values Accordion Row -->
+    <div class="row m-1">
+
+        <!-- Left Accordion Column -->
+        <div class="col-4">
+            <div id="dropdownLeftAccordion">
+
+                <!-- Water Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#waterTypesBody">
+                        <span class="font-weight-bold">Water Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="waterTypesBody" class="collapse" data-parent="#dropdownLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.WaterTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creature Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#creatureTypesBody">
+                        <span class="font-weight-bold">Creature Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="creatureTypesBody" class="collapse" data-parent="#dropdownLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.CreatureTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environments List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#tankEnvironmentsBody">
+                        <span class="font-weight-bold">Tank Environments </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="tankEnvironmentsBody" class="collapse" data-parent="#dropdownLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.EnvironmentAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Center Accordion Column -->
+        <div class="col-4">
+            <div id="dropdownCenterAccordion">
+
+                <!-- Stores List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#storeBody">
+                        <span class="font-weight-bold">Suppliers / Stores </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="storeBody" class="collapse" data-parent="#dropdownCenterAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.StoresAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Categories List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#purchaseCategoryBody">
+                        <span class="font-weight-bold">Purchase Categories </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="purchaseCategoryBody" class="collapse" data-parent="#dropdownCenterAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.PurchaseCategoriesAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Type List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#purchaseTypeBody">
+                        <span class="font-weight-bold">Purchase Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="purchaseTypeBody" class="collapse" data-parent="#dropdownCenterAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.PurchaseTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right Accordion Column -->
+        <div class="col-4">
+            <div id="dropdownRightAccordion">
+
+                <!-- Lighting Type List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#lightingTypeBody">
+                        <span class="font-weight-bold">Lighting Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="lightingTypeBody" class="collapse" data-parent="#dropdownRightAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.LightingTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#filterTypesBody">
+                        <span class="font-weight-bold">Filter Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="filterTypesBody" class="collapse" data-parent="#dropdownRightAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.FilterTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tank Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#tankTypesBody">
+                        <span class="font-weight-bold">Tank Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="tankTypesBody" class="collapse" data-parent="#dropdownRightAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.TankTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-3">
+        <h2>
+            <i class="fas fa-users-cog"></i> User Permissions List Values
+        </h2>
+        <hr class="w-100" />
+    </div>
+
+    <!-- User Permission Accordion Row -->
+    <div class="row m-1">
+
+        <!-- Left Accordion Column -->
+        <div class="col-4">
+            <div id="permissionLeftAccordion">
+
+                <!-- Permission Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#permissionTypesBody">
+                        <span class="font-weight-bold">Permission Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="permissionTypesBody" class="collapse" data-parent="#permissionLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.PermissionTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#userTypesBody">
+                        <span class="font-weight-bold">User Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="userTypesBody" class="collapse" data-parent="#permissionLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.UserTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Access Type List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#accessTypesBody">
+                        <span class="font-weight-bold">Access Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="accessTypesBody" class="collapse" data-parent="#permissionLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.AccessTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-3">
+        <h2>
+            <i class="fas fa-fish"></i> Creature Attribute List Values
+        </h2>
+        <hr class="w-100" />
+    </div>
+
+    <div class="row m-1">
+
+        <!-- Creature Attribute Left Accordion-->
+        <div class="col-4">
+            <div id="creatureLeftAccordion">
+
+                <!-- Birthing Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#birthingTypesBody">
+                        <span class="font-weight-bold">Birthing Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="birthingTypesBody" class="collapse" data-parent="#creatureLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.BirthingTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feeder Types List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#feederTypesBody">
+                        <span class="font-weight-bold">Feeder Types </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="feederTypesBody" class="collapse" data-parent="#creatureLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.FeederTypeAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agression Levels List Card -->
+                <div class="card">
+                    <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#agressionLevelsBody">
+                        <span class="font-weight-bold">Agression Levels </span><div class="badge badge-secondary">0</div>
+                    </div>
+                    <div id="agressionLevelsBody" class="collapse" data-parent="#creatureLeftAccordion">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="ListValue.events.AgressionLevelAdd_Clicked()">Add</button>
+                            <div class="alert alert-info mt-1">
+                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>      
+        
+    </div>
+
+</div>

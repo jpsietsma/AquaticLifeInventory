@@ -1,0 +1,26 @@
+﻿@{
+}
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using AQLI.DataServices.context;
+
+@model PurchaseModel;
+@inject DataFactory DataSource;
+@inject DatabaseContext Database; 
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header bg-danger justify-content-center align-middle">
+            <h4 class="modal-title">Confirm Delete Purchase!</h4>
+        </div><div class="container-fluid"></div>
+        <div class="modal-body">
+            <b>
+                Are you sure you want to delete purchase #@Model.PurchaseID (<i>@Model.Description</i>)?
+            </b>
+        </div>
+        <div class="modal-footer">
+            <a href="#" data-dismiss="modal" class="btn btn-secondary">No</a>
+            <a id="ConfirmDeleteBtn" href="#" class="btn btn-outline-danger" onclick="Purchases.DeletePurchase(@Model.PurchaseID);">Yes</a>
+        </div>
+    </div>
+</div>

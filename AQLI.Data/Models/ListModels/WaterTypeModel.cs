@@ -10,6 +10,7 @@ namespace AQLI.Data.Models
     {
         [Key]
         public int WaterTypeID { get; set; }
+        [Display(Name = "Water Type Name")]
         public string WaterTypeName { get; set; }
 
         public List<AquaticTankModel> Tanks { get; set; }

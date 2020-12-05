@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/lib/jquery-ui/jquery-ui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" />    
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
+    <style>
+        .sdn-alert-container{
+            display: none;
+        }
+    </style>
     @RenderSection("Style", required: false)
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Aquatic Life Inventory</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -25,24 +30,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tank" asp-action="Index">My Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Purchase" asp-action="Index">Purchases</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ListValues" asp-action="Index">List Values</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark disabled" asp-area="" asp-controller="" asp-action="Index">Admin</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Tank" asp-action="Index">My Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Purchases" asp-action="Index">Purchases</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="ListValue" asp-action="Index">Data Lists</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark disabled" asp-area="" asp-controller="" asp-action="Index">Admin</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!-- Success alert notification container -->
+            <div id="SuccessAlertContainer" class="alert alert-success text-center col-6 sdn-alert-container">Success Message!</div>
+            <!-- danger alert notification container -->
+            <div id="DangerAlertContainer" class="alert alert-danger text-center col-6 sdn-alert-container">Danger Message!</div>
+        </div>        
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -55,10 +69,13 @@
     </footer>
 
     <!-- Modal Add/Edit shell -->
-    <div class="modal fade" id="modalAddEdit" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"></div>
+    <div class="modal fade" id="modalAddEdit" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+    <!-- Modal Add/Edit nested modal shell -->
+    <div class="modal fade" id="modalAddEditNested" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
     <!-- Modal Confirm shell -->
-    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"></div>
+    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -10,6 +10,9 @@ using AQLI.DataServices;
 using AQLI.DataServices.context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using AQLI.DataServices.Extensions;
 
 namespace AQLI.UI.Controllers
 {
@@ -17,14 +20,18 @@ namespace AQLI.UI.Controllers
     public class TankController : Controller
     {
         private readonly ILogger<TankController> _logger;
+        private readonly UserManager<WebsiteUser> UserManager;
+
         private DataFactory DataSource;
         private WebsiteUser UserModel;
 
-        public TankController(ILogger<TankController> logger, DataFactory _dataFactory, DatabaseContext _efContext)
+        public TankController(ILogger<TankController> logger, DataFactory _dataFactory, DatabaseContext _efContext, UserManager<WebsiteUser> _userManager)
         {
             _logger = logger;
             DataSource = _dataFactory;
-            UserModel = new WebsiteUser { UserId = 1, FirstName = "Jimmy", LastName = "Sietsma", Email = "jpsietsma@gmail.com", UserName = "jpsietsma" };
+            UserManager = _userManager;
+            
+            UserModel = new WebsiteUser { Id = "1", FirstName = "Jimmy", LastName = "Sietsma" };
         }
 
         public IActionResult Index()

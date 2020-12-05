@@ -1,0 +1,218 @@
+﻿@using System.Collections.Generic;
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using AQLI.DataServices.context;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+
+
+@model PurchaseInvoiceModel;
+@inject DataFactory DataSource;
+@inject DatabaseContext Database;
+@inject UserManager<WebsiteUser> UserManager;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+<style>
+    .card-header-text {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                @(Model.PurchaseInvoiceID == 0 ? "Add New Purchase Invoice" : "Editing Invoice Details: " + Model.PurchaseInvoiceID)
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addEditForm" method="post" asp-controller="Purchases" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
+                <input type="hidden" name="PurchaseInvoiceID" value="@Model.PurchaseInvoiceID" />
+                <input type="hidden" name="OwnerID" value="@((await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User)).UserId)" />
+                <!-- Store and Purchase Date form row -->
+                <div class="form-row">
+                    <div class="card col-12 mb-2">
+                        <div class="card-header text-center">
+                            <span class="card-header-text">
+                                <i class="fas fa-store-alt"></i> Supplier/Purchase Information
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label class="control-label">Purchase Date:</label>
+                                        <input class="form-control" type="date" name="Date" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" required />
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="control-label">Supplier:</label>
+                                        <select class="form-control" name="StoreID" required>
+                                            @if (DataSource.List_Stores().Count() == 0)
+                                            {
+                                                <option value="">-- No Supplier Stores --</option>
+                                            }
+                                            else
+                                            {
+                                                if (Model.PurchaseInvoiceID == 0)
+                                                {
+                                                    <option selected value="">-- Select Purchase Supplier --</option>
+                                                }
+
+                                                foreach (StoreModel store in DataSource.List_Stores())
+                                                {
+                                                    if (store.StoreID == Model.StoreID)
+                                                    {
+                                                        <option selected value="@store.StoreID">@store.StoreName</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@store.StoreID">@store.StoreName</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label class="control-label">Upload Purchase Invoice: (<i>Only .pdf files</i>)</label>
+                                            <input class="form-control-file" type="file" name="InvoiceFile" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Purchase Card -->
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <div class="card col-12">
+                                <div class="card-header text-center">
+                                    <span class="card-header-text">
+                                        <i class="fas fa-shopping-basket"></i> Products Purchased
+                                    </span>
+                                    <div class="btn-group col-2">
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="Purchases.addPurchaseDetailsModal(0)"><i class="fas fa-plus-circle"></i> Add</button>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center pt-2">
+                                    @if (Model.Purchases.Count() != 0)
+                                    {
+                                        <span id="emptyTableText" class="alert alert-primary font-italic">No purchases have been added to this invoice.</span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Purchases Grid -->
+                                        <table class="table table-bordered table-striped table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <td></td>
+                                                    <td>Description</td>
+                                                    <td>Cost</td>
+                                                    <td>Quantity</td>
+                                                    <td>Ext Cost</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><i class="far fa-trash-alt"></i></td>
+                                                    <td>Stuff for tanks</td>
+                                                    <td>$10.00</td>
+                                                    <td>15</td>
+                                                    <td>$150.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="far fa-trash-alt"></i></td>
+                                                    <td>Tap Water Safe</td>
+                                                    <td>$6.99</td>
+                                                    <td>1</td>
+                                                    <td>$6.99</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3"><b class="float-right">Total items: </b></td>
+                                                    <td><span id="PurchasesQty">16</span></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4"><b class="float-right">Invoice Total: </b></td>
+                                                    <td>$<span id="PurchasesSum">156.99</span></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tank form row -->
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="control-label">Assign All Purchases</label>
+                            <select class="form-control" name="TankID">
+                                @if (DataSource.List_Tanks().Count() == 0)
+                                {
+                                    <option value="">-- No Established Tanks --</option>
+                                }
+                                else
+                                {
+                                    if (Model.PurchaseInvoiceID == 0)
+                                    {
+                                        <option selected value="">-- Select Tank --</option>
+                                    }
+
+                                    foreach (AquaticTankModel tank in DataSource.List_Tanks())
+                                    {
+                                        if (tank.TankID == Model.TankID)
+                                        {
+                                            <option selected value="@tank.TankID">@tank.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@tank.TankID">@tank.Name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>                
+                @*
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="60" style="width: 60%;">
+                                <span class="sr-only"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                *@
+            </form>
+        </div>
+        <div class="modal-footer">
+            @if (Model.PurchaseInvoiceID != 0)
+            {
+                <button type="button" data-id="@Model.PurchaseInvoiceID" class="btn btn-danger sdn-delete-purchase justify-content-start"><i class="far fa-trash-alt"></i> Delete</button>
+                <button type="button" class="btn btn-success on-new" onclick="$('#addEditForm').submit();"><i class="far fa-save"></i> Save</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-success on-new" onclick="$('#addEditForm').submit();"><i class="far fa-save"></i> Add Invoice</button>
+            }
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

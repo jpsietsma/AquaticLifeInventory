@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace AQLI.Data.Models
@@ -8,6 +9,7 @@ namespace AQLI.Data.Models
     public abstract class CreatureModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CreatureID { get; set; }
         public string Description { get; set; }
         public string Name { get; private set; }
