@@ -45,6 +45,7 @@ namespace AQLI.UI.Areas.Identity.Pages.Account
         {
             [Required]
             [EmailAddress]
+            [Display(Name = "Username/Email Address")]
             public string Email { get; set; }
 
             [Required]
