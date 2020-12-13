@@ -16,7 +16,8 @@ function getFormData($form) {
 		}
 		else if (typeof indexed_array[n['name']] === "object") {
 			indexed_array[n['name']].push(n['value']);
-		} else {
+		}
+		else {
 			var oldVal = indexed_array[n['name']];
 			indexed_array[n['name']] = [];
 			indexed_array[n['name']].push(oldVal);
@@ -78,6 +79,7 @@ function saveFormData($form, success_callback, error_callback) {
 function saveFormDataPost($form, success_callback, error_callback) {
 
 	var passData = getFormData($form);
+
 	var urlref = $form.attr('action');
 	if (!urlref) {
 		console.error("Error in saving form data. no valid action found on the form");
@@ -307,6 +309,8 @@ function saveFormDataWithFile($form, success_callback, error_callback) {
 		});
 	});
 
+	console.log("Form Data: " + fd.passData);
+
 	var urlref = $form.attr('action');
 	if (!urlref) {
 		console.error("Error in saving form data. no valid action found on the form");
@@ -353,12 +357,14 @@ function saveFormDataWithFilePost($form, success_callback, error_callback) {
 
 	var fd = new FormData();
 	fd.append("passData", passData);
-
+		
 	$form.find('input[type="file"]').each(function (i, ui) {
 		$.each(ui.files, function (j, ui) {
 			fd.append('file_' + i + '_' + j, this);
 		});
 	});
+
+	console.log(fd);
 
 	var urlref = $form.attr('action');
 	if (!urlref) {

@@ -106,6 +106,9 @@
                 <li class="nav-item">
                     <a href="#notifications_tab" class="nav-link" data-toggle="tab">Notifications <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i></a>
                 </li>
+                <li class="nav-item">
+                    <a href="#purchases_tab" class="nav-link" data-toggle="tab">Invoices</a>
+                </li>
             </ul>
 
             <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
@@ -141,6 +144,10 @@
                 <div class="tab-pane container fade" id="notifications_tab">
                     <partial name="tabs/_Tab_Notifications" model="Model" />
                 </div>
+                <!-- purchases tab -->
+                <div class="tab-pane container fade" id="purchases_tab">
+                    <partial name="tabs/_Tab_Purchases" model="Model" />
+                </div>
             </div>
         </div>
         <br />
@@ -152,12 +159,6 @@
     <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-        });
-    </script>
 }
 
 <!-- Use this for loading/reloading partial pages into a div -->

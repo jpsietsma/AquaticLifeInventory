@@ -1,0 +1,101 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices.context;
+@using AQLI.DataServices;
+
+@inject DatabaseContext Database;
+@inject DataFactory DataSource;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/Purchases/Purchases.css" />   
+}
+<div class="row mx-auto">
+    <div class="col-lg-12 float-left">
+        <button type="button" class="btn btn-sm btn-warning" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> Add Invoice</button>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table id="SupplyPurchaseTable" class="table table-bordered table-light table-striped table-hover sdn-purchase-table col-12" border="1">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            Purchase Date
+                        </th>
+                        <th>
+                            Purchase Type
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Qty
+                        </th>
+                        <th>
+                            Cost
+                        </th>
+                        <th>
+                            Ext
+                        </th>
+                        <th>
+                            Store
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="sdn-purchase-table-body">
+                    @foreach (PurchaseModel purchase in DataSource.List_Purchases())
+                    {
+                        <tr class="sdn-purchase-table-row" data-id="@purchase.PurchaseID">
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.Date
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.PurchaseCategory.CategoryName
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.Description
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.Quantity
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.Cost
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.ExtCost
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @purchase.Store.StoreName
+                            </td>
+                            <td class="text-left">
+                                <button type="button" data-id="@purchase.PurchaseID" class="btn-sm btn-success sdn-assign-purchase">Assign</button>
+
+                                @if (purchase.PurchaseCategory.CategoryName.Contains("Live") && !purchase.PurchaseCategory.CategoryName.Contains("Food"))
+                                {
+                                    <button type="button" data-id="@purchase.PurchaseID" class="btn-sm btn-secondary sdn-death-purchase">Death</button>
+                                }
+
+                                @if (purchase.PurchaseCategory.CategoryName.Contains("Food"))
+                                {
+                                    <button type="button" data-id="@purchase.PurchaseID" class="btn-sm btn-secondary sdn-death-purchase">Exhausted</button>
+                                }
+
+                                @if (purchase.PurchaseCategory.CategoryName == "Fish Tank")
+                                {
+                                    <button type="button" data-id="@purchase.PurchaseID" class="btn-sm btn-primary sdn-maintenance-purchase">Maint</button>
+                                }                                
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Purchases/Purchases.js"></script>    
+}

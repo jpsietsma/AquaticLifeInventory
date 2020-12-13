@@ -46,7 +46,7 @@
         }
     },
     openModal: function (id) {
-        openModal('@Url.Action("_Details")/?ID=' + id, Tank.modalLoaded)
+        openModal('Tank/_Details/?ID=' + id, Tank.modalLoaded)
     },
     openConfirmDeleteModal: function (id) {
         openModal('@Url.Action("_ConfirmDeleteTank")/?ID=' + id, Tank.confirmModalLoaded)

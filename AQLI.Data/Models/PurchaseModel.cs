@@ -9,18 +9,18 @@ namespace AQLI.Data.Models
 {
     public class PurchaseModel
     {
-        [NotMapped]
-        public List<IFormFile> InvoiceUploadedFile { get; set; }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PurchaseID { get; set; }
         public string Date { get; set; }
-        public int Quantity { get; set; }        
+        public int Quantity { get; set; }
+
+        [Column(TypeName = "decimal(6,2)")]
         public decimal Cost { get; set; }        
         public string Description { get; set; }
+
+        [Column(TypeName = "decimal(6,2)")]
         public decimal ExtCost { get; set; }
-        public string InvoiceFilePath { get; set; }
         
         public int OwnerID { get; set; }
         //public WebsiteUser Owner { get; set; }

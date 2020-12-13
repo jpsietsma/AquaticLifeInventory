@@ -13,6 +13,10 @@
 @inject UserManager<WebsiteUser> UserManager;
 @inject IHttpContextAccessor HttpContextAccessor;
 
+@section Style {
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+}
+ 
 <style>
     .card-header-text {
         font-size: 18px;
@@ -31,7 +35,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="addEditForm" method="post" asp-controller="Purchases" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
+            <form id="addPurchaseInvoiceForm" method="post" asp-controller="Purchases" asp-action="_SavePurchaseInvoice" data-parsley-validate>
                 <input type="hidden" name="PurchaseInvoiceID" value="@Model.PurchaseInvoiceID" />
                 <input type="hidden" name="OwnerID" value="@((await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User)).UserId)" />
                 <!-- Store and Purchase Date form row -->
@@ -45,11 +49,11 @@
                         <div class="card-body">
                             <div class="container-fluid">
                                 <div class="row">
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-4">
                                         <label class="control-label">Purchase Date:</label>
-                                        <input class="form-control" type="date" name="Date" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" required />
+                                        <input class="form-control" type="date" name="PurchaseDate" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" required />
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-4">
                                         <label class="control-label">Supplier:</label>
                                         <select class="form-control" name="StoreID" required>
                                             @if (DataSource.List_Stores().Count() == 0)
@@ -60,7 +64,7 @@
                                             {
                                                 if (Model.PurchaseInvoiceID == 0)
                                                 {
-                                                    <option selected value="">-- Select Purchase Supplier --</option>
+                                                    <option selected value="">-- Select Supplier --</option>
                                                 }
 
                                                 foreach (StoreModel store in DataSource.List_Stores())
@@ -77,15 +81,11 @@
                                             }
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-8">
-                                        <div class="form-group">
-                                            <label class="control-label">Upload Purchase Invoice: (<i>Only .pdf files</i>)</label>
-                                            <input class="form-control-file" type="file" name="InvoiceFile" />
-                                        </div>
+                                    <div class="form-group col-4">
+                                        <label class="control-label">Invoice: (<i>.pdf</i>)</label>
+                                        <input asp-for="InvoiceFile" class="form-control-file" type="file" name="InvoiceFile" />
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
@@ -100,56 +100,24 @@
                                         <i class="fas fa-shopping-basket"></i> Products Purchased
                                     </span>
                                     <div class="btn-group col-2">
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="Purchases.addPurchaseDetailsModal(0)"><i class="fas fa-plus-circle"></i> Add</button>
+                                        <button type="button" class="btn btn-sm btn-sm btn-primary" onclick="Purchases.addPurchaseDetailsModal(0)"><i class="fas fa-plus-circle"></i> Add</button>
                                     </div>
                                 </div>
                                 <div class="card-body text-center pt-2">
-                                    @if (Model.Purchases.Count() != 0)
-                                    {
-                                        <span id="emptyTableText" class="alert alert-primary font-italic">No purchases have been added to this invoice.</span>
-                                    }
-                                    else
-                                    {
-                                        <!-- Purchases Grid -->
-                                        <table class="table table-bordered table-striped table-hover">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <td></td>
-                                                    <td>Description</td>
-                                                    <td>Cost</td>
-                                                    <td>Quantity</td>
-                                                    <td>Ext Cost</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><i class="far fa-trash-alt"></i></td>
-                                                    <td>Stuff for tanks</td>
-                                                    <td>$10.00</td>
-                                                    <td>15</td>
-                                                    <td>$150.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><i class="far fa-trash-alt"></i></td>
-                                                    <td>Tap Water Safe</td>
-                                                    <td>$6.99</td>
-                                                    <td>1</td>
-                                                    <td>$6.99</td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="3"><b class="float-right">Total items: </b></td>
-                                                    <td><span id="PurchasesQty">16</span></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="4"><b class="float-right">Invoice Total: </b></td>
-                                                    <td>$<span id="PurchasesSum">156.99</span></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    }
+                                    <!-- Purchases Grid -->
+                                    <table name="Purchases" id="purchaseInvoicePurchaseTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                                        @*<tfoot>
+                                            <tr>
+                                                <td colspan="3"><b class="float-right">Total items: </b></td>
+                                                <td><span id="PurchasesQty">16</span></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4"><b class="float-right">Invoice Total: </b></td>
+                                                <td>$<span id="PurchasesSum">156.99</span></td>
+                                            </tr>
+                                        </tfoot>*@
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -157,9 +125,9 @@
                 </div>
                 <!-- Tank form row -->
                 <div class="form-row">
-                    <div class="col-12">
+                    <div class="col-6">
                         <div class="form-group">
-                            <label class="control-label">Assign All Purchases</label>
+                            <label class="control-label">Assign To Tank</label>
                             <select class="form-control" name="TankID">
                                 @if (DataSource.List_Tanks().Count() == 0)
                                 {
@@ -187,6 +155,9 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <!-- empty row -->
+                    </div>
                 </div>                
                 @*
                 <div class="form-row">
@@ -205,13 +176,13 @@
             @if (Model.PurchaseInvoiceID != 0)
             {
                 <button type="button" data-id="@Model.PurchaseInvoiceID" class="btn btn-danger sdn-delete-purchase justify-content-start"><i class="far fa-trash-alt"></i> Delete</button>
-                <button type="button" class="btn btn-success on-new" onclick="$('#addEditForm').submit();"><i class="far fa-save"></i> Save</button>
+                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Save</button>
             }
             else
             {
-                <button type="button" class="btn btn-success on-new" onclick="$('#addEditForm').submit();"><i class="far fa-save"></i> Add Invoice</button>
+                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Create Invoice</button>
             }
-
+            @*<button type="button" class="btn btn-sm btn-info" onclick="Purchases.addPurchaseToInvoice()">Test</button>*@
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
     </div>

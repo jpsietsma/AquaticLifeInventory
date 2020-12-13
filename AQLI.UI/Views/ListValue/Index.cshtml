@@ -1,4 +1,5 @@
 ﻿@using AQLI.DataServices;
+@using AQLI.Data.Models;
 
 @inject DataFactory DataSource;
 
@@ -21,14 +22,33 @@
                 <!-- Water Types List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#waterTypesBody">
-                        <span class="font-weight-bold">Water Types </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Water Types </span><div class="badge badge-secondary">@DataSource.List_WaterTypes().Count()</div>
                     </div>
                     <div id="waterTypesBody" class="collapse" data-parent="#dropdownLeftAccordion">
                         <div class="card-body">
                             <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.WaterTypeAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            @if (DataSource.List_WaterTypes().Count() > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (WaterTypeModel waterType in DataSource.List_WaterTypes())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @waterType.WaterTypeName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>                                
+                            }
                         </div>
                     </div>
                 </div>
@@ -36,14 +56,33 @@
                 <!-- Creature Types List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#creatureTypesBody">
-                        <span class="font-weight-bold">Creature Types </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Creature Types </span><div class="badge badge-secondary">@DataSource.List_CreatureTypes().Count()</div>
                     </div>
                     <div id="creatureTypesBody" class="collapse" data-parent="#dropdownLeftAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.CreatureTypeAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.CreatureTypeAdd_Clicked()">Add</button>
+                            @if (DataSource.List_CreatureTypes().Count > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (CreatureTypeModel creatureType in DataSource.List_CreatureTypes())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @creatureType.CreatureTypeName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -51,14 +90,33 @@
                 <!-- Environments List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#tankEnvironmentsBody">
-                        <span class="font-weight-bold">Tank Environments </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Tank Environments </span><div class="badge badge-secondary">@DataSource.List_Environments().Count()</div>
                     </div>
                     <div id="tankEnvironmentsBody" class="collapse" data-parent="#dropdownLeftAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.EnvironmentAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.EnvironmentAdd_Clicked()">Add</button>
+                            @if (DataSource.List_Environments().Count > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (EnvironmentModel environmentType in DataSource.List_Environments())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @environmentType.EnvironmentName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -73,14 +131,33 @@
                 <!-- Stores List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#storeBody">
-                        <span class="font-weight-bold">Suppliers / Stores </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Suppliers / Stores </span><div class="badge badge-secondary">@DataSource.List_Stores().Count()</div>
                     </div>
                     <div id="storeBody" class="collapse" data-parent="#dropdownCenterAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.StoresAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.StoresAdd_Clicked()">Add</button>
+                            @if (DataSource.List_Environments().Count > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (StoreModel storeModel in DataSource.List_Stores())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @storeModel.StoreName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }                            
                         </div>
                     </div>
                 </div>
@@ -88,14 +165,33 @@
                 <!-- Purchase Categories List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#purchaseCategoryBody">
-                        <span class="font-weight-bold">Purchase Categories </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Purchase Categories </span><div class="badge badge-secondary">@DataSource.List_PurchaseCategories().Count()</div>
                     </div>
                     <div id="purchaseCategoryBody" class="collapse" data-parent="#dropdownCenterAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.PurchaseCategoriesAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.PurchaseCategoriesAdd_Clicked()">Add</button>
+                            @if (@DataSource.List_PurchaseCategories().Count() > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (PurchaseCategoryModel purchaseCategory in DataSource.List_PurchaseCategories())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @purchaseCategory.CategoryName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -155,14 +251,33 @@
                 <!-- Tank Types List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#tankTypesBody">
-                        <span class="font-weight-bold">Tank Types </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Tank Types </span><div class="badge badge-secondary">@DataSource.List_TankTypes().Count()</div>
                     </div>
                     <div id="tankTypesBody" class="collapse" data-parent="#dropdownRightAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.TankTypeAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.TankTypeAdd_Clicked()">Add</button>
+                            @if (@DataSource.List_TankTypes().Count() > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (TankTypeModel tankType in DataSource.List_TankTypes())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @tankType.TankTypeName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -174,7 +289,7 @@
 
     <div class="row mt-3">
         <h2>
-            <i class="fas fa-users-cog"></i> User Permissions List Values
+            <i class="fas fa-users-cog"></i> User Permission List Values
         </h2>
         <hr class="w-100" />
     </div>
@@ -282,14 +397,33 @@
                 <!-- Agression Levels List Card -->
                 <div class="card">
                     <div class="card-header text-center font-weight-bold" data-toggle="collapse" data-target="#agressionLevelsBody">
-                        <span class="font-weight-bold">Agression Levels </span><div class="badge badge-secondary">0</div>
+                        <span class="font-weight-bold">Aggression Levels </span><div class="badge badge-secondary">@DataSource.List_TempormentLevels().Count()</div>
                     </div>
                     <div id="agressionLevelsBody" class="collapse" data-parent="#creatureLeftAccordion">
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary" onclick="ListValue.events.AgressionLevelAdd_Clicked()">Add</button>
-                            <div class="alert alert-info mt-1">
-                                <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ListValue.events.AgressionLevelAdd_Clicked()">Add</button>
+                            @if (@DataSource.List_TempormentLevels().Count() > 0)
+                            {
+                                <table class="table table-striped table-hover mt-2">
+                                    @foreach (TempormentModel tempormentModel in DataSource.List_TempormentLevels())
+                                    {
+                                        <tr>
+                                            <td class="col-7">
+                                                @tempormentModel.TempormentName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-1">
+                                    <i class="fas fa-info-circle"></i> <i>There are no list items to show.</i>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

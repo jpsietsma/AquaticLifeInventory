@@ -75,7 +75,7 @@ namespace AQLI.DataServices
         /// <summary>
         /// List all purchases from the database
         /// </summary>
-        /// <returns>List of purchases</returns>
+        /// <returns>List<PurchaseModel></returns>
         public List<PurchaseModel> List_Purchases()
         {
             return Database.Purchases
@@ -84,18 +84,28 @@ namespace AQLI.DataServices
                 .ToList();
         }
 
+        /// <summary>
+        /// List all purchase categories
+        /// </summary>
+        /// <returns>List<PurchaseCategoryModel></returns>
         public List<PurchaseCategoryModel> List_PurchaseCategories()
         {
             return Database.PurchaseCategory
                 .ToList();
         }
 
+        /// <summary>
+        /// List all website users
+        /// </summary>
         public List<WebsiteUser> List_Users()
         {
             return Database.AspNetUsers
                 .ToList();
         }
 
+        /// <summary>
+        /// List all stores
+        /// </summary>
         public List<StoreModel> List_Stores()
         {
             return Database.Stores
@@ -163,6 +173,7 @@ namespace AQLI.DataServices
         /// Add a new purchase to the database
         /// </summary>
         /// <param name="_dataModel">Data model representing the purchase to add</param>
+        /// <returns>PurchaseModel</returns>
         public PurchaseModel Add_Purchase(PurchaseModel _dataModel)
         {
             Database.Purchases.Add(_dataModel);

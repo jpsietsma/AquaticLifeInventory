@@ -26,21 +26,20 @@ namespace AQLI.UI.Controllers
         [HttpPost]
         public async Task<string> UploadFiles(PurchaseInvoiceModel _model)
         {
-            List<IFormFile> InvoiceFile = _model.InvoiceFile;
+            IFormFile InvoiceFile = _model.InvoiceFile;
 
-            long size = InvoiceFile.Sum(f => f.Length);
+            long size = InvoiceFile.Length;
 
             var filePaths = new List<string>();
-            foreach (var formFile in InvoiceFile)
-            {
-                if (formFile.Length > 0)
+
+                if (size > 0)
                 {
                     // full path to file in invoice upload location
                     var filePath = Path.Combine(Env.WebRootPath, "invoices", string.Concat("Invoice_",
                         _model.StoreName.Replace(" ", ""),
                         "_",
                         _model.PurchaseDate.ToString().Split(" ").First().Replace("/", "-"), 
-                        "." + formFile.FileName.Split(".").Last()
+                        "." + InvoiceFile.FileName.Split(".").Last()
                         ));
 
                     filePaths.Add(filePath);
@@ -48,10 +47,9 @@ namespace AQLI.UI.Controllers
                     //save the file to the path
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        await formFile.CopyToAsync(stream);
+                        await InvoiceFile.CopyToAsync(stream);
                     }
                 }
-            }
 
             // process uploaded files
             // Don't rely on or trust the FileName property without validation.

@@ -10,11 +10,11 @@
 @inject DataFactory DataSource;
 @inject DatabaseContext Database;
 
-<div class="modal-dialog modal-lg" role="document">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
-                @(Model.PurchaseID == 0 ? "Add New Purchase" : "Editing Purchase Details: " + Model.Description)
+                @(Model.PurchaseID == 0 ? "Create New Purchase" : "Edit Invoice Purchase Details: " + Model.Description)
                 @if (Model.PurchaseID != 0)
                 {
                     <span class="badge bg-@(Model.PurchaseCategory.CategoryColor)">
@@ -27,41 +27,44 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="addEditForm" method="post" asp-controller="Purchases" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
+            @*<form id="addEditForm">*@
                 <input type="hidden" name="PurchaseID" value="@Model.PurchaseID" />
-                <!-- Purchase Description, Quantity, Cost, ExtCost form row -->
+                <!-- Purchase Description form row -->
                 <div class="form-row">
-                    <div class="col-6">
+                    <div class="col-12">
                         <div class="form-group">
                             <label class="control-label">Description</label>
-                            <input type="text" class="form-control" name="Description" placeholder="Enter Purchase Description..." value="@Model.Description" required />
+                            <input id="PurchaseDescription" type="text" class="form-control" name="Description" placeholder="Enter Purchase Description..." value="@Model.Description" required />
                         </div>
                     </div>
-                    <div class="col-2">
+                </div>
+                <!-- Quantity, Cost, ExtCost form row -->
+                <div class="form-row">
+                    <div class="col-4">
                         <div class="form-group">
                             <label class="control-label">Quantity</label>
                             <input id="Quantity" type="number" name="Quantity" class="form-control" value="@Model.Quantity" onchange="Purchases.events.purchaseQuantityOrCost_Changed()" required />
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-4">
                         <div class="form-group">
                             <label class="control-label">Cost</label>
-                            <input type="text" id="Cost" class="form-control" name="Cost" value="@Model.Cost" onchange="Purchases.events.purchaseQuantityOrCost_Changed()" required />
+                            <input id="Cost" type="text" class="form-control" name="Cost" value="@Model.Cost" onchange="Purchases.events.purchaseQuantityOrCost_Changed()" required />
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-4">
                         <div class="form-group">
                             <label class="control-label">Ext Cost</label>
-                            <input type="text" id="ExtCost" class="form-control" name="ExtCost" value="@Model.ExtCost" required disabled />
+                            <input id="ExtCost" type="text" class="form-control" name="ExtCost" value="@Model.ExtCost" disabled />
                         </div>
                     </div>
-                </div>                
+                </div>
                 <!-- Purchase Category and Owner form row -->
                 <div class="form-row">
                     <div class="col-6">
                         <div class="form-group">
                             <label class="control-label">Purchase Category</label>
-                            <select class="form-control" name="PurchaseCategoryID">
+                            <select id="PurchaseCategoryID" class="form-control" name="PurchaseCategoryID">
                                 @foreach (PurchaseCategoryModel category in DataSource.List_PurchaseCategories())
                                 {
                                     if (Model.PurchaseCategoryID == category.PurchaseCategoryID)
@@ -75,53 +78,70 @@
                                 }
                             </select>
                         </div>
-                    </div>                   
-                    
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                           <label class="control-label">Purchase Owner</label>
+                           <select class="form-control" name="OwnerID">
+                               @foreach (WebsiteUser user in DataSource.List_Users())
+                               {
+                                   if (Model.OwnerID == user.UserId)
+                                   {
+                                       <option selected value="@user.UserId">@user.FirstName @user.LastName</option>
+                                   }
+                                   else
+                                   {
+                                       <option value="@user.UserId">@user.FirstName @user.LastName</option>
+                                   }
+                               }
+                           </select>
+                        </div>
+                    </div>
                 </div>
                 <!-- Model details for Fish records and Tank Records -->
-                <div class="form-row">
-                    <div class="col-12">
-                        <div id="accordion">
-                            <div class="card">
-                                <div class="card-header">
-                                    <a class="collapsed card-link" data-toggle="collapse" href="#fishCollapse">
-                                        Fish Details
-                                    </a>
-                                </div>
-                                <div id="fishCollapse" class="collapse" data-parent="#accordion">
-                                    <div class="card-body">
-                                        Form for fish model goes here!
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <a class="collapsed card-link" data-toggle="collapse" href="#plantCollapse">
-                                        Plant Details
-                                    </a>
-                                </div>
-                                <div id="plantCollapse" class="collapse" data-parent="#accordion">
-                                    <div class="card-body">
-                                        Form for plant model goes here!
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <a class="collapsed card-link" data-toggle="collapse" href="#supplyCollapse">
-                                        Supply Details
-                                    </a>
-                                </div>
-                                <div id="supplyCollapse" class="collapse" data-parent="#accordion">
-                                    <div class="card-body">
-                                        Form for supply model goes here!
-                                    </div>
-                                </div>
+                @*<div class="form-row">
+            <div class="col-12">
+                <div id="accordion">
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#fishCollapse">
+                                Fish Details
+                            </a>
+                        </div>
+                        <div id="fishCollapse" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Form for fish model goes here!
                             </div>
                         </div>
                     </div>
-                </div>                
-            </form>
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#plantCollapse">
+                                Plant Details
+                            </a>
+                        </div>
+                        <div id="plantCollapse" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Form for plant model goes here!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#supplyCollapse">
+                                Supply Details
+                            </a>
+                        </div>
+                        <div id="supplyCollapse" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Form for supply model goes here!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+            @*</form>*@
         </div>
         <div class="modal-footer">
             @if (Model.PurchaseID != 0)
@@ -129,8 +149,8 @@
                 <button type="button" data-id="@Model.PurchaseID" class="btn btn-danger sdn-delete-purchase justify-content-start" onclick="Purchases.openConfirmDeleteModal(@Model.PurchaseID)">Delete</button>
             }
             @*<button type="button" class="btn btn-primary on-new" onclick="$('#addEditForm').submit();">Add</button>*@
-            <button type="button" class="btn btn-primary on-new" onclick="Purchases.AddPurchaseToInvoice()">Add</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="addToInvoice" type="button" class="btn btn-primary on-new">Add <i class="fas fa-plus"></i></button>
+            <button type="button" class="btn btn-success" data-dismiss="modal">Done <i class="fas fa-check"></i></button>
         </div>
     </div>
 </div>

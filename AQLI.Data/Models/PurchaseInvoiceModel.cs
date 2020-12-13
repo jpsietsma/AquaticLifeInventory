@@ -7,14 +7,11 @@ using System.Text;
 namespace AQLI.Data.Models
 {
     public class PurchaseInvoiceModel
-    {
-        [NotMapped]
-        public List<IFormFile> InvoiceFile { get; set; }
-
+    {        
         public int PurchaseInvoiceID { get; set; }
         public string StoreName { get; set; }
-        public DateTime PurchaseDate { get; set; }      
-        public string InvoiceFilePath { get; set; }
+
+        public DateTime PurchaseDate { get; set; }
 
         public int StoreID { get; set; }
         public StoreModel Store { get; set; }
@@ -22,9 +19,18 @@ namespace AQLI.Data.Models
         public int OwnerID { get; set; }
         public WebsiteUser Owner { get; set; }
 
-        public int TankID { get; set; }
+        public int? TankID { get; set; }
         public AquaticTankModel Tank { get; set; }
 
         public List<PurchaseModel> Purchases { get; set; }
+
+        [NotMapped]
+        public IFormFile InvoiceFile { get; set; }
+        public string InvoiceFilePath { get; set; }
+
+        public PurchaseInvoiceModel()
+        {
+            Purchases = new List<PurchaseModel>();
+        }
     }
 }
