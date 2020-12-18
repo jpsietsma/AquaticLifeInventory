@@ -303,13 +303,69 @@ function saveFormDataWithFile($form, success_callback, error_callback) {
 	var fd = new FormData();
 	fd.append("passData", passData);
 
+
 	$form.find('input[type="file"]').each(function (i, ui) {
 		$.each(ui.files, function (j, ui) {
 			fd.append('file_' + i + '_' + j, this);
 		});
 	});
 
-	console.log("Form Data: " + fd.passData);
+	var urlref = $form.attr('action');
+	if (!urlref) {
+		console.error("Error in saving form data. no valid action found on the form");
+		return;
+	}
+	$.ajax({
+		url: urlref,
+		type: 'post',
+		processData: false, //this needs to be false if you are including a file
+		contentType: false, //this needs to be false if you are including a file
+		//cache: false, //enable this line if you want jquery to add a parameter to not cache this request. Usually post requests are not cached by IE
+		data: fd
+	})
+		.done(function (data, textStatus) {
+			if (success_callback) {
+				success_callback(data);
+			}
+		})
+		.fail(function (jqXHR, textStatus, errorThrown) {
+
+			var jsonError = "";
+
+			try {
+				jsonError = JSON.parse(jqXHR.responseText);
+			}
+			catch (err) {
+				if (error_callback) {
+					error_callback('Unable to parse error response');
+				}
+				else {
+					console.error('Unable to parse error response: ' + err);
+				}
+				return;
+			}
+
+			if (error_callback) {
+				error_callback(jqXHR.responseText);
+			}
+		});
+}
+
+//This now works. You can parse you object from passData, and also user Request.Files to manage your files.
+function savePurchaseFormDataWithInvoice($form, purchaseData, success_callback, error_callback) {
+	var passData = JSON.stringify(getFormData($form));
+	var purchaseData = JSON.stringify(purchaseData);
+
+	var fd = new FormData();
+	fd.append("passData", passData);
+	fd.append("purchaseData", purchaseData);
+
+
+	$form.find('input[type="file"]').each(function (i, ui) {
+		$.each(ui.files, function (j, ui) {
+			fd.append('file_' + i + '_' + j, this);
+		});
+	});
 
 	var urlref = $form.attr('action');
 	if (!urlref) {

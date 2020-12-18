@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace AQLI.DataServices
 {
@@ -81,6 +82,20 @@ namespace AQLI.DataServices
             return Database.Purchases
                 .Include(pc => pc.PurchaseCategory)
                 .Include(st => st.Store)
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all purchase invoices from the database
+        /// </summary>
+        /// <returns>List<PurchaseInvoiceModel></returns>
+        public List<PurchaseInvoiceModel> List_PurchaseInvoices()
+        {
+            return Database.PurchaseInvoices
+                .Include(o => o.Owner)
+                .Include(p => p.Purchases)
+                .Include(s => s.Store)
+                //.Include(t => t.Tank)
                 .ToList();
         }
 
@@ -178,6 +193,19 @@ namespace AQLI.DataServices
         {
             Database.Purchases.Add(_dataModel);
             Database.SaveChanges();
+
+            return _dataModel;
+        }
+
+        /// <summary>
+        /// Add a new purchase invoice to the database
+        /// </summary>
+        /// <param name="_dataModel">Data model representing the purchase invoice to add</param>
+        public async Task<PurchaseInvoiceModel> Add_PurchaseInvoice(PurchaseInvoiceModel _dataModel)
+        {
+            Database.PurchaseInvoices.Add(_dataModel);
+
+            await Database.SaveChangesAsync();
 
             return _dataModel;
         }

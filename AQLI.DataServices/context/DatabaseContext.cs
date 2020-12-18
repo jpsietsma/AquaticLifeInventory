@@ -17,6 +17,7 @@ namespace AQLI.DataServices.context
         public DbSet<EnvironmentModel> Environment { get; set; }
         public DbSet<TempormentModel> Temporment { get; set; }
        
+        public DbSet<PurchaseInvoiceModel> PurchaseInvoices { get; set; }
         public DbSet<PurchaseModel> Purchases { get; set; }
         public DbSet<PurchaseCategoryModel> PurchaseCategory { get; set; }
         public DbSet<StoreModel> Stores { get; set; }
@@ -49,10 +50,12 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<EnvironmentModel>().HasKey("EnvironmentID");
             modelBuilder.Entity<TankTypeModel>().HasKey("TankTypeID");
             modelBuilder.Entity<MedicalRecordModel>().HasKey("MedicalRecordID");
+            modelBuilder.Entity<PurchaseInvoiceModel>().HasKey("PurchaseInvoiceID");
             modelBuilder.Entity<PurchaseModel>().HasKey("PurchaseID");
             modelBuilder.Entity<PurchaseCategoryModel>().HasKey("PurchaseCategoryID");
             modelBuilder.Entity<StoreModel>().HasKey("StoreID");
 
+            #region Section: AquaticTankModel modelbuilders
             modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(wt => wt.WaterType)
                 .WithMany(t => t.Tanks)
@@ -75,18 +78,47 @@ namespace AQLI.DataServices.context
                 .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();
+            #endregion
 
+            #region Section: InvoicePurchaseModel modelbuilders
+            modelBuilder.Entity<PurchaseInvoiceModel>()
+                .HasOne(o => o.Owner)
+                .WithMany(pi => pi.PurchaseInvoices)
+                .HasPrincipalKey(fk => fk.UserId);
+
+            modelBuilder.Entity<PurchaseInvoiceModel>()
+                .HasMany(p => p.Purchases)
+                .WithOne(p => p.Invoice);
+
+            modelBuilder.Entity<PurchaseInvoiceModel>()
+                .HasOne(p => p.Store)
+                .WithMany(p => p.Invoices);            
+
+            modelBuilder.Entity<PurchaseInvoiceModel>()
+                .Property(x => x.PurchaseInvoiceID).ValueGeneratedOnAdd();
+
+            #endregion
+
+            #region Section: PurchaseModel modelbuilders
             modelBuilder.Entity<PurchaseModel>()
                 .HasOne(pt => pt.PurchaseCategory)
                 .WithMany(p => p.Purchases)
                 .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<PurchaseModel>()
                 .HasOne(st => st.Store)
                 .WithMany(p => p.Purchases)
                 .OnDelete(DeleteBehavior.SetNull);
+            #endregion
+
+            #region Section: StoreModel modelbuilders
+            modelBuilder.Entity<StoreModel>()
+                .HasMany(p => p.Purchases)
+                .WithOne(p => p.Store);
+            #endregion
 
             //Ignore numeric User ID identity column when updating or inserting
-            modelBuilder.Entity<WebsiteUser>().Property(u => u.UserId).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+            modelBuilder.Entity<WebsiteUser>().Property(u => u.UserId).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();

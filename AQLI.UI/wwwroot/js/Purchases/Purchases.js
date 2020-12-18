@@ -82,17 +82,19 @@
         }
 
         $('#addToInvoice').on('click', function () {
+            var purchaseID = $('#PurchaseID').val();
             var description = $('#PurchaseDescription').val();
-            var quantity = $('#Quantity').val();
             var cost = $('#Cost').val();
+            var quantity = $('#Quantity').val();
             var extCost = $('#ExtCost').val();
             var purchaseCategory = $('#PurchaseCategoryID').val()
 
 
             $('#purchaseInvoicePurchaseTable').DataTable().row.add([
+                    purchaseID,
                     description,
-                    quantity,
                     cost,
+                    quantity,
                     extCost,
                     purchaseCategory
                 ]).draw(false);
@@ -122,6 +124,7 @@
         if (!$.fn.DataTable.isDataTable('#purchaseInvoicePurchaseTable')) {
             table = $('#purchaseInvoicePurchaseTable').DataTable({
                 "columns": [
+                    { visible: false },
                     null,
                     null,
                     null,
@@ -129,17 +132,18 @@
                     { visible: false },
                     {
                         render: function (data, type, row) {
-                            return '<a data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></a> <a data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></a>';
+                            return '<i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>';
                         }
                     }
                 ],
                 "columnDefs": [
-                    { orderable: false, "title": "Description", "targets": 0 },
-                    { "title": "Cost", "targets": 1 },
-                    { orderable: false, "title": "Quantity", "targets": 2 },
-                    { orderable: false, "title": "Ext Cost", "targets": 3 },
-                    { "title": "Category", "targets": 4 },
-                    { orderable: false, "title": "", "targets": 5}
+                    { "title": "PurchaseID", "targets": 0 },
+                    { "title": "Description", orderable: false, "targets": 1 },
+                    { "title": "Cost", "targets": 2 },
+                    { "title": "Quantity", orderable: false, "targets": 3 },
+                    { "title": "Ext Cost", orderable: false, "targets": 4 },
+                    { "title": "Category", "targets": 5 },
+                    { "title": "", orderable: false, "targets": 6}
                 ],
                 "searching": false,
                 "pageLength": 5,
@@ -165,13 +169,32 @@
 
         $('#addPurchaseInvoiceForm').parsley().on('form:submit', function () {
 
-            //Serialize the dataTable rows as a list of purchases - Working
-            var purchaseTableData = table.rows().data();
+            //Retrieve purchases as an array from dataTable
+            var purchaseData = table.rows().data();
 
-            //Process the file upload
+            //Create array for purchase objects
+            var purchaseArray = [];
 
-            //Send the form data to the server ajax to create the purcahse invoice
-            saveFormDataWithFile($('#addPurchaseInvoiceForm'),
+            //Iterate through the purchase grid purchases and populate our Purchases json list
+            $.each(purchaseData, function ($this, $propIdx, $propValue) {
+
+                purchaseArray.push({
+                    "PurchaseID": $propIdx[0],
+                    "Quantity": $propIdx[3],
+                    "Cost": $propIdx[2],
+                    "Description": $propIdx[1],
+                    "ExtCost": $propIdx[4],
+                    "OwnerID": 0,
+                    "StoreID": 0,
+                    "PurchaseCategoryID": $propIdx[5],
+                    "TankID": 0,
+                    "PurchaseDate": null
+                });
+
+            });
+
+            //Send the form data to the server ajax to create the purcahse invoice and file upload - Working!
+            savePurchaseFormDataWithInvoice($('#addPurchaseInvoiceForm'), purchaseArray,
                 function (data) {
                     //Success
                     $('#modalAddEdit').modal('hide');

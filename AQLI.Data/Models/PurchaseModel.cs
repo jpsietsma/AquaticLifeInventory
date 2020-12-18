@@ -46,5 +46,8 @@ namespace AQLI.Data.Models
         public int? DecorationID { get; set; }
         //public DecorationModel Decoration { get; set; }
 
+        public int? InvoiceID { get; set; }
+        public PurchaseInvoiceModel Invoice { get; set; }
+
     }
 }

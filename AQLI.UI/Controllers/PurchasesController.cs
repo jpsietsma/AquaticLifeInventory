@@ -67,74 +67,80 @@ namespace AQLI.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> _SavePurchaseInvoice()
         {
-            var _json = Request.Form["passData"].First();
-            var _dataModel = JsonConvert.DeserializeObject<PurchaseInvoiceModel>(_json);
-                _dataModel.Store = DataSource.List_Stores().Where(s => s.StoreID == _dataModel.StoreID).First();
+            var _formData = Request.Form["passData"].First();           
+            var _dataModel = JsonConvert.DeserializeObject<PurchaseInvoiceModel>(_formData);
 
-            if (Request.Form.Files.Count > 0)
+            var _purchaseData = Request.Form["purchaseData"];
+            var _purchaseList = JsonConvert.DeserializeObject<List<PurchaseModel>>(_purchaseData);
+
+            _dataModel.Store = DataSource.List_Stores().Where(s => s.StoreID == _dataModel.StoreID).First();
+
+            //Add purchase to the database and return PK
+            //int invoicePK = DataSource.Add_PurchaseInvoice(_dataModel);
+
+            //Upload invoice .pdf if existing filepath is null and form file selected
+            if (_dataModel.InvoiceFilePath == null && Request.Form.Files.Count > 0)
             {
                 var data = Request.Form.Files[0];
-
                 _dataModel.InvoiceFilePath = await UploadFiles(Request.Form.Files[0], _dataModel.Store.StoreName);
             }
 
-            
-
-            if (_dataModel.PurchaseInvoiceID == 0)
+            foreach (PurchaseModel purchaseModel in _purchaseList)
             {
-                //Upload invoice .pdf for first time invoice creation
-                if (_dataModel.InvoiceFile != null)
-                {
-                    string storeName = DataSource.List_Stores().Where(s => s.StoreID == _dataModel.StoreID).Select(s => s.StoreName).First();
+                purchaseModel.Date = _dataModel.PurchaseDate.ToString();
+                purchaseModel.TankID = _dataModel.TankID;
+                purchaseModel.StoreID = _dataModel.StoreID;
+                //purchaseModel.InvoiceID = invoicePK;
 
-                     _dataModel.InvoiceFilePath = await UploadFiles(_dataModel.InvoiceFile, string.Concat(storeName));
-                }
+                _dataModel.Purchases.Add(purchaseModel);
 
-                //Add purchases to the database
-                foreach (PurchaseModel purchase in _dataModel.Purchases)
-                {
-                    DataSource.Add_Purchase(purchase);
-                }
+                //if (purchaseModel.PurchaseID == 0)
+                //{
+                //    Insert new purchase record
+                //    DataSource.Add_Purchase(purchase);
+                //}
+                //else
+                //{
+                //    Update purchases to the database
+                //    DataSource.Update_Purchase(purchase);
+                //}
             }
-            else
-            {
-                //Update purchases to the database
-                foreach (PurchaseModel purchase in _dataModel.Purchases)
-                {
-                    DataSource.Update_Purchase(purchase);
-                }
-            }
+
+            var modelList = _dataModel.Purchases;
 
             return RedirectToAction("Index");
         }
 
-        private async Task<string> UploadFiles(IFormFile InvoiceFile, string title)
+        /// <summary>
+        /// Upload purchase invoice to ~/invoices/
+        /// </summary>
+        /// <param name="InvoiceFile">IFormFile represents file for upload</param>
+        /// <param name="storeName">String name of store which invoice applies to</param>
+        /// <returns>String full filepath to uploaded invoice .pdf</returns>
+        private async Task<string> UploadFiles(IFormFile InvoiceFile, string storeName)
         {
             long size = InvoiceFile.Length;
             string filePath = string.Empty;
 
-                if (size > 0)
+            if (size > 0)
+            {
+                // full path to file in invoice upload location
+                filePath = Path.Combine(Env.WebRootPath, "invoices", string.Concat("Invoice_",
+                    storeName.Replace(" ", ""),
+                    "_",
+                    DateTime.Now.ToString().Split(" ").First().Replace("/", "-"),
+                    "." + InvoiceFile.FileName.Split(".").Last()
+                    ));
+
+                //save the file to the path
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    // full path to file in invoice upload location
-                    filePath = Path.Combine(Env.WebRootPath, "invoices", string.Concat("Invoice_",
-                        title.Replace(" ", ""),
-                        "_",
-                        DateTime.Now.ToString().Split(" ").First().Replace("/", "-"),
-                        "." + InvoiceFile.FileName.Split(".").Last()
-                        ));
-
-                    //save the file to the path
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await InvoiceFile.CopyToAsync(stream);
-                    }
-
-                // process uploaded files
-                // Don't rely on or trust the FileName property without validation.
-                                
+                    await InvoiceFile.CopyToAsync(stream);
+                }                                
             }
 
             return filePath;
         }
+
     }
 }

@@ -16,6 +16,7 @@ namespace AQLI.Data.Models
         public int? ContactInfoID { get; set; }
 
 
+        public List<PurchaseInvoiceModel> Invoices { get; set; }
         public List<PurchaseModel> Purchases { get; set; }
     }
 }
