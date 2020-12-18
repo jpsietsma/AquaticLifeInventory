@@ -100,6 +100,21 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// List all purchase invoices from the database for a particular user
+        /// </summary>
+        /// <returns>List<PurchaseInvoiceModel></returns>
+        public List<PurchaseInvoiceModel> List_PurchaseInvoices(int id)
+        {
+            return Database.PurchaseInvoices
+                .Include(o => o.Owner)
+                .Include(p => p.Purchases)
+                .Include(s => s.Store)
+                //.Include(t => t.Tank)
+                .Where(o => o.OwnerID == id)
+                .ToList();
+        }
+
+        /// <summary>
         /// List all purchase categories
         /// </summary>
         /// <returns>List<PurchaseCategoryModel></returns>
