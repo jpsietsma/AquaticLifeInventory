@@ -1,0 +1,60 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices.context;
+@using AQLI.DataServices;
+
+@inject DatabaseContext Database;
+@inject DataFactory DataSource;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/Purchases/Purchases.css" />   
+}
+<div class="row mx-auto">
+    <div class="col-lg-12 float-left">
+        <button type="button" class="btn btn-sm btn-warning" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> Add Invoice</button>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table id="PurchaseInvoiceTable" class="table table-bordered table-light table-striped table-hover sdn-purchase-table col-12" border="1">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Invoice</th>
+                        <th># Items</th>
+                        <th>Cost</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody class="sdn-purchase-table-body">
+                    @foreach (PurchaseInvoiceModel invoice in DataSource.List_PurchaseInvoices())
+                    {
+                        <tr class="sdn-purchase-invoice-table-row" data-id="@invoice.PurchaseInvoiceID">
+                            <td class="sdn-purchase-invoice-table-cell">
+                                @invoice.PurchaseDate
+                            </td>
+                            <td class="sdn-purchase-invoice-table-cell">
+                                @invoice.Store.StoreName
+                            </td>
+                            <td class="sdn-purchase-invoice-table-cell">
+                                <a href="@invoice.InvoiceFilePath" target="_blank"><i class="far fa-file-pdf"></i></a>
+                            </td>
+                            <td class="sdn-purchase-invoice-table-cell">
+                                @invoice.Purchases.Sum(p => p.Quantity)
+                            </td>
+                            <td class="sdn-purchase-invoice-table-cell">
+                                $@invoice.Purchases.Sum(p => p.ExtCost)
+                            </td>
+                            <td><button type="button" class="btn btn-sm btn-primary" onclick="PurchaseInvoice.openPurchaseInvoiceModal(@invoice.PurchaseInvoiceID)">Purchases</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Purchases/PurchaseInvoice.js"></script>    
+}

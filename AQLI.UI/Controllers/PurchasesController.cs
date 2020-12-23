@@ -51,8 +51,15 @@ namespace AQLI.UI.Controllers
         {
             PurchaseInvoiceModel model;
 
-            model = new PurchaseInvoiceModel();
-            model.Purchases = new List<PurchaseModel>();
+            if (ID != 0)
+            {
+                model = DataSource.List_PurchaseInvoices().Where(pi => pi.PurchaseInvoiceID == ID).First();
+            }
+            else
+            {
+                model = new PurchaseInvoiceModel();
+                model.Purchases = new List<PurchaseModel>();
+            }          
 
             return PartialView(model);
         }

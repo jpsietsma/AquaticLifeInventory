@@ -1,4 +1,4 @@
-﻿var Purchases = {
+﻿var PurchaseInvoice = {
     init: function () {
         //make sure multiple modal backdrops overlay properly
         $(document).on('show.bs.modal', '.modal', function () {
@@ -14,23 +14,16 @@
             //location.reload();
         });
 
-        //Open modal on purchase cell click
-        $('.sdn-purchase-table-cell').on('click', function (e) {
-            var id = $(e.target).closest("tr").attr("data-id");
-
-            Purchases.openModal(id);
-        });
-
         //Open modal on purchase invoice cell click
         $('.sdn-purchase-invoice-table-cell').on('click', function (e) {
             var id = $(e.target).closest("tr").attr("data-id");
 
-            Purchases.openPurchaseInvoiceModal(id);
+            PurchaseInvoice.openPurchaseInvoiceModal(id);
         });
 
         //Initialize page tooltips
         $('[data-toggle="tooltip"]').tooltip()
-                                
+
     },
     events: {
         addPurchases_Clicked: function () {
@@ -53,16 +46,16 @@
         },
     },
     openModal: function (id) {
-        openModal('Purchases/_PurchaseDetails/?ID=' + id, Purchases.modalLoaded)
+        openModal('Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
     },
     openPurchaseInvoiceModal: function (id) {
-        openModal('Purchases/_PurchaseInvoiceDetails/?ID=' + id, Purchases.modalLoaded)
+        openModal('Purchases/_PurchaseInvoiceDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
     },
     addPurchaseDetailsModal: function (id) {
-        openNestedModal('Purchases/_PurchaseDetails/?ID=' + id, Purchases.nestedModalLoaded);
+        openNestedModal('Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.nestedModalLoaded);
     },
     openConfirmDeleteModal: function (id) {
-        openConfirmModal('Purchases/_ConfirmDeletePurchase/?ID=' + id, Purchases.confirmModalLoaded)
+        openConfirmModal('Purchases/_ConfirmDeletePurchase/?ID=' + id, PurchaseInvoice.confirmModalLoaded)
     },
     confirmModalLoaded: function (success) {
         if (!success) {
@@ -70,7 +63,7 @@
         }
     },
     addPurchaseToInvoice: function () {
-        console.log("hello!");      
+        console.log("hello!");
     },
     DeletePurchase: function (id) {
         var purchaseId = id;
@@ -98,14 +91,14 @@
 
 
             $('#purchaseInvoicePurchaseTable').DataTable().row.add([
-                    purchaseID,
-                    description,
-                    cost,
-                    quantity,
-                    extCost,
-                    purchaseCategory
-                ]).draw(false);
-            });
+                purchaseID,
+                description,
+                cost,
+                quantity,
+                extCost,
+                purchaseCategory
+            ]).draw(false);
+        });
     },
     modalLoaded: function (success) {
         if (!success) {
@@ -150,12 +143,12 @@
                     { "title": "Quantity", orderable: false, "targets": 3 },
                     { "title": "Ext Cost", orderable: false, "targets": 4 },
                     { "title": "Category", "targets": 5 },
-                    { "title": "", orderable: false, "targets": 6}
+                    { "title": "", orderable: false, "targets": 6 }
                 ],
                 "searching": false,
                 "pageLength": 5,
                 "oLanguage": {
-                    "sEmptyTable": "No purchases added to invoice."
+                    "sEmptyTable": "No purchases currently added to this invoice."
                 }
             });
 
@@ -171,7 +164,7 @@
             $('#purchaseInvoicePurchaseTable tbody').on('click', 'i.icon-edit-row', function () {
                 //show edit modal here, passing object
             });
-            
+
         }
 
         $('#addPurchaseInvoiceForm').parsley().on('form:submit', function () {
@@ -242,9 +235,10 @@
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;
         });
+    },
+    loadInvoicePurchases: function (purchaseData) {
+        var table = 
     }
 }
 
-$(Purchases.init);
-
-//Add purchase invoice javascript here for simplicity in accessing within a tab
+$(PurchaseInvoice.init);

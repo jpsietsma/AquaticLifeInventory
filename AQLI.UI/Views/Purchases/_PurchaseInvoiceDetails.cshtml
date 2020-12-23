@@ -51,11 +51,11 @@
                                 <div class="row">
                                     <div class="form-group col-4">
                                         <label class="control-label">Purchase Date:</label>
-                                        <input class="form-control" type="date" name="PurchaseDate" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" required />
+                                        <input class="form-control" type="date" name="PurchaseDate" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required") />
                                     </div>
                                     <div class="form-group col-4">
                                         <label class="control-label">Supplier:</label>
-                                        <select class="form-control" name="StoreID" required>
+                                        <select class="form-control" name="StoreID" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required")>
                                             @if (DataSource.List_Stores().Count() == 0)
                                             {
                                                 <option value="">-- No Supplier Stores --</option>
@@ -82,8 +82,15 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-4">
-                                        <label class="control-label">Invoice: (<i>.pdf</i>)</label>
-                                        <input class="form-control-file" type="file" name="InvoiceFile" />
+                                        @if (Model.InvoiceFilePath == null)
+                                        {
+                                            <label class="control-label">Invoice: (<i>.pdf</i>)</label>
+                                            <input class="form-control-file" type="file" name="InvoiceFile" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@Model.InvoiceFilePath">View Invoice<i class="far fa-file-pdf"></i></a>
+                                        }
                                     </div>
                                 </div>                                
                             </div>
@@ -106,6 +113,23 @@
                                 <div class="card-body text-center pt-2">
                                     <!-- Purchases Grid -->
                                     <table name="Purchases" id="purchaseInvoicePurchaseTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                                        @if (Model.Purchases.Count() > 0)
+                                        {
+                                            foreach (PurchaseModel purchase in Model.Purchases)
+                                            {
+                                                <tr>
+                                                    <td class="sdn-purchase-table-cell" style="display: none;">@purchase.PurchaseID</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Description</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Cost</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Quantity</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.ExtCost</td>
+                                                    <td class="sdn-purchase-table-cell" style="display: none;">@purchase.PurchaseCategoryID</td>
+                                                    <td>
+                                                        <i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
                                         @*<tfoot>
                                             <tr>
                                                 <td colspan="3"><b class="float-right">Total items: </b></td>
