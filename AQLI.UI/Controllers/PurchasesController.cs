@@ -115,6 +115,15 @@ namespace AQLI.UI.Controllers
 
             var modelList = _dataModel.Purchases;
 
+            try
+            {
+                await DataSource.Add_PurchaseInvoice(_dataModel);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.InnerException.Message);
+            }
+
             return RedirectToAction("Index");
         }
 

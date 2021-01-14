@@ -20,6 +20,7 @@ namespace AQLI.Data.Models
         public string Description { get; set; }
 
         [Column(TypeName = "decimal(6,2)")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public decimal ExtCost { get; set; }
         
         public int OwnerID { get; set; }
