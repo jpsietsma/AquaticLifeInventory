@@ -44,7 +44,8 @@
                             </td>
                             <td>
                                 <div class="btn btn-sm btn-primary sdn-purchase-invoice-table-cell mr-2">Details</div>
-                                <a href="@invoice.InvoiceFilePath" target="_blank"><i class="far fa-file-pdf fa-lg"></i></a>
+                                @*<a href="@invoice.InvoiceFilePath" target="_blank"><i class="far fa-file-pdf fa-lg mr-2" style="color: red;"></i></a>*@
+                                <a href="@invoice.InvoiceFilePath" data-toggle="tooltip" title="Original Invoice" target="_blank"><i class="fas fa-file-invoice-dollar fa-lg" style="color: darkblue;"></i></a>
                             </td>
                         </tr>
                     }

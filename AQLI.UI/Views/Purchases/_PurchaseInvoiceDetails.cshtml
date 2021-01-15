@@ -43,7 +43,7 @@
                     <div class="card col-12 mb-2">
                         <div class="card-header text-center">
                             <span class="card-header-text">
-                                <i class="fas fa-store-alt"></i> Supplier/Purchase Information
+                                <i class="fas fa-store-alt"></i> Supplier/Invoice Information
                             </span>
                         </div>
                         <div class="card-body">
@@ -84,12 +84,17 @@
                                     <div class="form-group col-4">
                                         @if (Model.InvoiceFilePath == null)
                                         {
-                                            <label class="control-label">Invoice: (<i>.pdf</i>)</label>
+                                            <label class="control-label">Invoice: (<i>.pdf</i>)</label><br />
                                             <input class="form-control-file" type="file" name="InvoiceFile" />
                                         }
                                         else
                                         {
-                                            <a href="@Model.InvoiceFilePath">View Invoice<i class="far fa-file-pdf"></i></a>
+                                            <div class="form-group">
+                                                <label class="control-label mb-2">Download Options:</label><br />
+                                                <a data-toggle="tooltip" title="Download Scanned Invoice" href="@Model.InvoiceFilePath" target="_blank"><i class="fas fa-file-invoice-dollar fa-3x mr-3 ml-2" style="color: darkblue;"></i></a>
+                                                <a data-toggle="tooltip" title="Download AQL Invoice as .pdf" href="#" target="_blank"><i class="far fa-file-pdf fa-3x mr-3" style="color: red;"></i></a>
+                                                <a data-toggle="tooltip" title="Export Purchases as .csv" href="#" target="_blank"><i class="fas fa-file-excel fa-3x" style="color: darkgreen;"></i></a>
+                                            </div>                                            
                                         }
                                     </div>
                                 </div>                                
@@ -132,13 +137,8 @@
                                         }
                                         <tfoot>
                                             <tr>
-                                                <td colspan="3"><b class="float-right">Total items: </b></td>
-                                                <td><span id="PurchasesQty">16</span></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4"><b class="float-right">Invoice Total: </b></td>
-                                                <td>$<span id="PurchasesSum">156.99</span></td>
+                                                <th colspan="4"><b class="float-right">Invoice Total: </b></th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>
                                     </table>

@@ -149,6 +149,28 @@
                 "pageLength": 5,
                 "oLanguage": {
                     "sEmptyTable": "No purchases currently added to this invoice."
+                },
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(4)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                                        
+                    // Update footer
+                    $(api.column(4).footer()).html('$' + total);
                 }
             });
 
@@ -164,9 +186,9 @@
             $('#purchaseInvoicePurchaseTable tbody').on('click', 'i.icon-edit-row', function () {
                 //show edit modal here, passing object
             });
-
+                        
         }
-
+                
         $('#addPurchaseInvoiceForm').parsley().on('form:submit', function () {
 
             //Retrieve purchases as an array from dataTable
@@ -213,31 +235,10 @@
                     }
                 }
             );
-            //saveFormDataPost($('#addPurchaseInvoiceForm'),
-            //    function (data) {
-            //        //Success
-            //        $('#modalAddEdit').modal('hide');
-            //        if (data && data.View) {
-            //            location.reload();
-            //        } else {
-            //            ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
-            //        }
-            //    },
-            //    function (data) {
-            //        //Fail
-            //        if (typeof data.clientError != "undefined") {
-            //            ErrorMessage.show(data.clientError);
-            //        } else {
-            //            ErrorMessage.show(data.jsonResult);
-            //        }
-            //    }
-            //);
+
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;
         });
-    },
-    loadInvoicePurchases: function (purchaseData) {
-        var table = 
     }
 }
 
