@@ -91,9 +91,9 @@
                                         {
                                             <div class="form-group">
                                                 <label class="control-label mb-2">Download Options:</label><br />
-                                                <a data-toggle="tooltip" title="Download Scanned Invoice" href="@Model.InvoiceFilePath" target="_blank"><i class="fas fa-file-invoice-dollar fa-3x mr-3 ml-2" style="color: darkblue;"></i></a>
-                                                <a data-toggle="tooltip" title="Download AQL Invoice as .pdf" href="#" target="_blank"><i class="far fa-file-pdf fa-3x mr-3" style="color: red;"></i></a>
-                                                <a data-toggle="tooltip" title="Export Purchases as .csv" href="#" target="_blank"><i class="fas fa-file-excel fa-3x" style="color: darkgreen;"></i></a>
+                                                <a data-toggle="tooltip" title="Scanned Receipt (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID })" target="_blank"><i class="fas fa-file-invoice-dollar fa-3x mr-3 ml-2" style="color: darkblue;"></i></a>
+                                                <a data-toggle="tooltip" title="AQL Invoice (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "aqlpdf"  })" target="_blank"><i class="far fa-file-pdf fa-3x mr-3" style="color: red;"></i></a>
+                                                <a data-toggle="tooltip" title="Export Purchases (csv)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "csv" })" target="_blank"><i class="fas fa-file-excel fa-3x" style="color: darkgreen;"></i></a>
                                             </div>                                            
                                         }
                                     </div>
