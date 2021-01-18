@@ -1,4 +1,5 @@
-﻿using AQLI.DataServices;
+﻿using AQLI.Data.Models;
+using AQLI.DataServices;
 using AQLI.DataServices.context;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -6,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Http;
 
 namespace AQLI.UI.Controllers
 {
@@ -33,14 +37,12 @@ namespace AQLI.UI.Controllers
                     case "csv":
                     {
                         //Return CSV file of purchases associated with the invoice.  Headers included.
-                        return await BuildCSV(invoice.Purchases, true, filename, true, new string[] { "Store", "Tank", "Invoice", "PurchaseCategory" });                        
+                        return BuildCSV(invoice.Purchases, true, filename, true, new string[] { "Store", "Tank", "Invoice", "PurchaseCategory" });                        
                     }
                     case "aqlpdf":
                     {
                         //Prompt generation and download of PDF version of AQL Invoice details window
-                        
-                        //      ...determine code to generate PDF here....
-                        return null;
+                        return BuildPDF<PurchaseInvoiceModel>(invoice.PurchaseInvoiceID);
                     }
                     default:
                     {
@@ -62,7 +64,7 @@ namespace AQLI.UI.Controllers
             /// <param name="includeHeader">Write headers to the csv file?</param>
             /// <param name="excludedColumns">string array of properties to be excluded</param>
             /// <returns>Returns csv string of list if promptDownload is set to false, otherwise returns FileContentResult which results in download of csv</returns>
-            private async Task<dynamic> BuildCSV<T>(List<T> dataList, bool promptDownload = false, string promptFilename = null, bool includeHeader = false, params string[] excludedColumns) where T : class
+            private dynamic BuildCSV<T>(List<T> dataList, bool promptDownload = false, string promptFilename = null, bool includeHeader = false, params string[] excludedColumns) where T : class
             {
                 StringBuilder csvData = new StringBuilder();
 
@@ -127,6 +129,57 @@ namespace AQLI.UI.Controllers
                 }
 
                 return csvData.ToString();
+            }
+
+            /// <summary>
+            /// Generate and prompt to save a PDF document of the Invoice Details from the AQL application.  Custom AQL invoice.
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns>Generated PDF document of invoice, propmpt to save</returns>
+            private FileContentResult BuildPDF<T>(int invoiceID) where T: class
+            {
+                var invoice = DataSource.List_PurchaseInvoices().Where(I => I.PurchaseInvoiceID == invoiceID).First();
+                var bytes = GeneratePDF(invoice.PurchaseInvoiceID);
+
+                return File(bytes, "application/octet-stream");
+            }
+
+            private byte[] GeneratePDF(int invoiceID)
+            {
+                byte[] bytes = null;
+
+                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+                {
+                    Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+
+                    PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                    document.Open();
+
+                    Chunk chunk = new Chunk("This is from chunk. ");
+                    document.Add(chunk);
+
+                    Phrase phrase = new Phrase("This is from Phrase.");
+                    document.Add(phrase);
+
+                    Paragraph para = new Paragraph("This is from paragraph.");
+                    document.Add(para);
+
+                    string text = @"you are successfully created PDF file.";
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.SpacingBefore = 10;
+                    paragraph.SpacingAfter = 10;
+                    paragraph.Alignment = Element.ALIGN_LEFT;
+                    paragraph.Font = FontFactory.GetFont(FontFactory.HELVETICA, 12f, BaseColor.GREEN);
+                    paragraph.Add(text);
+                    document.Add(paragraph);
+
+                    document.Close();
+
+                    bytes = memoryStream.ToArray();
+                    memoryStream.Close();                   
+                }
+
+                return bytes;
             }
 
         #endregion
