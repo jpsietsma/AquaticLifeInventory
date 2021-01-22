@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace AQLI.UI.Controllers
 {
@@ -42,14 +43,14 @@ namespace AQLI.UI.Controllers
                     case "aqlpdf":
                     {
                         //Prompt generation and download of PDF version of AQL Invoice details window
-                        return BuildPDF<PurchaseInvoiceModel>(invoice.PurchaseInvoiceID);
+                        return BuildAQLPurchaseInvoicePDF<PurchaseInvoiceModel>(invoice.PurchaseInvoiceID);
                     }
                     default:
                     {
                         //Prompt download of scanned receipt file in whatever format it was uploaded in
                         var bytes = await System.IO.File.ReadAllBytesAsync(invoice.InvoiceFilePath);
 
-                        return File(bytes, "application/octet-stream", filename);
+                        return File(bytes, "application/octet-stream", filename.Replace(".csv", ".pdf"));
                     }                    
                 }
             }
@@ -136,45 +137,42 @@ namespace AQLI.UI.Controllers
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <returns>Generated PDF document of invoice, propmpt to save</returns>
-            private FileContentResult BuildPDF<T>(int invoiceID) where T: class
+            private FileContentResult BuildAQLPurchaseInvoicePDF<T>(int invoiceID) where T: class
             {
                 var invoice = DataSource.List_PurchaseInvoices().Where(I => I.PurchaseInvoiceID == invoiceID).First();
-                var bytes = GeneratePDF(invoice.PurchaseInvoiceID);
+                string filename = invoice.InvoiceFilePath.Split('/').Last().Split('.').First() + ".pdf";
 
-                return File(bytes, "application/octet-stream");
+                var bytes = GenerateAQLPurchaseInvoicePDF(invoice);
+
+                return File(bytes, "application/octet-stream", filename);
             }
 
-            private byte[] GeneratePDF(int invoiceID)
+            /// <summary>
+            /// Generate and return PDF invoice document as byte[]
+            /// </summary>
+            /// <param name="invoiceID">ID of the invoice to generate PDF document</param>
+            /// <returns>byte[] contents of PDF document</returns>
+            private byte[] GenerateAQLPurchaseInvoicePDF(PurchaseInvoiceModel invoice)
             {
                 byte[] bytes = null;
-
-                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+                
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    Document document = new Document(PageSize.A4, 10, 10, 10, 10);
-
+                    Document document = new Document(PageSize.A4, 5, 5, 5, 5);
                     PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-                    document.Open();
+                             
+                    //Open document for writing to memory, and add first page to document.
+                    document.OpenDocument();
+                    document.NewPage();                    
 
-                    Chunk chunk = new Chunk("This is from chunk. ");
-                    document.Add(chunk);
+                    //Create a table to hold purchase line items
+                    PdfPTable t = new PdfPTable(5);
+                        t.SetWidths(new float[] { 150f, 20f, 40f, 40f, 75f });
 
-                    Phrase phrase = new Phrase("This is from Phrase.");
-                    document.Add(phrase);
-
-                    Paragraph para = new Paragraph("This is from paragraph.");
-                    document.Add(para);
-
-                    string text = @"you are successfully created PDF file.";
-                    Paragraph paragraph = new Paragraph();
-                    paragraph.SpacingBefore = 10;
-                    paragraph.SpacingAfter = 10;
-                    paragraph.Alignment = Element.ALIGN_LEFT;
-                    paragraph.Font = FontFactory.GetFont(FontFactory.HELVETICA, 12f, BaseColor.GREEN);
-                    paragraph.Add(text);
-                    document.Add(paragraph);
+                    //Add table with purchase line items and summary
+                    AddPurchasesTable(t, invoice, document);                                    
 
                     document.Close();
-
                     bytes = memoryStream.ToArray();
                     memoryStream.Close();                   
                 }
@@ -182,6 +180,163 @@ namespace AQLI.UI.Controllers
                 return bytes;
             }
 
+        private void AddInvoicePurchaseTableHeaderRow(PdfPTable t)
+        {
+            PdfPHeaderCell descriptionHeaderCell = new PdfPHeaderCell();
+            descriptionHeaderCell.AddElement(new Chunk("Purchase Desctiption"));
+            
+            PdfPHeaderCell quantityHeaderCell = new PdfPHeaderCell();
+            quantityHeaderCell.AddElement(new Chunk("Qty"));
+            
+            PdfPHeaderCell costHeaderCell = new PdfPHeaderCell();
+            costHeaderCell.AddElement(new Chunk("Cost"));
+
+            PdfPHeaderCell extHeaderCell = new PdfPHeaderCell();
+            extHeaderCell.AddElement(new Chunk("Ext Cost"));
+
+            PdfPHeaderCell tankHeaderCell = new PdfPHeaderCell();
+            tankHeaderCell.AddElement(new Chunk("Assigned Tank"));
+
+            t.AddCell(descriptionHeaderCell);
+            t.AddCell(quantityHeaderCell);
+            t.AddCell(costHeaderCell);
+            t.AddCell(extHeaderCell);
+            t.AddCell(tankHeaderCell);
+        }
+
+        private void AddInvoicePurchaseDataRow(PurchaseModel purchase, PdfPTable t)
+        {
+            PdfPCell descriptionCell = new PdfPCell();
+            PdfPCell quantityCell = new PdfPCell();
+            PdfPCell costCell = new PdfPCell();
+            PdfPCell extCell = new PdfPCell();
+            PdfPCell tankCell = new PdfPCell();
+
+            Chunk descriptionData = new Chunk(purchase.Description);
+            descriptionData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+            descriptionCell.AddElement(descriptionData);
+
+            Chunk quantityData = new Chunk(purchase.Quantity.ToString());
+            quantityData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+            quantityCell.AddElement(quantityData);
+
+            Chunk costData = new Chunk(purchase.Cost.ToString("C"));
+            costData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+            costCell.AddElement(costData);
+
+            Chunk extData = new Chunk(purchase.ExtCost.ToString("C"));
+            extData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+            extCell.AddElement(extData);
+
+            Chunk tankData = new Chunk(purchase.Tank != null ? purchase.Tank.Name : "-unassigned-");
+            tankData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+            tankCell.AddElement(tankData);
+
+            t.AddCell(descriptionCell);
+            t.AddCell(quantityCell);
+            t.AddCell(costCell);
+            t.AddCell(extCell);
+            t.AddCell(tankCell);
+        }
+
+        private void AddPurchasesTable(PdfPTable t, PurchaseInvoiceModel invoice, Document document)
+        {
+            //Add header row to purchase table
+            AddInvoicePurchaseTableHeaderRow(t);
+
+            //Generate table rows for each purchase on invoice, Add them to the table
+            invoice.Purchases.ForEach(p => AddInvoicePurchaseDataRow(p, t));
+
+            //Add purchase table summary footer
+            AddPurchaseTableSummaryFooter(t, invoice);
+
+            //Add the table to the PDF document
+            document.Add(t);
+        }
+
+        private void AddPurchaseTableSummaryFooter(PdfPTable t, PurchaseInvoiceModel invoice)
+        {
+            //Quantity total summary row
+            Paragraph quantityHeaderText = new Paragraph("Total Purchases: ");
+                quantityHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+            PdfPCell quantityTotalSummaryHeader = new PdfPCell();
+                quantityTotalSummaryHeader.AddElement(quantityHeaderText);
+
+            PdfPCell quantityTotalSummaryValue = new PdfPCell();
+                quantityTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.Quantity).ToString()));
+                quantityTotalSummaryValue.Colspan = 4;
+
+            t.AddCell(quantityTotalSummaryHeader);
+            t.AddCell(quantityTotalSummaryValue);
+
+            //Subtotal cost summary row
+            Paragraph costHeaderText = new Paragraph("Purchase Subtotal: ");
+                costHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+            PdfPCell costTotalSummaryHeader = new PdfPCell();
+                costTotalSummaryHeader.AddElement(costHeaderText);
+                costTotalSummaryHeader.Colspan = 3;
+
+            PdfPCell costTotalSummaryValue = new PdfPCell();
+                costTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.ExtCost).ToString("C")));
+                costTotalSummaryValue.Colspan = 2;
+
+            t.AddCell(costTotalSummaryHeader);
+            t.AddCell(costTotalSummaryValue);
+
+            //Tax summary row
+            Paragraph taxHeaderText = new Paragraph("Tax (8%): ");
+                taxHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+            PdfPCell taxHeader = new PdfPCell();
+                taxHeader.AddElement(taxHeaderText);
+                taxHeader.Colspan = 3;
+
+            PdfPCell taxValue = new PdfPCell();
+            var tax = (float)invoice.Purchases.Sum(p => p.ExtCost) * .08f;
+
+            taxValue.AddElement(new Chunk(tax.ToString("C")));
+            taxValue.Colspan = 2;
+
+            t.AddCell(taxHeader);
+            t.AddCell(taxValue);
+
+            //Total cost summary row
+            Paragraph totalHeaderText = new Paragraph("Invoice Total: ");
+            totalHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+            PdfPCell totalHeader = new PdfPCell();
+            totalHeader.AddElement(totalHeaderText);
+            totalHeader.Colspan = 3;
+
+            PdfPCell totalValue = new PdfPCell();
+            var total = (float)invoice.Purchases.Sum(p => p.ExtCost) * 1.08f;
+
+            totalValue.AddElement(new Chunk(total.ToString("C")));
+            totalValue.Colspan = 2;
+
+            t.AddCell(totalHeader);
+            t.AddCell(totalValue);
+
+        }
+
         #endregion
     }
 }
+
+// ---------- These are the items available to add to an iTextSharp PDFPCell -----------
+//string text = @"This is a string added to the document.";
+//Chunk chunk = new Chunk("This is from chunk. ");
+//Phrase phrase = new Phrase("This is from Phrase.");
+//Paragraph paragraph = new Paragraph("This is from the first paragraph");
+//paragraph.SpacingBefore = 10;
+//paragraph.SpacingAfter = 10;
+//paragraph.Alignment = Element.ALIGN_LEFT;
+//paragraph.Font = FontFactory.GetFont(FontFactory.HELVETICA, 12f, BaseColor.GREEN);
+//paragraph.Add(text);

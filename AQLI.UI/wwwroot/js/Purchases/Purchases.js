@@ -29,7 +29,9 @@
         });
 
         //Initialize page tooltips
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip({
+            delay: { show: 0, hide: 200 }
+        });
                                 
     },
     events: {
