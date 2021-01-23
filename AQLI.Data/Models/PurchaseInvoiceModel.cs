@@ -15,6 +15,10 @@ namespace AQLI.Data.Models
 
         public DateTime PurchaseDate { get; set; }
 
+        public decimal ShippingCost { get; set; }
+
+        public bool IsOnlineOrder { get; set; }
+
         public string InvoiceFilePath { get; set; }
 
         public int StoreID { get; set; }

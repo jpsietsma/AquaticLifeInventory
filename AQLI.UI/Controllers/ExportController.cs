@@ -291,33 +291,56 @@ namespace AQLI.UI.Controllers
             t.AddCell(costTotalSummaryValue);
 
             //Tax summary row
+            var tax = (float)invoice.Purchases.Sum(p => p.ExtCost) * .08f;
+
             Paragraph taxHeaderText = new Paragraph("Tax (8%): ");
                 taxHeaderText.Alignment = Element.ALIGN_RIGHT;
 
             PdfPCell taxHeader = new PdfPCell();
                 taxHeader.AddElement(taxHeaderText);
-                taxHeader.Colspan = 3;
+                taxHeader.Colspan = 3;            
 
             PdfPCell taxValue = new PdfPCell();
-            var tax = (float)invoice.Purchases.Sum(p => p.ExtCost) * .08f;
-
-            taxValue.AddElement(new Chunk(tax.ToString("C")));
-            taxValue.Colspan = 2;
+                taxValue.AddElement(new Chunk(tax.ToString("C")));
+                taxValue.Colspan = 2;
 
             t.AddCell(taxHeader);
             t.AddCell(taxValue);
+                        
+            var total = ((float)invoice.Purchases.Sum(p => p.ExtCost)) * 1.08f;
 
-            //Total cost summary row
+            //If invoice purchases were ordered online and shipped, show shipping cost summary row
+            if (invoice.IsOnlineOrder)
+            {
+                var shipping = (float)invoice.ShippingCost;
+
+                Paragraph shippingHeaderText = new Paragraph("Shipping: ");
+                shippingHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                PdfPCell shippingHeader = new PdfPCell();
+                shippingHeader.AddElement(shippingHeaderText);
+                shippingHeader.Colspan = 3;
+
+                PdfPCell shippingValue = new PdfPCell();
+                shippingValue.AddElement(new Chunk(shipping.ToString("C")));
+                shippingValue.Colspan = 2;
+
+                t.AddCell(shippingHeader);
+                t.AddCell(shippingValue);
+
+                total = total + shipping;
+            }                        
+
+            //Total cost summary row           
             Paragraph totalHeaderText = new Paragraph("Invoice Total: ");
-            totalHeaderText.Alignment = Element.ALIGN_RIGHT;
+                totalHeaderText.Alignment = Element.ALIGN_RIGHT;
 
             PdfPCell totalHeader = new PdfPCell();
-            totalHeader.AddElement(totalHeaderText);
-            totalHeader.Colspan = 3;
-
+                totalHeader.AddElement(totalHeaderText);
+                totalHeader.Colspan = 3;
+                        
             PdfPCell totalValue = new PdfPCell();
-            var total = (float)invoice.Purchases.Sum(p => p.ExtCost) * 1.08f;
-
+            
             totalValue.AddElement(new Chunk(total.ToString("C")));
             totalValue.Colspan = 2;
 
