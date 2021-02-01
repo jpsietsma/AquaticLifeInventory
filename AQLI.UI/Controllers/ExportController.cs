@@ -158,19 +158,15 @@ namespace AQLI.UI.Controllers
                 
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    Document document = new Document(PageSize.A4, 5, 5, 5, 5);
+                    Document document = new Document(PageSize.A4, 2, 2, 2, 2);
                     PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
                              
                     //Open document for writing to memory, and add first page to document.
                     document.OpenDocument();
                     document.NewPage();                    
 
-                    //Create a table to hold purchase line items
-                    //PdfPTable purchaseTable = new PdfPTable(5);
-                    //purchaseTable.SetWidths(new float[] { 150f, 20f, 40f, 40f, 75f });
-
-                    //Add table with supplier contact information
-                    AddInvoiceSupplierContactHeaderTable(invoice.Store, document);
+                    //Add table with supplier contact information and AQL logo
+                    AddInvoiceSupplierContactHeaderTable(invoice.Store, document);                                       
 
                     //Add Spacing Between Supplier Header and Purchase Line Item table
                     InsertDocumentLineBreak(document);
@@ -187,55 +183,94 @@ namespace AQLI.UI.Controllers
                 return bytes;
             }
             
-            #region Section: Invoice Supplier Table Generation Methods...
+            #region Section: Invoice Supplier Table  And Logo Generation Methods...
 
                 private void AddInvoiceSupplierContactHeaderTable(StoreModel supplier, Document document)
                 {
+                    //Create container table to hold supplier contact table and logo table
+                    PdfPTable containerTable = new PdfPTable(2);
+                        containerTable.SetWidths(new float[] { 150f, 150f });
+                        containerTable.DefaultCell.Border = 0;
+
                     //Create a table to hold supplier contact information
                     PdfPTable supplierContactTable = new PdfPTable(2);
-                    supplierContactTable.SetWidths(new float[] { 200f, 50f });
+                        supplierContactTable.SetWidths(new float[] { 60, 40 });
+                        supplierContactTable.HorizontalAlignment = Element.ALIGN_LEFT;
+                        supplierContactTable.WidthPercentage = 50;
 
                     PdfPCell supplierNameCell = new PdfPCell();
-                    PdfPCell supplierStreetAddressCell = new PdfPCell();
-                    PdfPCell supplierCityStateZipCell = new PdfPCell();
-                    PdfPCell supplierPhoneEmailCell = new PdfPCell();
+                        supplierNameCell.Colspan = 2;
 
                     Chunk supplierNameData = new Chunk(supplier.StoreName);
-                    supplierNameData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                        supplierNameData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
 
-                    supplierNameCell.AddElement(supplierNameData);
-                    supplierNameCell.Colspan = 2;
+                        supplierNameCell.AddElement(supplierNameData);                  
 
-                    Chunk supplierStreetAddressData = new Chunk("Add to Entity");
-                    supplierStreetAddressData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    PdfPCell supplierStreetAddressCell = new PdfPCell();
 
-                    supplierStreetAddressCell.AddElement(supplierStreetAddressData);
+                    Chunk supplierStreetAddressData = new Chunk("123 Street Address Ave.");
+                        supplierStreetAddressData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                        
+                        supplierStreetAddressCell.AddElement(supplierStreetAddressData);
 
-                    Chunk supplierCityStateZipData = new Chunk("add csz to, entity");
-                    supplierCityStateZipData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
-
-                    supplierCityStateZipCell.AddElement(supplierCityStateZipData);
-
-                    Chunk supplierPhoneEmailData = new Chunk("(607) 865-1234 sagahors@gmail.com");
-                    supplierPhoneEmailData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    PdfPCell supplierCityStateZipCell = new PdfPCell();
                     
-                    supplierPhoneEmailCell.Rowspan = 2;
-                    supplierPhoneEmailCell.AddElement(supplierPhoneEmailData);
+                     Chunk supplierCityStateZipData = new Chunk("Walton, NY 13856");
+                        supplierCityStateZipData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
 
+                        supplierCityStateZipCell.AddElement(supplierCityStateZipData);
+
+                    PdfPCell supplierPhoneEmailCell = new PdfPCell();
+                        supplierPhoneEmailCell.Rowspan = 2;
+            
+                        Chunk supplierPhoneEmailData = new Chunk("(607) 865-1234 sagahors@gmail.com");
+                            supplierPhoneEmailData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);            
+
+                        supplierPhoneEmailCell.AddElement(supplierPhoneEmailData);
+            
+                    PdfPCell supplierWebsiteCell = new PdfPCell();
+                        supplierWebsiteCell.Colspan = 2;
+                        supplierWebsiteCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        supplierWebsiteCell.Border = 0;
+                        
+                        Paragraph supplierWebsiteData = new Paragraph("Http://www.sagamorepets.com");
+                            supplierWebsiteData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                        supplierWebsiteCell.AddElement(supplierWebsiteData);
+                                                                               
                     supplierContactTable.AddCell(supplierNameCell);
                     supplierContactTable.AddCell(supplierStreetAddressCell);
-                    supplierContactTable.AddCell(supplierCityStateZipCell);
                     supplierContactTable.AddCell(supplierPhoneEmailCell);
+                    supplierContactTable.AddCell(supplierCityStateZipCell);
+                    supplierContactTable.AddCell(supplierWebsiteCell);
 
-                    document.Add(supplierContactTable);
+                    containerTable.AddCell(supplierContactTable);
 
+                    PdfPCell logoCell = new PdfPCell();
+                        logoCell.Border = 0;
 
+                    AddAQLInvoiceLogo(logoCell);
+
+                    containerTable.AddCell(logoCell);
+                    
+                    document.Add(containerTable);
+                    //document.Add(supplierContactTable);
+                }
+
+                private void AddAQLInvoiceLogo(PdfPCell cell)
+                {                    
+                    Image logoImage = Image.GetInstance("wwwroot\\images\\templates\\invoice\\AquaticLife_Logo.png");
+                        logoImage.Alignment = Element.ALIGN_RIGHT;
+                        logoImage.ScaleAbsoluteWidth(150f);
+                        logoImage.ScaleAbsoluteHeight(150f);
+
+                    cell.AddElement(logoImage);
                 }
 
             #endregion
 
             #region Section: Invoice Purchase Table Generation Methods...
-        
+
                 /// <summary>
             /// Generate a table with headers, line item data, and footer summary rows
             /// </summary>
