@@ -26,7 +26,7 @@ namespace AQLI.UI.Controllers
             DataSource = _factory;
         }
 
-        #region Purchase Invoice Export Methods...
+        #region Section: Purchase Invoice Export Methods...
 
             public async Task<FileContentResult> ExportPurchaseInvoice(int purchaseID, string fileType = "pdf")
             {
@@ -166,11 +166,18 @@ namespace AQLI.UI.Controllers
                     document.NewPage();                    
 
                     //Create a table to hold purchase line items
-                    PdfPTable t = new PdfPTable(5);
-                        t.SetWidths(new float[] { 150f, 20f, 40f, 40f, 75f });
+                    //PdfPTable purchaseTable = new PdfPTable(5);
+                    //purchaseTable.SetWidths(new float[] { 150f, 20f, 40f, 40f, 75f });
 
-                    //Add table with purchase line items and summary
-                    AddPurchasesTable(t, invoice, document);                                    
+                    //Add table with supplier contact information
+                    AddInvoiceSupplierContactHeaderTable(invoice.Store, document);
+
+                    //Add Spacing Between Supplier Header and Purchase Line Item table
+                    InsertDocumentLineBreak(document);
+                    InsertDocumentLineBreak(document);
+
+                    //Add table with purchase line items, headers, and summary rows
+                    AddPurchasesTable(invoice, document);                                    
 
                     document.Close();
                     bytes = memoryStream.ToArray();
@@ -179,175 +186,253 @@ namespace AQLI.UI.Controllers
 
                 return bytes;
             }
-
-        private void AddInvoicePurchaseTableHeaderRow(PdfPTable t)
-        {
-            PdfPHeaderCell descriptionHeaderCell = new PdfPHeaderCell();
-            descriptionHeaderCell.AddElement(new Chunk("Purchase Desctiption"));
             
-            PdfPHeaderCell quantityHeaderCell = new PdfPHeaderCell();
-            quantityHeaderCell.AddElement(new Chunk("Qty"));
-            
-            PdfPHeaderCell costHeaderCell = new PdfPHeaderCell();
-            costHeaderCell.AddElement(new Chunk("Cost"));
+            #region Section: Invoice Supplier Table Generation Methods...
 
-            PdfPHeaderCell extHeaderCell = new PdfPHeaderCell();
-            extHeaderCell.AddElement(new Chunk("Ext Cost"));
+                private void AddInvoiceSupplierContactHeaderTable(StoreModel supplier, Document document)
+                {
+                    //Create a table to hold supplier contact information
+                    PdfPTable supplierContactTable = new PdfPTable(2);
+                    supplierContactTable.SetWidths(new float[] { 200f, 50f });
 
-            PdfPHeaderCell tankHeaderCell = new PdfPHeaderCell();
-            tankHeaderCell.AddElement(new Chunk("Assigned Tank"));
+                    PdfPCell supplierNameCell = new PdfPCell();
+                    PdfPCell supplierStreetAddressCell = new PdfPCell();
+                    PdfPCell supplierCityStateZipCell = new PdfPCell();
+                    PdfPCell supplierPhoneEmailCell = new PdfPCell();
 
-            t.AddCell(descriptionHeaderCell);
-            t.AddCell(quantityHeaderCell);
-            t.AddCell(costHeaderCell);
-            t.AddCell(extHeaderCell);
-            t.AddCell(tankHeaderCell);
-        }
+                    Chunk supplierNameData = new Chunk(supplier.StoreName);
+                    supplierNameData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
 
-        private void AddInvoicePurchaseDataRow(PurchaseModel purchase, PdfPTable t)
-        {
-            PdfPCell descriptionCell = new PdfPCell();
-            PdfPCell quantityCell = new PdfPCell();
-            PdfPCell costCell = new PdfPCell();
-            PdfPCell extCell = new PdfPCell();
-            PdfPCell tankCell = new PdfPCell();
+                    supplierNameCell.AddElement(supplierNameData);
+                    supplierNameCell.Colspan = 2;
 
-            Chunk descriptionData = new Chunk(purchase.Description);
-            descriptionData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    Chunk supplierStreetAddressData = new Chunk("Add to Entity");
+                    supplierStreetAddressData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
 
-            descriptionCell.AddElement(descriptionData);
+                    supplierStreetAddressCell.AddElement(supplierStreetAddressData);
 
-            Chunk quantityData = new Chunk(purchase.Quantity.ToString());
-            quantityData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    Chunk supplierCityStateZipData = new Chunk("add csz to, entity");
+                    supplierCityStateZipData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
 
-            quantityCell.AddElement(quantityData);
+                    supplierCityStateZipCell.AddElement(supplierCityStateZipData);
 
-            Chunk costData = new Chunk(purchase.Cost.ToString("C"));
-            costData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    Chunk supplierPhoneEmailData = new Chunk("(607) 865-1234 sagahors@gmail.com");
+                    supplierPhoneEmailData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    
+                    supplierPhoneEmailCell.Rowspan = 2;
+                    supplierPhoneEmailCell.AddElement(supplierPhoneEmailData);
 
-            costCell.AddElement(costData);
+                    supplierContactTable.AddCell(supplierNameCell);
+                    supplierContactTable.AddCell(supplierStreetAddressCell);
+                    supplierContactTable.AddCell(supplierCityStateZipCell);
+                    supplierContactTable.AddCell(supplierPhoneEmailCell);
 
-            Chunk extData = new Chunk(purchase.ExtCost.ToString("C"));
-            extData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                    document.Add(supplierContactTable);
 
-            extCell.AddElement(extData);
 
-            Chunk tankData = new Chunk(purchase.Tank != null ? purchase.Tank.Name : "-unassigned-");
-            tankData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+                }
 
-            tankCell.AddElement(tankData);
+            #endregion
 
-            t.AddCell(descriptionCell);
-            t.AddCell(quantityCell);
-            t.AddCell(costCell);
-            t.AddCell(extCell);
-            t.AddCell(tankCell);
-        }
+            #region Section: Invoice Purchase Table Generation Methods...
+        
+                /// <summary>
+            /// Generate a table with headers, line item data, and footer summary rows
+            /// </summary>
+            /// <param name="purchaseTable">Table to which elements are added</param>
+            /// <param name="invoice">Invoice used to render purchase line item data rows</param>
+            /// <param name="document">Document to which table is added</param>
+                private void AddPurchasesTable(PurchaseInvoiceModel invoice, Document document)
+                {
+                    //Create a table to hold purchases associated with invoices
+                    PdfPTable purchaseTable = new PdfPTable(5);
+                        purchaseTable.SetWidths(new float[] { 150f, 20f, 40f, 40f, 75f });
 
-        private void AddPurchasesTable(PdfPTable t, PurchaseInvoiceModel invoice, Document document)
-        {
-            //Add header row to purchase table
-            AddInvoicePurchaseTableHeaderRow(t);
+                    //Add header row to purchase table
+                    AddInvoicePurchaseTableHeaderRow(purchaseTable);
 
-            //Generate table rows for each purchase on invoice, Add them to the table
-            invoice.Purchases.ForEach(p => AddInvoicePurchaseDataRow(p, t));
+                    //Generate table rows for each purchase on invoice, Add them to the table
+                    invoice.Purchases.ForEach(p => AddInvoicePurchaseDataRow(p, purchaseTable));
 
-            //Add purchase table summary footer
-            AddPurchaseTableSummaryFooter(t, invoice);
+                    //Add purchase table summary footer
+                    AddPurchaseTableSummaryFooter(purchaseTable, invoice);
 
-            //Add the table to the PDF document
-            document.Add(t);
-        }
+                    //Add the table to the PDF document
+                    document.Add(purchaseTable);
+                }
 
-        private void AddPurchaseTableSummaryFooter(PdfPTable t, PurchaseInvoiceModel invoice)
-        {
-            //Quantity total summary row
-            Paragraph quantityHeaderText = new Paragraph("Total Purchases: ");
-                quantityHeaderText.Alignment = Element.ALIGN_RIGHT;
-
-            PdfPCell quantityTotalSummaryHeader = new PdfPCell();
-                quantityTotalSummaryHeader.AddElement(quantityHeaderText);
-
-            PdfPCell quantityTotalSummaryValue = new PdfPCell();
-                quantityTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.Quantity).ToString()));
-                quantityTotalSummaryValue.Colspan = 4;
-
-            t.AddCell(quantityTotalSummaryHeader);
-            t.AddCell(quantityTotalSummaryValue);
-
-            //Subtotal cost summary row
-            Paragraph costHeaderText = new Paragraph("Purchase Subtotal: ");
-                costHeaderText.Alignment = Element.ALIGN_RIGHT;
-
-            PdfPCell costTotalSummaryHeader = new PdfPCell();
-                costTotalSummaryHeader.AddElement(costHeaderText);
-                costTotalSummaryHeader.Colspan = 3;
-
-            PdfPCell costTotalSummaryValue = new PdfPCell();
-                costTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.ExtCost).ToString("C")));
-                costTotalSummaryValue.Colspan = 2;
-
-            t.AddCell(costTotalSummaryHeader);
-            t.AddCell(costTotalSummaryValue);
-
-            //Tax summary row
-            var tax = (float)invoice.Purchases.Sum(p => p.ExtCost) * .08f;
-
-            Paragraph taxHeaderText = new Paragraph("Tax (8%): ");
-                taxHeaderText.Alignment = Element.ALIGN_RIGHT;
-
-            PdfPCell taxHeader = new PdfPCell();
-                taxHeader.AddElement(taxHeaderText);
-                taxHeader.Colspan = 3;            
-
-            PdfPCell taxValue = new PdfPCell();
-                taxValue.AddElement(new Chunk(tax.ToString("C")));
-                taxValue.Colspan = 2;
-
-            t.AddCell(taxHeader);
-            t.AddCell(taxValue);
-                        
-            var total = ((float)invoice.Purchases.Sum(p => p.ExtCost)) * 1.08f;
-
-            //If invoice purchases were ordered online and shipped, show shipping cost summary row
-            if (invoice.IsOnlineOrder)
+                private void AddInvoicePurchaseTableHeaderRow(PdfPTable t)
             {
-                var shipping = (float)invoice.ShippingCost;
+                PdfPHeaderCell descriptionHeaderCell = new PdfPHeaderCell();
+                descriptionHeaderCell.AddElement(new Chunk("Purchase Desctiption"));
 
-                Paragraph shippingHeaderText = new Paragraph("Shipping: ");
-                shippingHeaderText.Alignment = Element.ALIGN_RIGHT;
+                PdfPHeaderCell quantityHeaderCell = new PdfPHeaderCell();
+                quantityHeaderCell.AddElement(new Chunk("Qty"));
 
-                PdfPCell shippingHeader = new PdfPCell();
-                shippingHeader.AddElement(shippingHeaderText);
-                shippingHeader.Colspan = 3;
+                PdfPHeaderCell costHeaderCell = new PdfPHeaderCell();
+                costHeaderCell.AddElement(new Chunk("Cost"));
 
-                PdfPCell shippingValue = new PdfPCell();
-                shippingValue.AddElement(new Chunk(shipping.ToString("C")));
-                shippingValue.Colspan = 2;
+                PdfPHeaderCell extHeaderCell = new PdfPHeaderCell();
+                extHeaderCell.AddElement(new Chunk("Ext Cost"));
 
-                t.AddCell(shippingHeader);
-                t.AddCell(shippingValue);
+                PdfPHeaderCell tankHeaderCell = new PdfPHeaderCell();
+                tankHeaderCell.AddElement(new Chunk("Assigned Tank"));
 
-                total = total + shipping;
-            }                        
+                t.AddCell(descriptionHeaderCell);
+                t.AddCell(quantityHeaderCell);
+                t.AddCell(costHeaderCell);
+                t.AddCell(extHeaderCell);
+                t.AddCell(tankHeaderCell);
+            }
 
-            //Total cost summary row           
-            Paragraph totalHeaderText = new Paragraph("Invoice Total: ");
-                totalHeaderText.Alignment = Element.ALIGN_RIGHT;
+                private void AddInvoicePurchaseDataRow(PurchaseModel purchase, PdfPTable t)
+                {
+                    PdfPCell descriptionCell = new PdfPCell();
+                    PdfPCell quantityCell = new PdfPCell();
+                    PdfPCell costCell = new PdfPCell();
+                    PdfPCell extCell = new PdfPCell();
+                    PdfPCell tankCell = new PdfPCell();
 
-            PdfPCell totalHeader = new PdfPCell();
-                totalHeader.AddElement(totalHeaderText);
-                totalHeader.Colspan = 3;
+                    Chunk descriptionData = new Chunk(purchase.Description);
+                    descriptionData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                    descriptionCell.AddElement(descriptionData);
+
+                    Chunk quantityData = new Chunk(purchase.Quantity.ToString());
+                    quantityData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                    quantityCell.AddElement(quantityData);
+
+                    Chunk costData = new Chunk(purchase.Cost.ToString("C"));
+                    costData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                    costCell.AddElement(costData);
+
+                    Chunk extData = new Chunk(purchase.ExtCost.ToString("C"));
+                    extData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                    extCell.AddElement(extData);
+
+                    Chunk tankData = new Chunk(purchase.Tank != null ? purchase.Tank.Name : "-unassigned-");
+                    tankData.Font = FontFactory.GetFont(FontFactory.HELVETICA, 10f, BaseColor.BLACK);
+
+                    tankCell.AddElement(tankData);
+
+                    t.AddCell(descriptionCell);
+                    t.AddCell(quantityCell);
+                    t.AddCell(costCell);
+                    t.AddCell(extCell);
+                    t.AddCell(tankCell);
+                }
+
+                private void AddPurchaseTableSummaryFooter(PdfPTable t, PurchaseInvoiceModel invoice)
+            {
+                //Quantity total summary row
+                Paragraph quantityHeaderText = new Paragraph("Total Purchases: ");
+                    quantityHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                PdfPCell quantityTotalSummaryHeader = new PdfPCell();
+                    quantityTotalSummaryHeader.AddElement(quantityHeaderText);
+
+                PdfPCell quantityTotalSummaryValue = new PdfPCell();
+                    quantityTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.Quantity).ToString()));
+                    quantityTotalSummaryValue.Colspan = 4;
+
+                t.AddCell(quantityTotalSummaryHeader);
+                t.AddCell(quantityTotalSummaryValue);
+
+                //Subtotal cost summary row
+                Paragraph costHeaderText = new Paragraph("Purchase Subtotal: ");
+                    costHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                PdfPCell costTotalSummaryHeader = new PdfPCell();
+                    costTotalSummaryHeader.AddElement(costHeaderText);
+                    costTotalSummaryHeader.Colspan = 3;
+
+                PdfPCell costTotalSummaryValue = new PdfPCell();
+                    costTotalSummaryValue.AddElement(new Chunk(invoice.Purchases.Sum(p => p.ExtCost).ToString("C")));
+                    costTotalSummaryValue.Colspan = 2;
+
+                t.AddCell(costTotalSummaryHeader);
+                t.AddCell(costTotalSummaryValue);
+
+                //Tax summary row
+                var tax = (float)invoice.Purchases.Sum(p => p.ExtCost) * .08f;
+
+                Paragraph taxHeaderText = new Paragraph("Tax (8%): ");
+                    taxHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                PdfPCell taxHeader = new PdfPCell();
+                    taxHeader.AddElement(taxHeaderText);
+                    taxHeader.Colspan = 3;            
+
+                PdfPCell taxValue = new PdfPCell();
+                    taxValue.AddElement(new Chunk(tax.ToString("C")));
+                    taxValue.Colspan = 2;
+
+                t.AddCell(taxHeader);
+                t.AddCell(taxValue);
                         
-            PdfPCell totalValue = new PdfPCell();
+                var total = ((float)invoice.Purchases.Sum(p => p.ExtCost)) * 1.08f;
+
+                //If invoice purchases were ordered online and shipped, show shipping cost summary row
+                if (invoice.IsOnlineOrder)
+                {
+                    var shipping = (float)invoice.ShippingCost;
+
+                    Paragraph shippingHeaderText = new Paragraph("Shipping: ");
+                    shippingHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                    PdfPCell shippingHeader = new PdfPCell();
+                    shippingHeader.AddElement(shippingHeaderText);
+                    shippingHeader.Colspan = 3;
+
+                    PdfPCell shippingValue = new PdfPCell();
+                    shippingValue.AddElement(new Chunk(shipping.ToString("C")));
+                    shippingValue.Colspan = 2;
+
+                    t.AddCell(shippingHeader);
+                    t.AddCell(shippingValue);
+
+                    total = total + shipping;
+                }                        
+
+                //Total cost summary row           
+                Paragraph totalHeaderText = new Paragraph("Invoice Total: ");
+                    totalHeaderText.Alignment = Element.ALIGN_RIGHT;
+
+                PdfPCell totalHeader = new PdfPCell();
+                    totalHeader.AddElement(totalHeaderText);
+                    totalHeader.Colspan = 3;
+                        
+                PdfPCell totalValue = new PdfPCell();
             
-            totalValue.AddElement(new Chunk(total.ToString("C")));
-            totalValue.Colspan = 2;
+                totalValue.AddElement(new Chunk(total.ToString("C")));
+                totalValue.Colspan = 2;
 
-            t.AddCell(totalHeader);
-            t.AddCell(totalValue);
+                t.AddCell(totalHeader);
+                t.AddCell(totalValue);
 
-        }
+            }
+
+                private void InsertDocumentLineBreak(Document document, bool spaceAfter = true, bool spaceBefore = true)
+                {
+                    Paragraph paragraph = new Paragraph();
+                    
+                    if (spaceBefore)
+                    {
+                        paragraph.SpacingBefore = 10;
+                    }
+
+                    if (spaceBefore)
+                    {
+                        paragraph.SpacingAfter = 10;
+                    }
+                                                    
+                    document.Add(paragraph);
+                }
+
+            #endregion                    
 
         #endregion
     }
