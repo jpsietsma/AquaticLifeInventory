@@ -39,8 +39,11 @@ namespace AQLI.UI
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            //inject EF context wrapper factory class
+            //inject EF context wrapper factory service
             services.AddTransient<DataFactory>();
+
+            //inject Barcode Factory service
+            services.AddTransient<BarcodeFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

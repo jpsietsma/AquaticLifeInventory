@@ -12,18 +12,23 @@ using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
+using static AQLI.DataServices.BarcodeConfig;
+using System.Drawing.Imaging;
+
 namespace AQLI.UI.Controllers
 {
     public class ExportController : Controller
     {
         private readonly DatabaseContext Database;
         private readonly DataFactory DataSource;
+        private readonly BarcodeFactory BarcodeFactory;
 
 
-        public ExportController(DatabaseContext _context, DataFactory _factory)
+        public ExportController(DatabaseContext _context, DataFactory _factory, BarcodeFactory _barFactory)
         {
             Database = _context;
             DataSource = _factory;
+            BarcodeFactory = _barFactory;
         }
 
         #region Section: Purchase Invoice Export Methods...
@@ -166,7 +171,15 @@ namespace AQLI.UI.Controllers
                     document.NewPage();                    
 
                     //Add table with supplier contact information and AQL logo
-                    AddInvoiceSupplierContactHeaderTable(invoice.Store, document);                                       
+                    AddInvoiceSupplierContactHeaderTable(invoice.Store, document);
+                
+                    //Testing barcodes
+                    Image barcode = GetBarcodeImage(invoice);
+                        barcode.ScaleAbsoluteHeight(35f);
+                        barcode.ScaleAbsoluteWidth(250f);
+                        barcode.Alignment = Element.ALIGN_RIGHT;
+
+                    document.Add(barcode);
 
                     //Add Spacing Between Supplier Header and Purchase Line Item table
                     InsertDocumentLineBreak(document);
@@ -252,7 +265,7 @@ namespace AQLI.UI.Controllers
                     AddAQLInvoiceLogo(logoCell);
 
                     containerTable.AddCell(logoCell);
-                    
+
                     document.Add(containerTable);
                     //document.Add(supplierContactTable);
                 }
@@ -265,6 +278,11 @@ namespace AQLI.UI.Controllers
                         logoImage.ScaleAbsoluteHeight(150f);
 
                     cell.AddElement(logoImage);
+                }
+
+                private Image GetBarcodeImage(PurchaseInvoiceModel invoice)
+                {
+                    return Image.GetInstance(BarcodeFactory.GenerateBarcode(invoice.PurchaseInvoiceID, BarcodeTypes.Invoice), ImageFormat.Png);
                 }
 
             #endregion
