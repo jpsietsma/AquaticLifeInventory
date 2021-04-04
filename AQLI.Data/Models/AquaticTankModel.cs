@@ -14,7 +14,10 @@ namespace AQLI.Data.Models
         public string Description { get; set; }
         public double Capacity { get; set; }
         public DateTime? Added { get; set; }
+
         public bool IsActive { get; set; }
+        public bool IsMaintenance { get; set; }
+        public bool IsQuarantine { get; set; }
 
         public int TankTypeID { get; set; }
         public TankTypeModel TankType { get; set; }
@@ -30,6 +33,9 @@ namespace AQLI.Data.Models
 
         public int EnvironmentID { get; set; }
         public EnvironmentModel Environment { get; set; }
+
+        public int PurchaseID { get; set; }
+        public PurchaseModel Purchase { get; set; }
 
         public int OwnerID { get; set; }
         [NotMapped]

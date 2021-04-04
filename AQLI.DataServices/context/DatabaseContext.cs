@@ -73,6 +73,9 @@ namespace AQLI.DataServices.context
                 .WithMany(t => t.Tanks)
                 .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(p => p.Purchase)
+                .WithOne();
+            modelBuilder.Entity<AquaticTankModel>()
                 .HasOne(tt => tt.TankType)
                 .WithMany(t => t.Tanks)
                 .OnDelete(DeleteBehavior.SetNull);

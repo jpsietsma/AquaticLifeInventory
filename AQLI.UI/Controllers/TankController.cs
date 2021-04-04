@@ -58,8 +58,6 @@ namespace AQLI.UI.Controllers
         {
             if (_dataModel.TankID == 0)
             {
-                _dataModel.Owner = UserModel;
-                _dataModel.OwnerID = UserModel.UserId;
                 DataSource.Add_Tank(_dataModel);
             }
             else

@@ -65,8 +65,6 @@
         }
 
 
-        Tank.CreateCapacitySlider();
-
         $('#addEditForm').parsley().on('form:submit', function () {
             //Send the form data to the server ajax
             saveFormDataPost($('#addEditForm'),
@@ -95,26 +93,6 @@
     HideCard: function (cardId) {
         $(cardId).hide();
         console.log(cardId);
-    },
-    CreateCapacitySlider: function () {
-
-        var $slider = $("#slider").slider({
-            value: 0,
-            min: 5,
-            max: 125,
-            step: 5,
-            slide: function (event, ui) {
-
-            }
-        });
-
-        var max = $slider.slider("option", "max");
-        var spacing = 100 / (max - 1);
-
-        $slider.find('.ui-slider-tick-mark').remove();
-        for (var i = 0; i < max; i++) {
-            $('<span class="ui-slider-tick-mark"></span>').css('left', (spacing * i) + '%').appendTo($slider);
-        }
     }
 }
 

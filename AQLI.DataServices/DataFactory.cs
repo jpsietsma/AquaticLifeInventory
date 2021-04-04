@@ -45,6 +45,7 @@ namespace AQLI.DataServices
                     .Include(tem => tem.Temporment)
                     .Include(env => env.Environment)
                     .Include(tt => tt.TankType)
+                    .Include(pr => pr.Purchase)
                     .ToList();
         }
 
@@ -193,7 +194,14 @@ namespace AQLI.DataServices
         /// <param name="_dataModel">Data Model representing the tank to add</param>
         public AquaticTankModel Add_Tank(AquaticTankModel _dataModel)
         {
+            PurchaseModel purchaseModel = List_Purchases().Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
+
             Database.Tank.Add(_dataModel);
+            Database.SaveChanges();
+
+            purchaseModel.TankID = _dataModel.TankID;
+
+            Database.Purchases.Update(purchaseModel);
             Database.SaveChanges();
 
             return _dataModel;

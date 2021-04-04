@@ -3,12 +3,17 @@
 @using AQLI.DataServices;
 @using AQLI.DataServices.context;
 @using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Identity;
 @using Microsoft.AspNetCore.Http;
-
 
 @model AquaticTankModel;
 @inject DataFactory DataSource;
 @inject DatabaseContext Database;
+@inject UserManager<WebsiteUser> UserManager;
+
+@{
+    var WebsiteUser = await UserManager.GetUserAsync(User);
+}
 
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -22,8 +27,33 @@
             <form id="addEditForm" method="post" asp-controller="Tank" asp-action="_Save" asp-antiforgery="true" data-parsley-validate>
                 <input type="hidden" name="TankId" value="@Model.TankID" />
                 <input type="hidden" name="Added" value="@(DateTime.Now)" />
-                <input type="hidden" id="Active" name="IsActive" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.IsActive)" />
-                <input type="hidden" id="Capacity" name="Capacity" value="@Model.Capacity" />
+                <input type="hidden" id="OwnerID" name="OwnerID" value="@WebsiteUser.UserId" />
+                
+                <!-- Tank Purchase Record -->
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="control-label">Purchase Record</label>
+                            <select id="PurchaseID" class="form-control" name="PurchaseID" required>
+                                @if (DataSource.List_TankTypes().Count() > 0)
+                                {
+                                    <option value="">-- Choose Purchase Record --</option>
+
+                                    foreach (PurchaseModel purchase in DataSource.List_Purchases().Where(p => p.PurchaseCategoryID == 8 && p.TankID == null))
+                                    {
+                                        <option value="@(purchase.PurchaseID)">@("#" + purchase.PurchaseID + " -- " + purchase.Date + " -- " + purchase.Store.StoreName + " -- " + purchase.Description)</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="">-- No Tank Purchase Records Found --</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Tank Name, Capacity, and Water Type form row -->
                 <div class="form-row">
                     <div class="col-4">
@@ -35,7 +65,23 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label class="control-label">Tank Capacity</label>
-                            <div id="slider"></div>
+                            <select id="Capacity" class="form-control" name="Capacity" required>
+                                <option value="">-- Choose Capacity (gallons) --</option>
+                                <option value="1">1g</option>
+                                <option value="2">2g</option>
+                                <option value="5">5g</option>
+                                <option value="10">10g</option>
+                                <option value="15">15g</option>
+                                <option value="20">20g</option>
+                                <option value="29">29g</option>
+                                <option value="30">30g</option>
+                                <option value="40">40g</option>
+                                <option value="55">55g</option>
+                                <option value="60">60g</option>
+                                <option value="75">75g</option>
+                                <option value="100">100g</option>
+                                <option value="125">125g</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-4">
@@ -196,18 +242,28 @@
                 <!-- Status Checkboxes form group form row -->
                 <div class="form-row">
                     <div class="col-4">
+                        <label class="control-label">Active</label>
+                        <select id="IsActive" class="form-control" name="IsActive" required>
+                            <option value="true">Yes </option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
                         <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" checked="@(Model.IsActive)" />Active</label>
+                            <label class="control-label">Maintenance Mode</label>
+                            <select id="IsMaintenance" class="form-control" name="IsMaintenance" required>
+                                <option value="false">No </option>
+                                <option value="true">Yes</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Maintenance</label>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" />Quarantine</label>
+                            <label class="control-label">Quarantine Mode</label>
+                            <select id="IsQuarantine" class="form-control" name="IsQuarantine" required>
+                                <option value="false">No </option>
+                                <option value="true">Yes</option>
+                            </select>
                         </div>
                     </div>
                 </div>
