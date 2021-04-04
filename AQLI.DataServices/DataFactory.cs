@@ -297,9 +297,14 @@ namespace AQLI.DataServices
         /// <param name="id">ID of the tank to remove</param>
         public void Remove_UserTank(int id)
         {
-            var model = Database.Tank.Where(t => t.TankID == id).First();
-            
-            Database.Tank.Remove(model);
+            var tankModel = Database.Tank.Where(t => t.TankID == id).First();
+
+            var purchase = Database.Purchases.Where(t => t.TankID == id).FirstOrDefault();
+                purchase.TankID = null;
+
+            Database.Purchases.Update(purchase);
+            Database.Tank.Remove(tankModel);
+
             Database.SaveChanges();
         }
 
