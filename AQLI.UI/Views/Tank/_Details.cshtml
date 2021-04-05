@@ -37,11 +37,21 @@
                             <select id="PurchaseID" class="form-control" name="PurchaseID" required>
                                 @if (DataSource.List_TankTypes().Count() > 0)
                                 {
-                                    <option value="">-- Choose Purchase Record --</option>
-
-                                    foreach (PurchaseModel purchase in DataSource.List_Purchases().Where(p => p.PurchaseCategoryID == 8 && p.TankID == null))
+                                    if (Model.TankID != 0)
                                     {
-                                        <option value="@(purchase.PurchaseID)">@("#" + purchase.PurchaseID + " -- " + purchase.Date + " -- " + purchase.Store.StoreName + " -- " + purchase.Description)</option>
+                                        foreach (PurchaseModel purchase in DataSource.List_Purchases().Where(p => p.PurchaseID == Model.PurchaseID))
+                                        {
+                                            <option value="@(purchase.PurchaseID)">@("#" + purchase.PurchaseID + " -- " + purchase.Date + " -- " + purchase.Store.StoreName + " -- " + purchase.Description)</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">-- Choose Purchase Record --</option>
+
+                                        foreach (PurchaseModel purchase in DataSource.List_Purchases().Where(p => p.PurchaseCategoryID == 8 && p.TankID == null))
+                                        {
+                                            <option value="@(purchase.PurchaseID)">@("#" + purchase.PurchaseID + " -- " + purchase.Date + " -- " + purchase.Store.StoreName + " -- " + purchase.Description)</option>
+                                        }
                                     }
                                 }
                                 else
