@@ -6,11 +6,18 @@
 @using System.Linq;
 @using AQLI.Data.Models;
 @using AQLI.DataServices;
+@using Microsoft.AspNetCore.Identity;
 
 @inject DataFactory DataSource
+@inject UserManager<WebsiteUser> UserManager 
 
 @section Style {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
+}
+
+@{ 
+    var user = await UserManager.GetUserAsync(User);
+
 }
 
 <style>
@@ -27,7 +34,7 @@
         <hr class="col-8" />
     </div>
     <div name="tankCards" class="row justify-content-center">
-        @foreach (var item in DataSource.List_UserTanks(Model.UserId))
+        @foreach (var item in DataSource.List_UserTanks(user.UserId))
         {
             <!-- Favorite tank cards -->
             <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
@@ -48,7 +55,7 @@
                 </div>
             </div>
         }
-        @if (DataSource.List_UserTanks(Model.UserId).Count() == 0)
+        @if (DataSource.List_UserTanks(user.UserId).Count() == 0)
         {
             <!-- Add tank card -->
             <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
@@ -83,31 +90,49 @@
         <div class="col-9 text-center">
             <ul class="nav nav-tabs nav-justified">
                 <li class="nav-item">
-                    <a href="#tanks_tab" class="nav-link active" data-toggle="tab">My Tanks</a>
+                    <a href="#tanks_tab" class="nav-link active" data-toggle="tab"> <img src="~/images/icons/TankStatus_Established_Active.png" height="50" width="50" /> 
+                    <br />My Tanks
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#fish_tab" class="nav-link" data-toggle="tab">Fish</a>
+                    <a href="#fish_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Fish_Header.png" height="50" width="50" />
+                    <br />Fish
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#supplies_tab" class="nav-link" data-toggle="tab">Supplies</a>
+                    <a href="#supplies_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Supplies_Header.png" height="50" width="50" />
+                    <br />Supplies
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#maintenance_tab" class="nav-link" data-toggle="tab">Maintenance</a>
+                    <a href="#maintenance_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Maintenance_Header.png" height="50" width="50" />
+                    <br />Maintenance
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#medical_tab" class="nav-link" data-toggle="tab">Medical Records</a>
+                    <a href="#medical_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Medical_Header.png" height="50" width="50" />
+                    <br />Medical Records
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#inventory_tab" class="nav-link" data-toggle="tab">Equipment</a>
+                    <a href="#inventory_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Equipment_Header.png" height="50" width="75" />
+                    <br />Equipment
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#incident_tab" class="nav-link" data-toggle="tab">Incident Reports</a>
+                    <a href="#incident_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Report_Header.png" height="50" width="65" />
+                        <br />Reporting
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#notifications_tab" class="nav-link" data-toggle="tab">Notifications <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i></a>
+                    <a href="#notifications_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Notification_Header.png" height="50" width="50" />
+                    <br />Notifications <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#purchases_tab" class="nav-link" data-toggle="tab">Invoices</a>
+                    <a href="#purchases_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Invoice_Header.png" width="50" height="50" />
+                    <br />Invoices
+                    </a>
                 </li>
             </ul>
 

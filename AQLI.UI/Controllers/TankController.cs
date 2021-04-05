@@ -29,13 +29,13 @@ namespace AQLI.UI.Controllers
         {
             _logger = logger;
             DataSource = _dataFactory;
-            UserManager = _userManager;
-            
-            UserModel = new WebsiteUser { Id = "1", FirstName = "Jimmy", LastName = "Sietsma" };
+            UserManager = _userManager;                        
         }
 
         public IActionResult Index()
         {
+            UserModel = UserManager.GetUserAsync(User).Result;
+
             return View(UserModel);
         }                
 
