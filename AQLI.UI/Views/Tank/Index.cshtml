@@ -29,14 +29,14 @@
 <div class="grid">
     <div class="row">
         <div class="col-8 text-center">
-            <h2 class="display-9 col-8">Established Tanks:</h2>
+            <h2 class="display-9 col-8">@user.FirstName's Home Dashboard</h2>
         </div>
-        <hr class="col-8" />
+        <br />
     </div>
-    <div name="tankCards" class="row justify-content-center">
-        @foreach (var item in DataSource.List_UserTanks(user.UserId))
+    <div name="tankCards" class="row justify-content-center" style="display:none">
+        @foreach (var item in DataSource.List_UserTanks(user.UserId).Where(t => t.IsActive))
         {
-            <!-- Favorite tank cards -->
+            <!-- Established tank cards -->
             <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
                 <div class="card-header text-lg-center">
                     @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankID)
@@ -167,7 +167,7 @@
                 </div>
                 <!-- alerts tab -->
                 <div class="tab-pane container fade" id="notifications_tab">
-                    <partial name="tabs/_Tab_Notifications" model="Model" />
+                    <partial name="tabs/_Tab_Notifications" />
                 </div>
                 <!-- purchases tab -->
                 <div class="tab-pane container fade" id="purchases_tab">

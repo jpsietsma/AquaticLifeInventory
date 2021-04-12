@@ -1,0 +1,42 @@
+﻿@model AQLI.Data.Models.UserFishModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Fish Details: @Html.DisplayFor(model => model.FishName)</h1>
+
+<div>
+    <h4>UserFishModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EncumbranceMultiplier)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EncumbranceMultiplier)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FishType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FishType.CreatureTypeID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Purchase)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Purchase.PurchaseID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tank)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Tank.TankID)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.UserFishID">Edit</a> |
+    <a asp-action="Dashboard">Back to List</a>
+</div>

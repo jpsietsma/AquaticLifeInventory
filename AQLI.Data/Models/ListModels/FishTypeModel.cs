@@ -10,7 +10,7 @@ namespace AQLI.Data.Models.ListModels
         [Key]
         public int CreatureTypeID { get; set; }
         public string TypeName { get; set; }
-        public float TankPopulationEncumbrance { get; set; }
+        public double TankPopulationEncumbrance { get; set; }
         public string FishTypeImagePath { get; set; }
         public int FishMinTankSize { get; set; }
 
@@ -18,7 +18,7 @@ namespace AQLI.Data.Models.ListModels
         public FishFamilyModel FishFamily { get; set; }
 
         public int FishFeederTypeID { get; set; }
-        public FishFeedingTypeModel FishFeedingType { get; set; }
+        public FishFeedingTypeModel FishFeederType { get; set; }
 
         public int BirthingTypeID { get; set; }
         public BirthingTypeModel BirthingType { get; set; }
@@ -32,7 +32,7 @@ namespace AQLI.Data.Models.ListModels
         public int WaterTypeID { get; set; }
         public WaterTypeModel WaterType { get; set; }
 
-        public int CareGuideID { get; set; }
+        public int? CareGuideID { get; set; }
         public CareGuideModel CareGuide { get; set; }
 
     }

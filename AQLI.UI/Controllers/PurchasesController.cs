@@ -95,22 +95,35 @@ namespace AQLI.UI.Controllers
             foreach (PurchaseModel purchaseModel in _purchaseList)
             {
                 purchaseModel.Date = _dataModel.PurchaseDate.ToString();
-                purchaseModel.TankID = _dataModel.TankID;
                 purchaseModel.StoreID = _dataModel.StoreID;
-                //purchaseModel.InvoiceID = invoicePK;
+                purchaseModel.OwnerID = _dataModel.OwnerID;
 
                 _dataModel.Purchases.Add(purchaseModel);
 
-                //if (purchaseModel.PurchaseID == 0)
-                //{
-                //    Insert new purchase record
-                //    DataSource.Add_Purchase(purchase);
-                //}
-                //else
-                //{
-                //    Update purchases to the database
-                //    DataSource.Update_Purchase(purchase);
-                //}
+                switch (purchaseModel.PurchaseCategoryID)
+                {
+                    //Live fish purchase, add record to UserFish
+                    case 1:
+                    case 6:
+                        {
+                            break;
+                        }
+                    //Live plant purchase, add record to UserPlant
+                    case 2:
+                        {
+                            break;
+                        }
+                    //Supply purchase, add record to UserSupply
+                    case 3:
+                    case 4:
+                    case 7:
+                    case 26:
+                        {
+                            break;
+                        }
+                    default:
+                        break;
+                }                
             }
 
             var modelList = _dataModel.Purchases;

@@ -37,6 +37,9 @@ namespace AQLI.DataServices.context
         public DbSet<IdentityUserToken<string>> AspNetUserTokens { get; set; }
 
         public DbSet<NotificationModel> Notification { get; set; }
+        public DbSet<NotificationPriorityLevelModel> NotificationPriorityLevels { get; set; }
+
+        public DbSet<UserFishModel> UserFish { get; set; }
         
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -54,6 +57,15 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<PurchaseModel>().HasKey("PurchaseID");
             modelBuilder.Entity<PurchaseCategoryModel>().HasKey("PurchaseCategoryID");
             modelBuilder.Entity<StoreModel>().HasKey("StoreID");
+            modelBuilder.Entity<NotificationPriorityLevelModel>().HasKey("NotificationPriorityLevelID");
+            modelBuilder.Entity<FishTypeModel>().HasKey("CreatureTypeID");
+
+            #region Section: NotificationModel modelBuilders
+            modelBuilder.Entity<NotificationModel>()
+                .HasOne(o => o.WebsiteUser)
+                .WithMany(u => u.Notifications)
+                .HasPrincipalKey(o => o.UserId);
+            #endregion
 
             #region Section: AquaticTankModel modelbuilders
             modelBuilder.Entity<AquaticTankModel>()

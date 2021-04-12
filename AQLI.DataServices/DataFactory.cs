@@ -1,4 +1,5 @@
 ﻿using AQLI.Data.Models;
+using AQLI.Data.Models.ListModels;
 using AQLI.DataServices.context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -47,6 +48,47 @@ namespace AQLI.DataServices
                     .Include(tt => tt.TankType)
                     .Include(pr => pr.Purchase)
                     .ToList();
+        }
+
+        /// <summary>
+        /// List notifications with loaded dependent entities
+        /// </summary>
+        public List<NotificationModel> List_Notifications()
+        {
+            var data = Database.Notification
+                .Include(np => np.NotificationPriorityLevel)
+                .ToList();
+
+            return data;
+        }
+
+        public List<NotificationModel> List_PendingNotifications()
+        {
+            var data = Database.Notification
+                .Include(np => np.NotificationPriorityLevel)
+                .Where(n => n.AcknowledgedDate == null)
+                .ToList();
+
+            return data;
+        }
+
+        public NotificationModel Add_Notification(NotificationModel _modelData)
+        {
+            var finalModel = new NotificationModel { 
+                                                        AcknowledgedDate = _modelData.AcknowledgedDate,
+                                                        Message = _modelData.Message,
+                                                        MitigatedDate = _modelData.MitigatedDate,
+                                                        NotificationID = _modelData.NotificationID,
+                                                        NotificationPriorityLevelID = _modelData.NotificationPriorityLevelID,
+                                                        TankID = _modelData.TankID,
+                                                        TriggeredDate = _modelData.TriggeredDate,
+                                                        WebsiteUserID = _modelData.WebsiteUserID         
+                                                    };
+
+            Database.Notification.Add(finalModel);
+            Database.SaveChanges();
+
+            return finalModel;
         }
 
         /// <summary>
@@ -126,6 +168,15 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// Return all fish types
+        /// </summary>
+        public List<FishTypeModel> List_FishTypes()
+        {
+            return Database.FishTypes
+                .ToList();
+        }
+
+        /// <summary>
         /// List all website users
         /// </summary>
         public List<WebsiteUser> List_Users()
@@ -186,6 +237,35 @@ namespace AQLI.DataServices
         {
             return Database.CreatureType
                 .ToList();
+        }
+
+        /// <summary>
+        /// List all of the UserFish records, or just for a particular user
+        /// </summary>
+        /// <param name="UserID">ID of the user for records</param>
+        public List<UserFishModel> List_UserFish(int? UserID)
+        {
+            List<UserFishModel> _final = new List<UserFishModel>();
+
+            if (UserID.HasValue)
+            {
+                _final = Database.UserFish
+                    .Include(p => p.Purchase)                    
+                    .Include(t => t.Tank)
+                    .Include(ft => ft.FishType)
+                    .Where(u => u.Purchase.OwnerID == UserID)
+                    .ToList();
+            }
+            else
+            {
+                _final = Database.UserFish
+                    .Include(p => p.Purchase)
+                    .Include(ft => ft.FishType)
+                    .Include(t => t.Tank)
+                    .ToList();
+            }
+
+            return _final;
         }
 
         /// <summary>
@@ -292,6 +372,18 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// Add a UserFish record when a purchase is added
+        /// </summary>
+        /// <param name="_dataModel">data model representing UserFish record to be added</param>
+        public async Task<UserFishModel> Add_UserFish(UserFishModel _dataModel)
+        {
+            Database.UserFish.Add(_dataModel);
+            await Database.SaveChangesAsync();
+
+            return _dataModel;
+        }
+
+        /// <summary>
         /// Remove a Tank from the database.
         /// </summary>
         /// <param name="id">ID of the tank to remove</param>
@@ -306,6 +398,17 @@ namespace AQLI.DataServices
             Database.Tank.Remove(tankModel);
 
             Database.SaveChanges();
+        }
+
+        /// <summary>
+        /// Remove a user fish record
+        /// </summary>
+        /// <param name="_dataModel">data model representing UserFish record to remove</param>
+        public async Task Remove_UserFish(UserFishModel _dataModel)
+        {
+            Database.UserFish.Remove(_dataModel);
+
+            await Database.SaveChangesAsync();
         }
 
     }

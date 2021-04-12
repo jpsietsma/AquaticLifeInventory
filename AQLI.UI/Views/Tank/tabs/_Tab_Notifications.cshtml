@@ -1,1 +1,123 @@
-﻿Notifications!
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices.context;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Identity;
+
+@inject DatabaseContext Database;
+@inject DataFactory DataSource;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/Purchases/Purchases.css" />
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table id="NotificationTable" class="table table-bordered table-light table-striped table-hover sdn-purchase-table col-12" border="1">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+
+                        </th>
+                        <th>
+                            Priority
+                        </th>
+                        <th>
+                            Triggered
+                        </th>
+                        <th>
+                            Mitigated
+                        </th>
+                        <th>
+                            Acknowledged
+                        </th>
+                        <th>
+                            Message
+                        </th>
+                        <th>
+                            Tank Name
+                        </th>
+                        <th>
+                            Owned By
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="sdn-purchase-table-body">
+                    @foreach (NotificationModel notificationRecord in DataSource.List_Notifications())
+                    {
+                        <tr class="sdn-purchase-table-row" data-id="@notificationRecord.NotificationID">
+                            <td class="sdn-purchase-table-cell">
+                                @switch (notificationRecord.NotificationPriorityLevel.NotificationPriority)
+                                {
+                                    case 0:
+                                    {
+                                        <i class="fa fa-info-circle" style="color:cornflowerblue; height: 25px; width: 25px;"></i>
+                                        break;
+                                    }
+                                    case 1:
+                                    case 2:
+                                    case 3:
+                                    {
+                                        <i class="fas fa-arrow-alt-circle-down" style="color: green; height: 25px; width: 25px;"></i>
+                                        break;
+                                    }
+                                    case 4:
+                                    case 5:
+                                    case 6:
+                                    {
+                                        <i class="fas fa-arrow-alt-circle-right" style="color: goldenrod; height: 25px; width: 25px;"></i>
+                                        break;
+                                    }
+                                    case 7:
+                                    case 8:
+                                    case 9:
+                                    {
+                                        <i class="fas fa-arrow-alt-circle-up" style="color: red; height: 25px; width: 25px;"></i>
+                                        break;
+                                    }
+                                    default:
+                                    {
+                                        <i class="fa fa-info-circle" style="color:cornflowerblue; height: 25px; width: 25px;"></i>
+                                        break;
+                                    }                                       
+                                }
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @notificationRecord.NotificationPriorityLevel.NotificationPriorityLevelName
+                            </td>
+                            <td class="sdn-purchase-table-cell" style="font-size: small">
+                                @notificationRecord.TriggeredDate
+                            </td>
+                            <td class="sdn-purchase-table-cell" style="font-size: small">
+                                @notificationRecord.MitigatedDate
+                            </td>
+                            <td class="sdn-purchase-table-cell" style="font-size: small">
+                                @if (notificationRecord.AcknowledgedDate == null)
+                                {
+                                    <button type="button" data-id="@notificationRecord.NotificationID" class="btn-sm btn-success sdn-assign-purchase">Acknowledge</button>
+                                }
+                                else
+                                {
+                                    @notificationRecord.AcknowledgedDate
+                                }
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @notificationRecord.Message
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @notificationRecord.Tank.Name
+                            </td>
+                            <td class="sdn-purchase-table-cell">
+                                @notificationRecord.WebsiteUser.FirstName @notificationRecord.WebsiteUser.LastName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Purchases/Purchases.js"></script>
+}

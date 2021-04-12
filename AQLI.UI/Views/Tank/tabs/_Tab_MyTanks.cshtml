@@ -4,11 +4,14 @@
 @model WebsiteUser;
 @inject DataFactory DataSource;
 
-<div class="justify-content-center">
+<div class="justify-content-start">
     <div class="row mx-auto">
+        <br />
         <div class="col-lg-12 float-left">
-            <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(0)"><i class="fas fa-fish text-white"></i> Establish Tank</button>
+            <button type="button" class="btn btn-sm btn-success" onclick="Tank.openModal(0)"><i class="fas fa-fish text-white"></i> Establish New Tank</button>
         </div>
+        <br />
+        <br />
     </div>
     @if (DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId).Count() > 0)
     {

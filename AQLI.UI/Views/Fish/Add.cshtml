@@ -1,0 +1,77 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Identity;
+
+@model AQLI.Data.Models.UserFishModel
+
+@inject UserManager<WebsiteUser> UserDetails;
+@inject DataFactory DataSource;
+
+@{
+    ViewData["Title"] = "Add";
+
+    var user = await UserDetails.GetUserAsync(User);
+}
+
+<h1>Create New Fish</h1>
+
+<h4>Fish Details</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateUserFish">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="EncumbranceMultiplier" class="control-label"></label>
+                <input asp-for="EncumbranceMultiplier" class="form-control" />
+                <span asp-validation-for="EncumbranceMultiplier" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishName" class="control-label"></label>
+                <input asp-for="FishName" class="form-control" />
+                <span asp-validation-for="FishName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishTypeID" class="control-label"></label>
+                <select asp-for="FishTypeID" class="form-control" asp-items="ViewBag.FishTypeID" required>
+                    <option value="null">-- Select Fish Type --</option>
+                    @foreach (var fishType in DataSource.List_FishTypes())
+                    {
+                        <option value="@fishType.CreatureTypeID">@fishType.TypeName</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PurchaseID" class="control-label"></label>
+                <select asp-for="PurchaseID" class="form-control" asp-items="ViewBag.PurchaseID" required>
+                    <option value="null">-- Select Purchase Record --</option>
+                    @foreach (var purchaseDetails in DataSource.List_Purchases().Where(pc => pc.PurchaseCategoryID == 1 || pc.PurchaseCategoryID == 6))
+                    {
+                        <option value="@purchaseDetails.PurchaseID">@purchaseDetails.Date + "--" + @purchaseDetails.Store.StoreName + "--" + @purchaseDetails.Description</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TankID" class="control-label"></label>
+                <select asp-for="TankID" class="form-control" asp-items="ViewBag.TankID">
+                    <option value="null">-- Assign To Tank --</option>
+                    @foreach (var tankDetails in DataSource.List_UserTanks(user.UserId))
+                    {
+                        <option value="@tankDetails.TankID">@tankDetails.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Dashboard">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
