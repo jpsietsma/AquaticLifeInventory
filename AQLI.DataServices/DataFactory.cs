@@ -31,6 +31,7 @@ namespace AQLI.DataServices
                     .Include(tem => tem.Temporment)
                     .Include(env => env.Environment)
                     .Include(tt => tt.TankType)
+                    .Include(fp => fp.UserFish)
                     .Where(t => t.TankID == id)
                     .FirstOrDefault();
         }
@@ -47,6 +48,7 @@ namespace AQLI.DataServices
                     .Include(env => env.Environment)
                     .Include(tt => tt.TankType)
                     .Include(pr => pr.Purchase)
+                    .Include(fp => fp.UserFish)
                     .ToList();
         }
 

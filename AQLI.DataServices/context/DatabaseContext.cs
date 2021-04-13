@@ -92,6 +92,9 @@ namespace AQLI.DataServices.context
                 .WithMany(t => t.Tanks)
                 .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
+                .HasMany(fp => fp.UserFish)
+                .WithOne(t => t.Tank);
+            modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();
             #endregion
 

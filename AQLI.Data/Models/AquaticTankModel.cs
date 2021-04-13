@@ -41,13 +41,12 @@ namespace AQLI.Data.Models
         [NotMapped]
         public WebsiteUser Owner { get; set; }
 
-        public List<FishCreatureModel> FishPopulation { get; set; }
+        public List<UserFishModel> UserFish { get; set; }
         public List<TankInventoryRecordModel> InventoryRecords { get; set; }        
 
         public AquaticTankModel(WebsiteUser _tankOwner = null)
         {
             InventoryRecords = new List<TankInventoryRecordModel>();            
-            FishPopulation = new List<FishCreatureModel>();
 
             if (_tankOwner != null)
             {
@@ -58,7 +57,6 @@ namespace AQLI.Data.Models
         public AquaticTankModel()
         {
             InventoryRecords = new List<TankInventoryRecordModel>();
-            FishPopulation = new List<FishCreatureModel>();
         }               
 
     }

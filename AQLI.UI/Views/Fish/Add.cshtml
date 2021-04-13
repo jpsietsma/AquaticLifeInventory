@@ -55,7 +55,7 @@
                 <label asp-for="TankID" class="control-label"></label>
                 <select asp-for="TankID" class="form-control" asp-items="ViewBag.TankID">
                     <option value="null">-- Assign To Tank --</option>
-                    @foreach (var tankDetails in DataSource.List_UserTanks(user.UserId))
+                    @foreach (var tankDetails in DataSource.List_UserTanks(user.UserId).Where(t => t.IsActive).ToList())
                     {
                         <option value="@tankDetails.TankID">@tankDetails.Name</option>
                     }
