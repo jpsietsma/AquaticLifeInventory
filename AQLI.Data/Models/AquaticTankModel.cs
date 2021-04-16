@@ -38,11 +38,12 @@ namespace AQLI.Data.Models
         public PurchaseModel Purchase { get; set; }
 
         public int OwnerID { get; set; }
-        [NotMapped]
         public WebsiteUser Owner { get; set; }
 
         public List<UserFishModel> UserFish { get; set; }
         public List<TankSupplyModel> Supplies { get; set; }
+        public List<TankEquipmentModel> Equipment { get; set; }
+        public List<TankNoteModel> Notes { get; set; }
         public List<TankInventoryRecordModel> InventoryRecords { get; set; }        
 
         public AquaticTankModel(WebsiteUser _tankOwner = null)

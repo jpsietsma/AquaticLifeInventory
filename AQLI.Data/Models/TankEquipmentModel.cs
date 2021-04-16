@@ -12,11 +12,10 @@ namespace AQLI.Data.Models
         public int TankEquipmentId { get; set; }
         public string EquipmentName { get; set; }
 
-        public int PurchaseCategoryId { get; set; }
-        public PurchaseCategoryModel PurchaseCategory { get; set; }
+        public int PurchaseId { get; set; }
+        public PurchaseModel Purchase{ get; set; }
 
-        public int PurchaseCategoryTypeId { get; set; }
-        public PurchaseCategoryTypeModel PurchaseCategoryType { get; set; }
-
+        public int TankID { get; set; }
+        public AquaticTankModel Tank { get; set; }
     }
 }

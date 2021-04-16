@@ -41,6 +41,8 @@ namespace AQLI.DataServices.context
 
         public DbSet<UserFishModel> UserFish { get; set; }
         public DbSet<TankSupplyModel> Tank_Supply { get; set; }
+        public DbSet<TankEquipmentModel> Tank_Equipment { get; set; }
+        public DbSet<TankNoteModel> Tank_Notes { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -97,6 +99,16 @@ namespace AQLI.DataServices.context
                 .WithOne(t => t.Tank);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasMany(ts => ts.Supplies)
+                .WithOne(t => t.Tank);
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasMany(eq => eq.Equipment)
+                .WithOne(t => t.Tank);
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasOne(o => o.Owner)
+                .WithMany()
+                .HasPrincipalKey("UserId");
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasMany(n => n.Notes)
                 .WithOne(t => t.Tank);
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();

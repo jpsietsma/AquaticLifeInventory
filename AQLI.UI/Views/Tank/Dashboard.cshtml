@@ -8,34 +8,71 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
 }
 
-This is the tank dashboard for @Model.Name!
+<h1>Tank Overview: @Model.Name!</h1>
+<div><a href="@Url.ActionLink("Index", "Tank")">Back to User Dashboard</a></div>
 <br />
 <br />
 <div class="grid">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.href='@Url.ActionLink("_FeedTank", "Tank", new { ID = Model.TankID })'">Feed Tank</button>
+            <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_AddTankNote", "Tank", new { ID = Model.TankID })'">Add Note</button>
+            <button type="button" class="btn btn-sm btn-outline-warning" onclick="location.href='@Url.ActionLink("_UpdateStatus", "Tank", new { ID = Model.TankID })'">Update Status</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.href='@Url.ActionLink("_DoMaintenance", "Tank", new { ID = Model.TankID })'">Maintenance</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_DisbandTank", "Tank", new { ID = Model.TankID })'" disabled>Disband</button>
+        </div>        
+    </div>
     <div class="row">
         <div id="tankCard_addCard" class="card tank-card col-4" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
                 Information Overview
             </div>
             <div class="card-body text-left">
-                    <div class="row">
-                        <div class="col-3">
-                            Tank Name:
-                            <br />@Model.Name
-                        </div>
-                        <div class="col-3">
-                            Established: 
-                            <br />@Model.Added
-                        </div>
-                        <div class="col-2">
-                            Active? 
-                            <br />@Model.IsActive
-                        </div>
-                        <div class="col-4">
-                            Description: 
-                            <br />@Model.Description
-                        </div>
+                <div class="row">
+                    <div class="col-6">
+                        <b>Description:</b> @Model.Description
                     </div>
+                    <div class="col-6">
+                        <b>Establish Type:</b> @Model.CreatureType.CreatureTypeName (@Model.TankType.TankTypeName)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <b>Established:</b> @Model.Added
+                    </div>
+                    <div class="col-4">
+                        <b>Owner:</b> <a href="@Url.ActionLink("Profile", "User", new { ID = Model.OwnerID })">@Model.Owner.FirstName @Model.Owner.LastName</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <b>Active</b> <input type="checkbox" checked="@Model.IsActive" disabled />
+                    </div>
+                    <div class="col-4">
+                        <b>Maintenance</b> <input type="checkbox" checked="@Model.IsMaintenance" disabled />
+                    </div>
+                    <div class="col-4">
+                        <b>Quarantine</b> <input type="checkbox" checked="@Model.IsQuarantine" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12; mx-auto">
+                        <b>Water &amp; Community Statistics</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <b>Water:</b> @Model.WaterType.WaterTypeName
+                    </div>
+                    <div class="col-5">
+                        <b>Temporment:</b> @Model.Temporment.TempormentName
+                    </div>                    
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row">
@@ -48,6 +85,11 @@ This is the tank dashboard for @Model.Name!
                 Food &amp; Supplies
             </div>
             <div class="card-body text-left">
+                <div class="row">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AssignSupply", "Tank", new { ID = Model.TankID })'">Add Supply</button>
+                    </div>                    
+                </div>
                 <table class="table-striped table-bordered table-hover col-12">
                     @if (DataSource.List_TankSupplies(Model.TankID).Count() > 0)
                     {
@@ -122,9 +164,35 @@ This is the tank dashboard for @Model.Name!
                 Assigned Equipment
             </div>
             <div class="card-body text-left">
-                <p>Freshwater: Aquatic Freshwater fish </p>
-                <p>Saltwater: Marine Saltwater fish </p>
-                <p>Quarantine: Isolation Tank for sick or new fish, plants, and aquatics </p>
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AssignEquipment", "Tank", new { ID = Model.TankID })'">Add Equipment</button>
+                    </div>
+                </div>
+                <table class="table-striped table-bordered table-hover col-12">
+                    @if (Model.Equipment.Count() > 0)
+                    {
+                        <thead>
+                            <tr>
+                                <td>
+                                    Name
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (TankEquipmentModel equipment in Model.Equipment)
+                            {
+                                <tr>
+                                    <td>@equipment.EquipmentName</td>
+                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href='@Url.Action("_RemoveEquipment", "Tank", new { ID = equipment.TankEquipmentId })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Unassign</button></td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    }
+                </table>
             </div>
             <div class="card-footer">
                 <div class="row">
@@ -137,6 +205,13 @@ This is the tank dashboard for @Model.Name!
                 Fish Population
             </div>
             <div class="card-body text-left">
+                <div class="row">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AddFish", "Tank", new { ID = Model.TankID })'">Add</button>
+                        <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = Model.TankID })'">Transfer</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_FishDeath", "Tank", new { ID = Model.TankID })'">Deceased</button>
+                    </div>
+                </div>
                 <table class="table-striped table-bordered table-hover col-12">
                     @if (Model.UserFish.Count() > 0)
                     {
@@ -159,7 +234,7 @@ This is the tank dashboard for @Model.Name!
                                 <tr>
                                     <td>@fish.FishName</td>
                                     <td>@fish.FishType.TypeName</td>
-                                    <td><button type="button" class="btn btn-sm btn-success">Reassign</button></td>
+                                    <td><button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button></td>
                                 </tr>
                             }
                         </tbody>                        
