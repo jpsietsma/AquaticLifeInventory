@@ -40,7 +40,8 @@ namespace AQLI.DataServices.context
         public DbSet<NotificationPriorityLevelModel> NotificationPriorityLevels { get; set; }
 
         public DbSet<UserFishModel> UserFish { get; set; }
-        
+        public DbSet<TankSupplyModel> Tank_Supply { get; set; }
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         { }
@@ -93,6 +94,9 @@ namespace AQLI.DataServices.context
                 .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<AquaticTankModel>()
                 .HasMany(fp => fp.UserFish)
+                .WithOne(t => t.Tank);
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasMany(ts => ts.Supplies)
                 .WithOne(t => t.Tank);
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();

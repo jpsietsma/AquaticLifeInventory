@@ -1,0 +1,175 @@
+﻿@using AQLI.Data.Models;
+
+@model AQLI.Data.Models.AquaticTankModel
+
+@inject AQLI.DataServices.DataFactory DataSource;
+
+@section Style {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
+}
+
+This is the tank dashboard for @Model.Name!
+<br />
+<br />
+<div class="grid">
+    <div class="row">
+        <div id="tankCard_addCard" class="card tank-card col-4" data-id="0" onclick="Tank.events.cardClicked(this)">
+            <div class="card-header text-center">
+                Information Overview
+            </div>
+            <div class="card-body text-left">
+                    <div class="row">
+                        <div class="col-3">
+                            Tank Name:
+                            <br />@Model.Name
+                        </div>
+                        <div class="col-3">
+                            Established: 
+                            <br />@Model.Added
+                        </div>
+                        <div class="col-2">
+                            Active? 
+                            <br />@Model.IsActive
+                        </div>
+                        <div class="col-4">
+                            Description: 
+                            <br />@Model.Description
+                        </div>
+                    </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+        <div id="tankCard_addCard" class="card tank-card col-3" data-id="0" onclick="Tank.events.cardClicked(this)">
+            <div class="card-header text-center">
+                Food &amp; Supplies
+            </div>
+            <div class="card-body text-left">
+                <table class="table-striped table-bordered table-hover col-12">
+                    @if (DataSource.List_TankSupplies(Model.TankID).Count() > 0)
+                    {
+                        <thead>
+                            <tr>
+                                <td>
+                                    Name
+                                </td>
+                                <td>
+                                    Supply Type
+                                </td>
+                                <td>
+                                    Uses Left
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (TankSupplyModel supply in DataSource.List_TankSupplies(Model.TankID))
+                            {
+                                <tr>
+                                    <td>
+                                        @supply.SupplyName
+                                    </td>
+                                    @if (supply.IsFood)
+                                    {
+                                        <td>
+                                            Fish Food
+                                        </td>
+                                    }
+
+                                    @if (supply.IsConsumableSupply && !supply.IsFood)
+                                    {
+                                        <td>
+                                            Tank Supply
+                                        </td>
+                                    }
+
+                                    @if (supply.IsMedication)
+                                    {
+                                        <td>
+                                            Medication
+                                        </td>
+                                    }
+                                    <td>
+                                        @supply.ApplicationsRemaining
+                                    </td>
+                                </tr>                                
+                            }
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td>
+                                    No supplies assigned!
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+
+                </table>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+        <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
+            <div class="card-header text-center">
+                Assigned Equipment
+            </div>
+            <div class="card-body text-left">
+                <p>Freshwater: Aquatic Freshwater fish </p>
+                <p>Saltwater: Marine Saltwater fish </p>
+                <p>Quarantine: Isolation Tank for sick or new fish, plants, and aquatics </p>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+        <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
+            <div class="card-header text-center">
+                Fish Population
+            </div>
+            <div class="card-body text-left">
+                <table class="table-striped table-bordered table-hover col-12">
+                    @if (Model.UserFish.Count() > 0)
+                    {
+                        <thead>
+                            <tr>
+                                <td>
+                                    Fish Name
+                                </td>
+                                <td>
+                                    Type
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (UserFishModel fish in Model.UserFish)
+                            {
+                                <tr>
+                                    <td>@fish.FishName</td>
+                                    <td>@fish.FishType.TypeName</td>
+                                    <td><button type="button" class="btn btn-sm btn-success">Reassign</button></td>
+                                </tr>
+                            }
+                        </tbody>                        
+                    }
+                </table>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

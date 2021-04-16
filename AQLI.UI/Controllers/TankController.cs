@@ -82,5 +82,19 @@ namespace AQLI.UI.Controllers
             return PartialView("_ConfirmDeleteTank", DataSource.Find_TankDetails(ID));
         }
 
+        public IActionResult Dashboard(int ID)
+        {
+            var data = DataSource.Find_TankDetails(ID);
+
+            return View(data);
+        }
+
+        public IActionResult Test()
+        {
+            AquaticTankModel dataTest = DataSource.Find_TankDetails(14);
+
+            return View(dataTest);
+        }
+
     }
 }

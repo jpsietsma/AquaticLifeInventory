@@ -19,6 +19,16 @@ namespace AQLI.DataServices
             Database = _context;      
         }
 
+        public List<TankSupplyModel> List_TankSupplies(int TankID)
+        {
+            var data = Database.Tank_Supply
+                .Where(s => s.TankID == TankID)
+                .ToList();
+
+            return Database.Tank_Supply
+                .ToList();
+        }
+
         /// <summary>
         /// Find the details for a particular tank with loaded dependents
         /// </summary>
@@ -32,6 +42,8 @@ namespace AQLI.DataServices
                     .Include(env => env.Environment)
                     .Include(tt => tt.TankType)
                     .Include(fp => fp.UserFish)
+                    .ThenInclude(ft => ft.FishType)
+                    .Include(sup => sup.Supplies)
                     .Where(t => t.TankID == id)
                     .FirstOrDefault();
         }

@@ -1,0 +1,53 @@
+﻿@model AQLI.Data.Models.AquaticTankModel;
+
+@using AQLI.Data.Models;
+
+@inject AQLI.DataServices.DataFactory DataSource;
+
+List Tank Supplies:
+
+<table class="table-striped table-bordered table-hover col-12">
+    @if (Model.Supplies.Count() > 0)
+    {        
+        <thead>
+            <tr>
+                <td>Tank Supply ID</td>
+                <td>Supply Name</td>
+                <td>Food?</td>
+                <td>Consumable Supply?</td>
+                <td>Medication?</td>
+                <td>Depleted?</td>
+                <td>Remaining Uses</td>
+                <td>Uses Per Application</td>
+                <td>Tank ID</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (TankSupplyModel supply in Model.Supplies)
+            {
+                <tr>
+                    <td>@supply.TankSupplyID</td>
+                    <td>@supply.SupplyName</td>
+                    <td>@supply.IsFood</td>
+                    <td>@supply.IsConsumableSupply</td>
+                    <td>@supply.IsMedication</td>
+                    <td>@supply.IsDepleted</td>
+                    <td>@supply.ApplicationsRemaining / @supply.TotalUses</td>
+                    <td>@supply.UsagePerApplication</td>
+                    <td>@supply.TankID</td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody>
+            <tr>
+                <td>
+                    There are no supplies assigned to this tank!
+                </td>
+            </tr>
+        </tbody>
+    }
+        
+</table>

@@ -42,6 +42,7 @@ namespace AQLI.Data.Models
         public WebsiteUser Owner { get; set; }
 
         public List<UserFishModel> UserFish { get; set; }
+        public List<TankSupplyModel> Supplies { get; set; }
         public List<TankInventoryRecordModel> InventoryRecords { get; set; }        
 
         public AquaticTankModel(WebsiteUser _tankOwner = null)

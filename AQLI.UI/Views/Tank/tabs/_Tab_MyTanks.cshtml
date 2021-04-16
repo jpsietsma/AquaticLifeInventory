@@ -84,7 +84,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-sm btn-primary" onclick="Tank.openModal(@item.TankID)"><i class="fas fa-file-alt" style="color: white;"></i> Overview</button>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="location.href='@Url.Action("Dashboard", "Tank", new { ID = item.TankID })';return false;"><i class="fas fa-file-alt" style="color: white;"></i> Overview</button>
                             }
                             <button type="button" class="btn btn-sm btn-info" onclick="Tank.openModal(@item.TankID)"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Info</button>
                             @if (item.IsActive)
