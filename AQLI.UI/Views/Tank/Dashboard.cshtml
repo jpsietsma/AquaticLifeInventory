@@ -8,40 +8,63 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
 }
 
-<h1>Tank Overview: @Model.Name!</h1>
-<div><a href="@Url.ActionLink("Index", "Tank")">Back to User Dashboard</a></div>
-<br />
-<br />
-<div class="grid">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-5">
+            <h3>Tank Overview: @Model.Name!</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div><a href="@Url.ActionLink("Index", "Tank")">Back to User Dashboard</a></div>
+        </div>
+    </div>
+    <br />
+    <br />
     <div class="row">
         <div class="col-12 mx-auto">
+            <button type="button" class="btn btn-sm btn-info" onclick="Tank.openTankDetailsModal(@Model.TankID)"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Edit Info</button>
             <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.href='@Url.ActionLink("_FeedTank", "Tank", new { ID = Model.TankID })'">Feed Tank</button>
             <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_AddTankNote", "Tank", new { ID = Model.TankID })'">Add Note</button>
             <button type="button" class="btn btn-sm btn-outline-warning" onclick="location.href='@Url.ActionLink("_UpdateStatus", "Tank", new { ID = Model.TankID })'">Update Status</button>
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.href='@Url.ActionLink("_DoMaintenance", "Tank", new { ID = Model.TankID })'">Maintenance</button>
             <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_DisbandTank", "Tank", new { ID = Model.TankID })'" disabled>Disband</button>
-        </div>        
+        </div>
     </div>
     <div class="row">
         <div id="tankCard_addCard" class="card tank-card col-4" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
-                Information Overview
+                Tank Details Overview
             </div>
             <div class="card-body text-left">
                 <div class="row">
                     <div class="col-6">
-                        <b>Description:</b> @Model.Description
+                        <b>Description:</b>
+                        <br />@Model.Description
                     </div>
                     <div class="col-6">
-                        <b>Establish Type:</b> @Model.CreatureType.CreatureTypeName (@Model.TankType.TankTypeName)
+                        <b>Establish Type:</b>
+                        <br />@Model.CreatureType.CreatureTypeName (@Model.TankType.TankTypeName)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Empty spacer row -->&nbsp;
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <b>Established:</b> @Model.Added
+                        <b>Established:</b>
+                        <br />@Model.Added
                     </div>
                     <div class="col-4">
-                        <b>Owner:</b> <a href="@Url.ActionLink("Profile", "User", new { ID = Model.OwnerID })">@Model.Owner.FirstName @Model.Owner.LastName</a>
+                        <b>Owner:</b>
+                        <br /><a href="@Url.ActionLink("Profile", "User", new { ID = Model.OwnerID })">@Model.Owner.FirstName @Model.Owner.LastName</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Empty row spacer -->&nbsp;
                     </div>
                 </div>
                 <div class="row">
@@ -66,12 +89,56 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-12">
+                        <!-- Empty spacer row -->&nbsp;
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-4">
-                        <b>Water:</b> @Model.WaterType.WaterTypeName
+                        <b>Water Type:</b>
+                        <br />@Model.WaterType.WaterTypeName
                     </div>
                     <div class="col-5">
-                        <b>Temporment:</b> @Model.Temporment.TempormentName
-                    </div>                    
+                        <b>Population Temporment:</b>
+                        <br />@Model.Temporment.TempormentName
+                    </div>
+                    <div class="col-3">
+                        <b>Capacity: </b>
+                        <br />@Model.Capacity gallons
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12; mx-auto">
+                        <b>Tank Purchase Information</b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Empty spacer row -->&nbsp;
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <b>Description:</b>
+                        <br />@Model.Purchase.Description
+                    </div>
+                    <div class="col-3">
+                        <b>Store: </b>
+                        <br />@Model.Purchase.Store.StoreName
+                    </div>
+                    <div class="col-3">
+                        <b>Date:</b>
+                        <br />@Model.Purchase.Date
+                    </div>
+                    <div class="col-2">
+                        <b>Cost:</b>
+                        <br />$@Model.Purchase.Cost
+                    </div>
                 </div>
             </div>
             <div class="card-footer">
@@ -88,10 +155,10 @@
                 <div class="row">
                     <div class="col-12">
                         <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AssignSupply", "Tank", new { ID = Model.TankID })'">Add Supply</button>
-                    </div>                    
+                    </div>
                 </div>
                 <table class="table-striped table-bordered table-hover col-12">
-                    @if (DataSource.List_TankSupplies(Model.TankID).Count() > 0)
+                    @if (Model.Supplies.Count() > 0)
                     {
                         <thead>
                             <tr>
@@ -107,7 +174,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (TankSupplyModel supply in DataSource.List_TankSupplies(Model.TankID))
+                            @foreach (TankSupplyModel supply in Model.Supplies)
                             {
                                 <tr>
                                     <td>
@@ -136,7 +203,8 @@
                                     <td>
                                         @supply.ApplicationsRemaining
                                     </td>
-                                </tr>                                
+                                </tr>
+
                             }
                         </tbody>
                     }
@@ -186,11 +254,21 @@
                             {
                                 <tr>
                                     <td>@equipment.EquipmentName</td>
-                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href='@Url.Action("_RemoveEquipment", "Tank", new { ID = equipment.TankEquipmentId })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Unassign</button></td>
+                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href='@Url.Action("_RemoveEquipment", "Tank", new { ID = equipment.TankEquipmentId })';return false;"><i class="fas fa-minus-circle" style="color: white;"></i></button></td>
                                 </tr>
                             }
                         </tbody>
 
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td>
+                                    No Equipment assigned!
+                                </td>
+                            </tr>
+                        </tbody>
                     }
                 </table>
             </div>
@@ -224,7 +302,6 @@
                                     Type
                                 </td>
                                 <td>
-
                                 </td>
                             </tr>
                         </thead>
@@ -237,7 +314,18 @@
                                     <td><button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button></td>
                                 </tr>
                             }
-                        </tbody>                        
+                        </tbody>
+
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td>
+                                    No Fish assigned!
+                                </td>
+                            </tr>
+                        </tbody>
                     }
                 </table>
             </div>
@@ -248,3 +336,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+}

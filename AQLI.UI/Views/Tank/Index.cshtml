@@ -33,58 +33,7 @@
         </div>
         <br />
     </div>
-    <div name="tankCards" class="row justify-content-center" style="display:none">
-        @foreach (var item in DataSource.List_UserTanks(user.UserId).Where(t => t.IsActive))
-        {
-            <!-- Established tank cards -->
-            <div id="tankCard_@item.TankID" class="card tank-card col-2" data-id="@item.TankID">
-                <div class="card-header text-lg-center">
-                    @(item.Name ?? item.Owner.FirstName + "'s " + item.Environment.ToString() + " tank") (#@item.TankID)
-                    <button type="button" class="close remove-card float-right align-top" onclick="Tank.HideCard('#tankCard_' + @(item.TankID))">&times;</button>
-                </div>
-                <div class="card-body text-left">
-                    <div>Description: @(item.Description ?? item.Environment.ToString() + " tank") </div>
-                    <div>Tank Size: @item.Capacity gallons</div>
-                    <div>Environment: @item.Environment.EnvironmentName</div>
-                    <div>Water Type: @item.WaterType.WaterTypeName</div>
-                    <div class="align-content-center align-bottom">Added @item.Added</div>
-                </div>
-                <div class="card-footer" style="font-size: 10px;">
-                    <button type="button" class="btn btn-sm btn-danger float-right tank-remove-btn" data-id="@item.TankID" onclick="Tank.openConfirmDeleteModal(@item.TankID)">Delete</button>
-                    <button type="button" class="btn btn-sm btn-primary float-left tank-details-btn" data-id="@item.TankID" onclick="Tank.events.cardClicked(this)">Details</button>
-                </div>
-            </div>
-        }
-        @if (DataSource.List_UserTanks(user.UserId).Count() == 0)
-        {
-            <!-- Add tank card -->
-            <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
-                <div class="card-header text-center">
-                    Add New Tank
-                </div>
-                <div class="card-body text-left">
-                    <p>Freshwater: Aquatic Freshwater fish </p>
-                    <p>Saltwater: Marine Saltwater fish </p>
-                    <p>Quarantine: Isolation Tank for sick or new fish, plants, and aquatics </p>
-                </div>
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="btn-group-sm col-4">
-                            <input type="button" class="btn btn-sm btn-primary" value="Freshwater" />
-                        </div>
-                        <div class="btn-group-sm col-4">
-                            <input type="button" class="btn btn-sm btn-info" value="Saltwater" />
-                        </div>
-                        <div class="btn-group-sm col-4">
-                            <input type="button" class="btn btn-sm btn-warning" style="margin-left: -10px;" value="Quarantine" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-    <br />
-
+    
     <!-- Dashboard Tab Navigation -->
     <div class="row justify-content-center">
         <div class="col-9 text-center">

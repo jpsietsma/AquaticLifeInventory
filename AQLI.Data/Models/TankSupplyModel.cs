@@ -21,5 +21,8 @@ namespace AQLI.Data.Models
         public int TankID { get; set; }
         public AquaticTankModel Tank { get; set; }
 
+        public int PurchaseID { get; set; }
+        public PurchaseModel Purchase { get; set; }
+
     }
 }
