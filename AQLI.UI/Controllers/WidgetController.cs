@@ -13,6 +13,7 @@ namespace AQLI.UI.Controllers
     {
         private readonly DataFactory DataSource;
         private readonly AquaticTankModel DataModel;
+        private readonly WebsiteUser DataUser;
 
         public WidgetController(DataFactory _dataFactory)
         {
@@ -39,6 +40,8 @@ namespace AQLI.UI.Controllers
                 TempormentID = 1,
                 WaterTypeID = 1
             };
+
+            DataUser = DataSource.List_Users().Where(u => u.UserId == 4).FirstOrDefault();
         }
 
         public IActionResult Index()
@@ -81,7 +84,6 @@ namespace AQLI.UI.Controllers
             if (obj.GetType().GetProperty("AddedBy") != null)
             {
                 var recordData = DataSource.List_Users().Where(u => u.UserId == objType.GetProperty("AddedBy").GetValue(obj)).First();
-
                 widgetHtmlCode.Append($@"<b>by</b> <i>{recordData.FirstName} {recordData.LastName}</i> ");
 
                 //widgetHtmlCode.Append($@"<td>by {objType.GetProperty("AddedBy").GetValue(obj)}</td>");
@@ -95,8 +97,8 @@ namespace AQLI.UI.Controllers
             if (obj.GetType().GetProperty("ModifiedBy") != null)
             {
                 var recordData = DataSource.List_Users().Where(u => u.UserId == objType.GetProperty("ModifiedBy").GetValue(obj)).First();
-
                 widgetHtmlCode.Append($@"<b>by</b> <i>{recordData.FirstName} {recordData.LastName}</i></td>");
+
                 //widgetHtmlCode.Append($@"<td>by {objType.GetProperty("ModifiedBy").GetValue(obj)}</td>");
             }
 
@@ -107,6 +109,18 @@ namespace AQLI.UI.Controllers
             string finalString = widgetHtmlCode.ToString();
 
             return finalString;
+        }
+
+        public IActionResult PurchaseChartWidget()
+        {
+            var userModel = DataUser;
+
+            return View("_Widget_UserDashboard_PurchaseChartWidget", userModel);
+        }
+
+        public IActionResult TestWidget()
+        {
+            return View();
         }
     }
 }

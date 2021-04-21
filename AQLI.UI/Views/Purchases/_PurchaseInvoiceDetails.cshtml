@@ -15,8 +15,8 @@
 
 @section Style {
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
-}
- 
+} 
+
 <style>
     .card-header-text {
         font-size: 18px;
@@ -137,8 +137,16 @@
                                         }
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4"><b class="float-right">Invoice Total: </b></th>
+                                                <th colspan="4"><b class="float-right">Purchase Total: </b></th>
                                                 <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4"><b class="float-right">Shipping Cost: </b></th>
+                                                <th><input type="text" id="ShippingCost" name="ShippingCost" value="@Model.ShippingCost" onfocusout="UpdateInvoiceTotal(@(Model.ShippingCost + Model.Purchases.Sum(p => p.ExtCost)))" /></th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4"><b class="float-right" style="font-size: 14px;">Invoice Total: </b></th>
+                                                <th id="InvoiceTotalFooterValue" colspan="2">$@(Model.ShippingCost + Model.Purchases.Sum(p => p.ExtCost))</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -146,43 +154,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Tank form row -->
-                <div class="form-row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="control-label">Assign To Tank</label>
-                            <select class="form-control" name="TankID">
-                                @if (DataSource.List_Tanks().Count() == 0)
-                                {
-                                    <option value="">-- No Established Tanks --</option>
-                                }
-                                else
-                                {
-                                    if (Model.PurchaseInvoiceID == 0)
-                                    {
-                                        <option selected value="">-- Select Tank --</option>
-                                    }
-
-                                    foreach (AquaticTankModel tank in DataSource.List_Tanks())
-                                    {
-                                        if (tank.TankID == Model.TankID)
-                                        {
-                                            <option selected value="@tank.TankID">@tank.Name</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@tank.TankID">@tank.Name</option>
-                                        }
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <!-- empty row -->
-                    </div>
-                </div>                
+                </div>                               
                 @*
                 <div class="form-row">
                     <div class="col-12">

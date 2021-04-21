@@ -25,5 +25,10 @@ namespace AQLI.Data.Models
 
         public int? TankID { get; set; }
         public AquaticTankModel Tank { get; set; }
+
+        public DateTime? Added { get; set; }
+        public int? AddedBy { get; set; }
+        public DateTime? Modified { get; set; }
+        public int? ModifiedBy { get; set; }
     }
 }

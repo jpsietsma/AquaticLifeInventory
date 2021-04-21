@@ -15,9 +15,9 @@ namespace AQLI.Data.Models
         public double Capacity { get; set; }
 
         public DateTime? Added { get; set; }
-        public int AddedBy { get; set; }
+        public int? AddedBy { get; set; }
         public DateTime? Modified { get; set; }
-        public int ModifiedBy { get; set; }
+        public int? ModifiedBy { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsMaintenance { get; set; }

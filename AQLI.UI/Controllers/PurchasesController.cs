@@ -154,7 +154,7 @@ namespace AQLI.UI.Controllers
             if (size > 0)
             {
                 // full path to file in invoice upload location
-                filePath = Path.Combine(Env.WebRootPath, "invoices", string.Concat("Invoice_",
+                filePath = Path.Combine(Env.WebRootPath, "invoices", string.Concat("UploadedInvoice_",
                     storeName.Replace(" ", "-"),
                     "_",
                     DateTime.Now.ToString().Split(" ").First().Replace("/", "-"),

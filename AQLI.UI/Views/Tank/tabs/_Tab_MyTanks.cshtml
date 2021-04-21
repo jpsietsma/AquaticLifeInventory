@@ -86,19 +86,7 @@
                             {
                                 <button type="button" class="btn btn-sm btn-primary" onclick="location.href='@Url.Action("Dashboard", "Tank", new { ID = item.TankID })';return false;"><i class="fas fa-file-alt" style="color: white;"></i> Overview</button>
                             }
-                            <button type="button" class="btn btn-sm btn-info" onclick="Tank.openModal(@item.TankID)"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Info</button>
-                            @if (item.IsActive)
-                            {
-                                <button type="button" class="btn btn-sm btn-secondary"><i class="fas fa-unlink" style="color: white;"></i> Disband</button>
-                            }
-                            else
-                            {
-                                <button type="button" class="btn btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true" style="color: white;"></i> Remove&nbsp;&nbsp;</button>
-                            }
-                            @if (DataSource.List_Notifications().Where(n => n.TankID == item.TankID && n.AcknowledgedDate == null).Count() > 0)
-                            {
-                                <button type="button" class="btn btn-sm btn-warning"><i class="far fa-bell" style="color:black;"></i></button>
-                            }
+                            <button type="button" class="btn btn-sm btn-info" onclick="Tank.openModal(@item.TankID)"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Info</button>                
                         </td>
                     </tr>
                     }

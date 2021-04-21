@@ -40,22 +40,28 @@
                 </div>
                 <!-- Quantity, Cost, ExtCost form row -->
                 <div class="form-row">
-                    <div class="col-4">
+                    <div class="col-3">
                         <div class="form-group">
                             <label class="control-label">Quantity</label>
                             <input id="Quantity" type="number" name="Quantity" class="form-control" value="@Model.Quantity" onchange="Purchases.events.purchaseQuantityOrCost_Changed()" required />
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <div class="form-group">
                             <label class="control-label">Cost</label>
                             <input id="Cost" type="text" class="form-control" name="Cost" value="@Model.Cost" onchange="Purchases.events.purchaseQuantityOrCost_Changed()" required />
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <div class="form-group">
                             <label class="control-label">Ext Cost</label>
                             <input id="ExtCost" type="text" class="form-control" name="ExtCost" value="@Model.ExtCost" disabled />
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label class="control-label">Item Count</label>
+                            <input id="PackageCount" type="text" class="form-control" name="PackageCount" value="@Model.PackageCount" />
                         </div>
                     </div>
                 </div>

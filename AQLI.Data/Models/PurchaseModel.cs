@@ -23,6 +23,8 @@ namespace AQLI.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public decimal ExtCost { get; set; }
         
+        public int PackageCount { get; set; }
+
         public int OwnerID { get; set; }
         //public WebsiteUser Owner { get; set; }
 

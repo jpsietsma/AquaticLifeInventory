@@ -23,6 +23,7 @@
                         <th>Supplier</th>
                         <th># Items</th>
                         <th>Cost</th>
+                        <th>Shipping</th>
                         <th> </th>
                     </tr>
                 </thead>
@@ -40,7 +41,10 @@
                                 @invoice.Purchases.Sum(p => p.Quantity)
                             </td>
                             <td>
-                                $@invoice.Purchases.Sum(p => p.ExtCost)
+                                $@(invoice.Purchases.Sum(p => p.ExtCost) + invoice.ShippingCost)
+                            </td>
+                            <td>
+                                $@(invoice.ShippingCost)
                             </td>
                             <td>
                                 <div class="btn btn-sm btn-primary sdn-purchase-invoice-table-cell mr-2">Details</div>
