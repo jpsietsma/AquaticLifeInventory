@@ -1,5 +1,6 @@
 ﻿@using System.Collections.Generic;
 @using AQLI.Data.Models;
+@using AQLI.Data.Models.ListModels;
 @using AQLI.DataServices;
 @using AQLI.DataServices.context;
 @using Microsoft.AspNetCore.Mvc;
@@ -65,42 +66,62 @@
                         </div>
                     </div>
                 </div>
-                <!-- Purchase Category and Owner form row -->
+                <!-- Purchase Type, Purchase Category and Owner form row -->
                 <div class="form-row">
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="form-group">
-                            <label class="control-label">Purchase Category</label>
-                            <select id="PurchaseCategoryID" class="form-control" name="PurchaseCategoryID">
-                                @foreach (PurchaseCategoryModel category in DataSource.List_PurchaseCategories())
+                            <label class="control-label">Purchase Type</label>
+                            <select id="PurchaseCategoryTypeID" class="form-control" name="PurchaseCategoryTypeID" onchange="Purchases.events.purchaseType_Changed()" required>
+                                <option value="0">-- Select Purchase Type --</option>
+                                @foreach (PurchaseCategoryTypeModel categoryType in DataSource.List_PurchaseCategoryTypes())
                                 {
-                                    if (Model.PurchaseCategoryID == category.PurchaseCategoryID)
+                                    if (Model.PurchaseCategoryTypeID == categoryType.PurchaseCategoryTypeID)
                                     {
-                                        <option selected value="@category.PurchaseCategoryID">@category.CategoryName</option>
+                                        <option selected value="@categoryType.PurchaseCategoryTypeID">@categoryType.PurchaseCategoryTypeName</option>
                                     }
                                     else
                                     {
-                                        <option value="@category.PurchaseCategoryID">@category.CategoryName</option>
+                                        <option value="@categoryType.PurchaseCategoryTypeID">@categoryType.PurchaseCategoryTypeName</option>
                                     }
                                 }
                             </select>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="form-group">
-                           <label class="control-label">Purchase Owner</label>
-                           <select class="form-control" name="OwnerID">
-                               @foreach (WebsiteUser user in DataSource.List_Users())
-                               {
-                                   if (Model.OwnerID == user.UserId)
-                                   {
-                                       <option selected value="@user.UserId">@user.FirstName @user.LastName</option>
-                                   }
-                                   else
-                                   {
-                                       <option value="@user.UserId">@user.FirstName @user.LastName</option>
-                                   }
-                               }
-                           </select>
+                            <label class="control-label">Purchase Subtype</label>
+                            <select id="PurchaseCategoryID" class="form-control" name="PurchaseCategoryID" required>
+                                <option value="0">-- Choose Purchase Type --</option>
+                                @foreach (PurchaseCategoryModel category in DataSource.List_PurchaseCategories().OrderBy(p => p.CategoryName))
+                                {
+                                    if (Model.PurchaseCategoryID == category.PurchaseCategoryID)
+                                    {
+                                        <option selected value="@category.PurchaseCategoryID" data-categoryType="@category.PurchaseCategoryTypeID">@category.CategoryName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.PurchaseCategoryID" data-categoryType="@category.PurchaseCategoryTypeID">@category.CategoryName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="control-label">Purchase Owner</label>
+                            <select class="form-control" name="OwnerID">
+                                @foreach (WebsiteUser user in DataSource.List_Users())
+                                {
+                                    if (Model.OwnerID == user.UserId)
+                                    {
+                                        <option selected value="@user.UserId">@user.FirstName @user.LastName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@user.UserId">@user.FirstName @user.LastName</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>

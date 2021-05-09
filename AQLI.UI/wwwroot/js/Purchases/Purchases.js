@@ -50,9 +50,27 @@
 
             $(extCostInputElement).val($(quantityInputElement).val() * $(costInputElement).val());
 
-            //debugging
-            //console.log("Quantity Updated: " + $(quantityInputElement).val() + " x " + $(costInputElement).val() + " = " + ($(quantityInputElement).val() * $(costInputElement).val()));           
         },
+        purchaseType_Changed: function () {
+
+            $("#PurchaseCategoryTypeID").on("change", function () {
+                var sel = $(this).val(),
+                    $ddl = $("#PurchaseCategoryID");
+                if (!sel) { // if there is no value means first option is selected
+                    $ddl.find("option").show();
+                    $ddl.val(''); // show all options and reset the value
+                }
+                else {
+                    $ddl.find("option").hide();
+
+                    // hide all options
+                    // show only those options which contain the selected value, 
+                    // set the selected property to true for the only remaining ones
+                    $ddl.find("option[data-categoryType*='" + sel + "']").show().prop('selected', true);
+                }
+            });
+
+        }
     },
     openModal: function (id) {
         openModal('Purchases/_PurchaseDetails/?ID=' + id, Purchases.modalLoaded)
@@ -90,6 +108,27 @@
             ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
         }
 
+        $ddl = $("#PurchaseCategoryID").find("option").hide();
+
+        $("#PurchaseCategoryTypeID").on("change", function () {
+            var sel = $(this).val(),
+                $ddl = $("#PurchaseCategoryID");
+                $ddl.find("option").hide();
+                $ddl.find("option[data-categoryType='" + sel + "']")
+            if (!sel) { // if there is no value means first option is selected
+                $ddl.find("option[data-categoryType='" + sel + "']").show();
+                $ddl.val(''); // show all options and reset the value
+            }
+            else {
+                $ddl.find("option").hide();
+
+                // hide all options
+                // show only those options which contain the selected value, 
+                // set the selected property to true for the only remaining ones
+                $ddl.find("option[data-categoryType='" + sel + "']").show().prop('selected', true);
+            }
+        });
+
         $('#addToInvoice').on('click', function () {
             var purchaseID = $('#PurchaseID').val();
             var description = $('#PurchaseDescription').val();
@@ -114,20 +153,8 @@
             ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
         }
 
-        ////Begin modal edit timeout
-        //var i = 10;
-
-        //var counterBack = setInterval(function () {
-        //    i--;
-        //    if (i > 0) {
-        //        $('.progress-bar').css('width', i + '%');
-        //    } else {
-        //        clearTimeout(counterBack);
-        //    }
-
-        //}, 1000);
         $('[data-toggle="tooltip"]').tooltip();
-
+                
         var table;
 
         if (!$.fn.DataTable.isDataTable('#purchaseInvoicePurchaseTable')) {
@@ -244,25 +271,7 @@
                     }
                 }
             );
-            //saveFormDataPost($('#addPurchaseInvoiceForm'),
-            //    function (data) {
-            //        //Success
-            //        $('#modalAddEdit').modal('hide');
-            //        if (data && data.View) {
-            //            location.reload();
-            //        } else {
-            //            ErrorMessage.show('An problem appears to have occurred saving the record. Please reload the page and try again.')
-            //        }
-            //    },
-            //    function (data) {
-            //        //Fail
-            //        if (typeof data.clientError != "undefined") {
-            //            ErrorMessage.show(data.clientError);
-            //        } else {
-            //            ErrorMessage.show(data.jsonResult);
-            //        }
-            //    }
-            //);
+            
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;
         });

@@ -1,4 +1,5 @@
 ﻿using AQLI.Data.Models;
+using AQLI.Data.Models.ViewComponentModels;
 using AQLI.DataServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -121,6 +122,56 @@ namespace AQLI.UI.Controllers
         public IActionResult TestWidget()
         {
             return View();
+        }
+
+        //Database widget = working
+        public IActionResult TestVC()
+        {
+            UserFishModel Model = DataSource.List_UserFish(4).First();
+
+            return View(Model);
+        }
+
+        //Grouped Bar Graph = working
+        public IActionResult TestGraphVC()
+        {
+
+            PurchaseByCategoryVCModel viewDataModel = new PurchaseByCategoryVCModel
+            {
+                GraphTitle = "Current Year Breakdown of Purchases By Category Type",
+                AllPurchases = DataSource.List_Purchases().Where(p => p.OwnerID == 4).ToList(),
+                DataUser = "Jimmy Sietsma"
+            };
+
+
+
+
+            return View(viewDataModel);
+        }
+        
+        //Pie Chart = IN PROGRESS
+        public IActionResult TestPieChartVC()
+        {
+            TotalPurchaseBreakdownVCModel viewData = new TotalPurchaseBreakdownVCModel
+            {
+                GraphTitle = "Yearly Total Purchase Breakdown",
+                GraphTitleSubtext = "for Jimmy Sietsma"
+            };
+
+
+            return View(viewData);
+        }
+
+        public IActionResult TestVertBarVC()
+        {
+            TotalDeathBreakdownVCModel dataModel = new TotalDeathBreakdownVCModel
+            {
+                GraphTitle = "Total Deaths vs Living",
+                GraphTitleSubtext = "for Jimmy Sietsma"
+            };
+
+
+            return View(dataModel);
         }
     }
 }

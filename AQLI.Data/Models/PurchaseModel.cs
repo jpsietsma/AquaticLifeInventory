@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AQLI.Data.Models.ListModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,13 +17,13 @@ namespace AQLI.Data.Models
         public int Quantity { get; set; }
 
         [Column(TypeName = "decimal(6,2)")]
-        public decimal Cost { get; set; }        
+        public decimal Cost { get; set; }
         public string Description { get; set; }
 
         [Column(TypeName = "decimal(6,2)")]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public decimal ExtCost { get; set; }
-        
+
         public int PackageCount { get; set; }
 
         public int OwnerID { get; set; }
@@ -33,6 +34,9 @@ namespace AQLI.Data.Models
 
         public int PurchaseCategoryID { get; set; }
         public PurchaseCategoryModel PurchaseCategory { get; set; }
+
+        public int PurchaseCategoryTypeID { get; set;}
+        public PurchaseCategoryTypeModel PurchaseCategoryType { get; set; }
 
         public int? CreatureID { get; set; }
         //public CreatureModel Creature { get; set; }

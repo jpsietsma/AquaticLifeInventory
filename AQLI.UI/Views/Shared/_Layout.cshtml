@@ -6,14 +6,20 @@
     <title>@ViewData["Title"] | Aquatic Life Inventory</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/lib/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" />    
+    <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
     <style>
-        .sdn-alert-container{
+        .sdn-alert-container {
             display: none;
         }
     </style>
     @RenderSection("Style", required: false)
+
+    <!-- These are the javascript files needed for the graphs -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
 <body>
     <header>

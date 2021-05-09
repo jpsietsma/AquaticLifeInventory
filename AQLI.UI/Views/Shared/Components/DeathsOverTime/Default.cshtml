@@ -1,0 +1,53 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+@using AQLI.DataServices;
+
+@model DeathsOverTimeVCModel;
+
+@inject DataFactory DataSource;
+
+<link rel="stylesheet" href="~/css/widgets/DeathsOverTimeLineWidget.css" />
+
+<figure class="highcharts-figure">
+    <div id="deathsovertimecontainer"></div>
+    <p class="highcharts-description">
+        All deaths broken down over time
+    </p>
+</figure>
+
+<script>
+    Highcharts.chart('deathsovertimecontainer', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '@Model.GraphTitle'
+        },
+        subtitle: {
+            text: '@Model.GraphTitleSubtext'
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: 'Fish Deaths'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '29 Gallon Tank',
+            data: [3, 7, 10, 1, 3, 2, 1, 0, 0, 0, 1, 1]
+        },
+        {
+            name: '10 Gallon Tank',
+            data: [1, 0, 0, 0, 1, 0, 1, 2, 1, 0, 0, 0]
+        }]
+    });
+</script>

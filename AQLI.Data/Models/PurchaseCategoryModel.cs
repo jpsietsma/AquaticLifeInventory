@@ -16,6 +16,8 @@ namespace AQLI.Data.Models
         public string CategoryColor { get; set; }
 
         public int PurchaseCategoryTypeID { get; set; }
+        public PurchaseCategoryTypeModel PurchaseCategoryType { get; set; }
+
         public List<PurchaseModel> Purchases { get; set; }
     }
 }

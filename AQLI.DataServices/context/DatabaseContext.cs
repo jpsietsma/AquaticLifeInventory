@@ -43,6 +43,7 @@ namespace AQLI.DataServices.context
         public DbSet<TankSupplyModel> Tank_Supply { get; set; }
         public DbSet<TankEquipmentModel> Tank_Equipment { get; set; }
         public DbSet<TankNoteModel> Tank_Notes { get; set; }
+        public DbSet<PurchaseCategoryTypeModel> PurchaseCategoryTypes { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -137,6 +138,11 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<PurchaseModel>()
                 .HasOne(pt => pt.PurchaseCategory)
                 .WithMany(p => p.Purchases)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<PurchaseModel>()
+                .HasOne(pc => pc.PurchaseCategoryType)
+                .WithMany()
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<PurchaseModel>()

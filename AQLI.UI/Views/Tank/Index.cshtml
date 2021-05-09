@@ -27,60 +27,96 @@
 </style>
 
 <div class="grid">
+    @if (TempData["ActionStatusCode"] != null)
+    {
+        @if ((int)TempData["ActionStatusCode"] == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-block alert-success">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <h4>Transfer Complete!</h4>
+                        @Html.Raw(TempData["ActionStatusMsg"])
+                    </div>
+                </div>
+            </div>
+        }
+        else if ((int)TempData["ActionStatusCode"] > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-block alert-info">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <h4>Unable to transfer purchase</h4>
+                        @Html.Raw(TempData["ActionStatusMsg"])
+                    </div>
+                </div>
+            </div>
+        }
+    }
     <div class="row">
         <div class="col-8 text-center">
             <h2 class="display-9 col-8">@user.FirstName's Home Dashboard</h2>
         </div>
         <br />
     </div>
-    
+
     <!-- Dashboard Tab Navigation -->
     <div class="row justify-content-center">
         <div class="col-9 text-center">
             <ul class="nav nav-tabs nav-justified">
                 <li class="nav-item">
-                    <a href="#tanks_tab" class="nav-link active" data-toggle="tab"> <img src="~/images/icons/TankStatus_Established_Active.png" height="50" width="50" /> 
-                    <br />My Tanks
+                    <a href="#tanks_tab" class="nav-link active" data-toggle="tab">
+                        <img src="~/images/icons/TankStatus_Established_Active.png" height="50" width="50" />
+                        <br />My Tanks
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#fish_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Fish_Header.png" height="50" width="50" />
-                    <br />Fish
+                    <a href="#fish_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Fish_Header.png" height="50" width="50" />
+                        <br />Fish
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#plant_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Plant_Header.com.png" height="50" width="50" />
-                    <br />Plants
+                    <a href="#plant_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Plant_Header.com.png" height="50" width="50" />
+                        <br />Plants
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#supplies_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Supplies_Header.png" height="50" width="50" />
-                    <br />Supplies
+                    <a href="#supplies_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Supplies_Header.png" height="50" width="50" />
+                        <br />Supplies
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#maintenance_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Maintenance_Header.png" height="50" width="50" />
-                    <br />Maintenance
+                    <a href="#maintenance_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Maintenance_Header.png" height="50" width="50" />
+                        <br />Maintenance
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#inventory_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Equipment_Header.png" height="50" width="75" />
-                    <br />Equipment
+                    <a href="#inventory_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Equipment_Header.png" height="50" width="75" />
+                        <br />Equipment
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#incident_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Report_Header.png" height="50" width="65" />
+                    <a href="#incident_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Report_Header.png" height="50" width="65" />
                         <br />Reporting
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#notifications_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Notification_Header.png" height="50" width="50" />
-                    <br />Alerts <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i>
+                    <a href="#notifications_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Notification_Header.png" height="50" width="50" />
+                        <br />Alerts <i class="badge badge-pill badge-info">@Model.Notifications.Count()</i>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#purchases_tab" class="nav-link" data-toggle="tab"><img src="~/images/icons/TankTab_Invoice_Header.png" width="50" height="50" />
-                    <br />Invoices
+                    <a href="#purchases_tab" class="nav-link" data-toggle="tab">
+                        <img src="~/images/icons/TankTab_Invoice_Header.png" width="50" height="50" />
+                        <br />Invoices
                     </a>
                 </li>
             </ul>
@@ -111,12 +147,12 @@
                     <partial name="tabs/_Tab_Inventory" model="Model" />
                 </div>
                 <!-- incident tab -->
-                <div class="tab-pane container fade" id="incident_tab">
+                <div class="tab-pane container-fluid fade" id="incident_tab">
                     <partial name="tabs/_Tab_IncidentReports" model="Model" />
                 </div>
                 <!-- alerts tab -->
                 <div class="tab-pane container fade" id="notifications_tab">
-                    <partial name="tabs/_Tab_Notifications" />
+                    <partial name="tabs/_Tab_Notifications" model="Model" />
                 </div>
                 <!-- purchases tab -->
                 <div class="tab-pane container fade" id="purchases_tab">

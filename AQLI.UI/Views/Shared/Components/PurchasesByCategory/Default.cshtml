@@ -1,0 +1,166 @@
+﻿@model AQLI.Data.Models.ViewComponentModels.PurchaseByCategoryVCModel;
+
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@inject DataFactory DataSource;
+
+<link rel="stylesheet" type="text/css" href="~/css/widgets/PurchaseChartWidget.css" />
+
+<figure class="highcharts-figure">
+    <div id="PurchaseChartWidgetContainer"></div>
+    <br />
+    <p class="highcharts-description" style="font-size: 14px;">
+        All purchases for the specified user, broken by month and grouped by category type.
+    </p>
+</figure>
+
+<script>
+    var liveFishDataArray = [];
+    var equipmentDataArray = [];
+    var livePlantDataArray = [];
+    var foodDataArray = [];
+    var tankDataArray = [];
+    var supplyDataArray = [];
+
+    @{
+        //Get count of live fish purchases, grouped by month
+        var livefishdata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 1)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in livefishdata)
+        {
+            @:liveFishDataArray.push(@d.Value);
+        }
+
+        //Get count of equipment purchases, grouped by month
+        var equipmentdata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 2)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in equipmentdata)
+        {
+            @:equipmentDataArray.push(@d.Value);
+        }
+
+        //Get count of live plant purchases, grouped by month
+        var liveplantdata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 9)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in liveplantdata)
+        {
+            @:livePlantDataArray.push(@d.Value);
+        }
+
+        //Get count of food purchases, grouped by month
+        var fooddata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 5)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in fooddata)
+        {
+            @:foodDataArray.push(@d.Value);
+        }
+
+        //Get count of tank purchases, grouped by month
+        var tankdata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 6)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in tankdata)
+        {
+            @:tankDataArray.push(@d.Value);
+        }
+
+        //Get count of supply purchases, grouped by month
+        var supplydata = Model.AllPurchases
+            .Where(p => p.PurchaseCategoryTypeID == 3)
+            .GroupBy(x => new { Month = DateTime.Parse(x.Date).Month, Year = DateTime.Parse(x.Date).Year })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var d in supplydata)
+        {
+            @:supplyDataArray.push(@d.Value);
+        }
+    }
+
+    Highcharts.chart('PurchaseChartWidgetContainer', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '@Model.GraphTitle'
+        },
+        subtitle: {
+            text: 'for @Model.DataUser'
+        },
+        xAxis: {
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: '@Model.YAxisTitle'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 1
+            }
+        },
+        series: [{
+            name: 'Live Fish',
+            data: liveFishDataArray
+
+        }, {
+            name: 'Equipment',
+            data: equipmentDataArray
+
+        }, {
+            name: 'Live Plant',
+            data: livePlantDataArray
+
+        }, {
+            name: 'Food',
+            data: foodDataArray
+        }, {
+            name: 'Tank',
+            data: tankDataArray
+        }, {
+            name: 'Supply',
+            data: supplyDataArray
+        }]
+    });
+
+</script>
+

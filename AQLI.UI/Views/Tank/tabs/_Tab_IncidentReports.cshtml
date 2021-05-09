@@ -1,1 +1,36 @@
-﻿Incidents
+﻿@model AQLI.Data.Models.WebsiteUser;
+
+@inject AQLI.DataServices.DataFactory DataSource;
+
+@{
+    var purchases = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList();
+    var title = "Breakdown of Purchases By Category";
+    var name = string.Concat(Model.FirstName, " ", Model.LastName);
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-5">
+            <!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
+            @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = purchases, Title = title, User = name })
+        </div>
+        <div class="col-3">
+            <!-- Total purchases category breakdown. Created as a View Component for ease -->
+            @await Component.InvokeAsync("TotalPurchaseBreakdown", new { GraphTitle = "Purchase Type Breakdown", GraphSubtitle = "for Jimmy Sietsma" })
+        </div>
+        <div class="col-3">
+            <!-- Lifetime Fish Type purchase breakdown. Created as a View Component for ease -->
+            @await Component.InvokeAsync("TotalFishTypeBreakdown", new { GraphTitle = "Fish Type Breakdown", GraphSubtitle = "for 29 Gallon Glo Tank" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <!-- Total living vs deaths breakdown. Created as a View Component for ease -->
+            @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "all time" })
+        </div>
+        <div class="col-6">
+            <!-- Deaths over time breakdown. Created as a View Component for ease -->
+            @await Component.InvokeAsync("DeathsOverTime", new { GraphTitle = "Live Fish Deaths Over Time", GraphSubtitle = "all time" })
+        </div>
+    </div>
+</div>

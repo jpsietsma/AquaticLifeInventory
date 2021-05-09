@@ -171,5 +171,66 @@ namespace AQLI.UI.Controllers
             return filePath;
         }
 
+        public IActionResult Transfer()
+        {
+
+            return View("Transfer");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TransferPurchase(int sourceUser, int newUser, int purchaseID)
+        {
+            int fromUserID = sourceUser;
+            int destUserID = newUser;
+            int transferPurchaseID = purchaseID;
+
+            WebsiteUser SourceTransferUser = DataSource.List_Users().Where(u => u.UserId == fromUserID).First();
+            WebsiteUser DestinationTransferUser = DataSource.List_Users().Where(u => u.UserId == destUserID).First();
+            
+            PurchaseModel TransferPurchase = DataSource.List_Purchases().Where(p => p.PurchaseID == transferPurchaseID).First();
+            TransferPurchase.OwnerID = destUserID;
+
+            try
+            {
+                switch (TransferPurchase.PurchaseCategory.PurchaseCategoryTypeID)
+                {
+                    //Living creature
+                    case 1:
+                    //Tank Equipment
+                    case 2:
+                    //Tank Supply
+                    case 3:
+                    //Tank decoration
+                    case 4:
+                    //Food
+                    case 5:
+                    //Tank
+                    case 6:
+                    //Miscellaneous purchase
+                    case 7:
+                    //Bulk food purchase
+                    case 8:
+                    //Live Plant Purchases
+                    case 9:
+                    default:
+                        break;
+                }
+                //Database.Purchases.Update(TransferPurchase);
+                //await Database.SaveChangesAsync();
+
+                TempData["ActionStatusCode"] = 0;
+                TempData["ActionStatusMsg"] = @$"<b>{TransferPurchase.Description}</b> was successfully transferred from <b>{SourceTransferUser.FirstName} {SourceTransferUser.LastName}</b> to <b>{DestinationTransferUser.FirstName} {DestinationTransferUser.LastName}</b>.";
+
+                //put code to log transfer
+            }
+            catch (Exception)
+            {
+                TempData["ActionStatusCode"] = 1;
+                TempData["ActionStatusMsg"] = @$"<b>{TransferPurchase.Description}</b> could not be transferred.  Please try again.";
+            }
+
+            return RedirectToAction("Index", "Tank");
+        }
+
     }
 }

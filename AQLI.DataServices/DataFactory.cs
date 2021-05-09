@@ -151,6 +151,8 @@ namespace AQLI.DataServices
         {
             return Database.Purchases
                 .Include(pc => pc.PurchaseCategory)
+                .ThenInclude(ct => ct.PurchaseCategoryType)
+                .Include(pct => pct.PurchaseCategoryType)
                 .Include(st => st.Store)
                 .ToList();
         }
@@ -191,6 +193,15 @@ namespace AQLI.DataServices
         public List<PurchaseCategoryModel> List_PurchaseCategories()
         {
             return Database.PurchaseCategory
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all purchase category types
+        /// </summary>
+        public List<PurchaseCategoryTypeModel> List_PurchaseCategoryTypes()
+        {
+            return Database.PurchaseCategoryTypes
                 .ToList();
         }
 

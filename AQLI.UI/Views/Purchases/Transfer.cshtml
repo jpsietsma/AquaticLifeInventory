@@ -1,0 +1,57 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Identity;
+
+@model AQLI.Data.Models.UserFishModel
+
+@inject UserManager<WebsiteUser> UserDetails;
+@inject DataFactory DataSource;
+
+@{
+    ViewData["Title"] = "Transfer Purchase";
+
+    var user = await UserDetails.GetUserAsync(User);
+}
+
+<h1>Transfer Purchase Ownership</h1>
+
+<h4>Purchase Details</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="TransferPurchase">
+            <input type="hidden" name="sourceUser" value="@user.UserId" />
+            <div class="form-group">
+                <label class="control-label">Purchase to Transfer</label>
+                <select name="PurchaseID">
+                    <option value="">-- Select Purchase --</option>
+                    @foreach (PurchaseModel purchase in DataSource.List_Purchases().Where(p => p.OwnerID == user.UserId))
+                    {
+                        <option value="@purchase.PurchaseID">@purchase.Store.StoreName -  @purchase.Date - @purchase.Description</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Transfer to User</label>
+                <select name="newUser">
+                    <option value="">-- Select Recipient User --</option>
+                    @foreach (WebsiteUser userDetails in DataSource.List_Users().Where(u => u.UserId != user.UserId))
+                    {
+                        <option value="@userDetails.UserId">@userDetails.FirstName @userDetails.LastName</option>
+                    }
+                </select>
+            </div>            
+            <div class="form-group">
+                <input type="submit" value="Transfer" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Purchases">Back to Purchases</a>
+</div>
+
+@section Scripts {
+    
+}

@@ -1,0 +1,70 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+@using AQLI.DataServices;
+
+@model TotalPurchaseBreakdownVCModel;
+
+@inject DataFactory DataSource;
+
+<link rel="stylesheet" type="text/css" href="~/css/widgets/TotalPurchaseBreakdownPieWidget.css" />
+
+<figure class="highcharts-figure">
+    <div id="pruchasebreakdowncontainer"></div>
+    <p class="highcharts-description">
+        All time purchases for the user, with a breakdown of category types.
+    </p>
+</figure>
+
+<script>
+    // Build the chart
+Highcharts.chart('pruchasebreakdowncontainer', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: '@Model.GraphTitle'
+    },
+    subtitle: {
+        text: '@Model.GraphTitleSubtext'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        name: 'Brands',
+        colorByPoint: true,
+        data: [{
+            name: 'Food',
+            y: 14.16,
+            sliced: true,
+            selected: true
+        }, {
+            name: 'Live Fish',
+            y: 65.84
+        }, {
+            name: 'Equipent',
+            y: 2.85
+        }, {
+            name: 'Supplies',
+            y: 17.15
+        }]
+    }]
+});
+</script>
