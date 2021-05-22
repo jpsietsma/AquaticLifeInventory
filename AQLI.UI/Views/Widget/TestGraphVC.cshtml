@@ -3,4 +3,4 @@
 @model PurchaseByCategoryVCModel;
 
 <!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
-@await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = Model.AllPurchases, Title = Model.GraphTitle, User = Model.DataUser })
+@await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = Model.AllPurchases, Title = Model.GraphTitle })

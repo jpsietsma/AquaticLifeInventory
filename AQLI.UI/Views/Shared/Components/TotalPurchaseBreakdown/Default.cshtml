@@ -8,12 +8,26 @@
 <link rel="stylesheet" type="text/css" href="~/css/widgets/TotalPurchaseBreakdownPieWidget.css" />
 
 <figure class="highcharts-figure">
-    <div id="pruchasebreakdowncontainer"></div>
+    <div id="pruchasebreakdowncontainer" style="padding: 5px;"></div>
     <p class="highcharts-description">
-        All time purchases for the user, with a breakdown of category types.
+        
     </p>
 </figure>
+<script>
+    var data = [];
+</script>
+@{ 
+    var purchaseCategories = Model.SeriesPieData.GroupBy(p => p.PurchaseCategoryType.PurchaseCategoryTypeName);
 
+    foreach (var dataGroup in purchaseCategories)
+    {
+        <script>
+            data.push({ name:'@dataGroup.Key', y: @dataGroup.Count() })
+        </script>
+    }
+
+
+}
 <script>
     // Build the chart
 Highcharts.chart('pruchasebreakdowncontainer', {
@@ -48,23 +62,9 @@ Highcharts.chart('pruchasebreakdowncontainer', {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Items',
         colorByPoint: true,
-        data: [{
-            name: 'Food',
-            y: 14.16,
-            sliced: true,
-            selected: true
-        }, {
-            name: 'Live Fish',
-            y: 65.84
-        }, {
-            name: 'Equipent',
-            y: 2.85
-        }, {
-            name: 'Supplies',
-            y: 17.15
-        }]
+        data: data
     }]
 });
 </script>

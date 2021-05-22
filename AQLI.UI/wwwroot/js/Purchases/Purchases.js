@@ -135,7 +135,9 @@
             var cost = $('#Cost').val();
             var quantity = $('#Quantity').val();
             var extCost = $('#ExtCost').val();
-            var purchaseCategory = $('#PurchaseCategoryID').val()
+            var purchaseCategory = $('#PurchaseCategoryID').val();
+            var purchaseCategoryType = $('#PurchaseCategoryTypeID').val();
+            
 
 
             $('#purchaseInvoicePurchaseTable').DataTable().row.add([
@@ -144,9 +146,11 @@
                     cost,
                     quantity,
                     extCost,
-                    purchaseCategory
+                    purchaseCategory,
+                    purchaseCategoryType
                 ]).draw(false);
-            });
+        });
+
     },
     modalLoaded: function (success) {
         if (!success) {
@@ -166,6 +170,7 @@
                     null,
                     null,
                     { visible: false },
+                    { visible: false },
                     {
                         render: function (data, type, row) {
                             return '<i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>';
@@ -179,7 +184,8 @@
                     { "title": "Quantity", orderable: false, "targets": 3 },
                     { "title": "Ext Cost", orderable: false, "targets": 4 },
                     { "title": "Category", "targets": 5 },
-                    { "title": "", orderable: false, "targets": 6}
+                    { "title": "Type", "targets": 6},
+                    { "title": "", orderable: false, "targets": 7}
                 ],
                 "searching": false,
                 "pageLength": 5,
@@ -245,7 +251,7 @@
                     "OwnerID": 0,
                     "StoreID": 0,
                     "PurchaseCategoryID": $propIdx[5],
-                    "TankID": 0,
+                    "PurchaseCategoryTypeID": $propIdx[6],
                     "PurchaseDate": null
                 });
 

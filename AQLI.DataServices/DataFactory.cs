@@ -167,7 +167,6 @@ namespace AQLI.DataServices
                 .Include(o => o.Owner)
                 .Include(p => p.Purchases)
                 .Include(s => s.Store)
-                //.Include(t => t.Tank)
                 .ToList();
         }
 

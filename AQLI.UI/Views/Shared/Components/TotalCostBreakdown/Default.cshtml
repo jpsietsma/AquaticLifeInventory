@@ -1,19 +1,34 @@
 ﻿@using AQLI.Data.Models.ViewComponentModels;
+@using AQLI.DataServices;
 
-@model TotalFishTypeBreakdownVCModel
+@model TotalCostBreakdownVCModel;
 
-<link rel="stylesheet" href="~/css/widgets/TotalFishTypeBreakdownPieWidget.css" />
+@inject DataFactory DataSource;
 
 <figure class="highcharts-figure">
-    <div id="fishbreakdowncontainer"></div>
+    <div id="totalcostcontainer" style="padding: 5px;"></div>
     <p class="highcharts-description">
-        All time live fish purchases for the user, with a breakdown of fish type.
+
     </p>
 </figure>
-
 <script>
+    var data = [];    
+</script>
+@{
+    var purchaseGroups = Model.SeriesPieData.GroupBy(p => p.PurchaseCategoryType.PurchaseCategoryTypeName);
+
+    foreach (var dataGroup in purchaseGroups)
+    {
+    <script>
+        var ano = { name: '@dataGroup.Key', y: @dataGroup.Sum(p => p.ExtCost) };
+            data.push(ano);
+    </script>
+    }
+}
+<script>
+
     // Build the chart
-    Highcharts.chart('fishbreakdowncontainer', {
+    Highcharts.chart('totalcostcontainer', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -45,29 +60,9 @@
             }
         },
         series: [{
-            name: 'Brands',
+            name: 'Total Cost',
             colorByPoint: true,
-            data: [{
-                name: 'Glo Tetra',
-                y: 36.41,
-                sliced: true,
-                selected: true
-            }, {
-                name: 'Glo Barb',
-                y: 18.84
-            }, {
-                name: 'Glo Danio',
-                y: 28.85
-            }, {
-                name: 'Glo Shark',
-                y: 4.67
-            }, {
-                name: 'Pleco/Bottom',
-                y: 4.18
-            }, {
-                name: 'Smail/Other',
-                y: 7.05
-            }]
+            data: data
         }]
     });
 </script>

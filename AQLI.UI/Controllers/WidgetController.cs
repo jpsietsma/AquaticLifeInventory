@@ -139,8 +139,7 @@ namespace AQLI.UI.Controllers
             PurchaseByCategoryVCModel viewDataModel = new PurchaseByCategoryVCModel
             {
                 GraphTitle = "Current Year Breakdown of Purchases By Category Type",
-                AllPurchases = DataSource.List_Purchases().Where(p => p.OwnerID == 4).ToList(),
-                DataUser = "Jimmy Sietsma"
+                AllPurchases = DataSource.List_Purchases().Where(p => p.OwnerID == 4).ToList()
             };
 
 

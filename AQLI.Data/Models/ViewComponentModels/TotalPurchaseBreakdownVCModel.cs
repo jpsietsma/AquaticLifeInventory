@@ -6,6 +6,6 @@ namespace AQLI.Data.Models.ViewComponentModels
 {
     public class TotalPurchaseBreakdownVCModel : BaseVCModel
     {
-
+        public List<PurchaseModel> SeriesPieData { get; set; }
     }
 }

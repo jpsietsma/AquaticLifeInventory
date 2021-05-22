@@ -87,7 +87,8 @@
             var cost = $('#Cost').val();
             var quantity = $('#Quantity').val();
             var extCost = $('#ExtCost').val();
-            var purchaseCategory = $('#PurchaseCategoryID').val()
+            var purchaseCategory = $('#PurchaseCategoryID').val();
+            var purchaseCategoryType = $('#PurchaseCategoryTypeID').val();
 
 
             $('#purchaseInvoicePurchaseTable').DataTable().row.add([
@@ -96,8 +97,10 @@
                 cost,
                 quantity,
                 extCost,
-                purchaseCategory
+                purchaseCategory,
+                purchaseCategoryType
             ]).draw(false);
+
         });
     },
     modalLoaded: function (success) {
@@ -129,10 +132,11 @@
                     null,
                     null,
                     null,
-                    { visible: false },
+                    null,
+                    null,
                     {
                         render: function (data, type, row) {
-                            return '<i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>';
+                            return '<i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i>';
                         }
                     }
                 ],
@@ -143,9 +147,10 @@
                     { "title": "Quantity", orderable: false, "targets": 3 },
                     { "title": "Ext Cost", orderable: false, "targets": 4 },
                     { "title": "Category", "targets": 5 },
-                    { "title": "", orderable: false, "targets": 6 }
+                    { "title": "Type", orderable: false, "targets": 6 },
+                    { "title": "", orderable: false, "targets": 7 }
                 ],
-                "searching": false,
+                "searching": true,
                 "pageLength": 5,
                 "oLanguage": {
                     "sEmptyTable": "No purchases currently added to this invoice."
@@ -181,11 +186,6 @@
                     .remove()
                     .draw();
             });
-
-            //Attach click listener to rows pencil icon to edit
-            $('#purchaseInvoicePurchaseTable tbody').on('click', 'i.icon-edit-row', function () {
-                //show edit modal here, passing object
-            });
                         
         }
                 
@@ -209,7 +209,7 @@
                     "OwnerID": 0,
                     "StoreID": 0,
                     "PurchaseCategoryID": $propIdx[5],
-                    "TankID": 0,
+                    "PurchaseCategoryTypeID": $propIdx[6],
                     "PurchaseDate": null
                 });
 
@@ -235,6 +235,12 @@
                     }
                 }
             );
+
+            //clear the form, reset focus
+            document.getElementById("#addPurchaseInvoiceForm").reset();
+
+            //Reset focus on description for new add
+            $("#PurchaseDescription").focus();
 
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;

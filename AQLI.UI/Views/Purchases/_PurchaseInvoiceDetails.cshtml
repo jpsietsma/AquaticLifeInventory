@@ -51,7 +51,7 @@
                                 <div class="row">
                                     <div class="form-group col-4">
                                         <label class="control-label">Purchase Date:</label>
-                                        <input class="form-control" type="date" name="PurchaseDate" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required") />
+                                        <input class="form-control" type="date" name="PurchaseDate" value="@(Model.PurchaseInvoiceID == 0 ? DateTime.Now.ToString("yyyy-MM-dd") : Model.PurchaseDate.ToString("yyyy-MM-dd"))" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required") />
                                     </div>
                                     <div class="form-group col-4">
                                         <label class="control-label">Supplier:</label>
@@ -67,7 +67,7 @@
                                                     <option selected value="">-- Select Supplier --</option>
                                                 }
 
-                                                foreach (StoreModel store in DataSource.List_Stores())
+                                                foreach (StoreModel store in DataSource.List_Stores().OrderBy(s => s.StoreName))
                                                 {
                                                     if (store.StoreID == Model.StoreID)
                                                     {
@@ -128,7 +128,8 @@
                                                     <td class="sdn-purchase-table-cell">@purchase.Cost</td>
                                                     <td class="sdn-purchase-table-cell">@purchase.Quantity</td>
                                                     <td class="sdn-purchase-table-cell">@purchase.ExtCost</td>
-                                                    <td class="sdn-purchase-table-cell" style="display: none;">@purchase.PurchaseCategoryID</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.PurchaseCategoryID</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.PurchaseCategoryTypeID</td>
                                                     <td>
                                                         <i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>
                                                     </td>

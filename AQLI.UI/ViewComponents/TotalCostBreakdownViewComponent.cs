@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 
 namespace AQLI.UI.ViewComponents
 {
-    public class TotalPurchaseBreakdownViewComponent : ViewComponent
+    public class TotalCostBreakdownViewComponent : ViewComponent
     {
         private readonly DataFactory DataSource;
 
-        public TotalPurchaseBreakdownViewComponent(DataFactory _datasource)
+        public TotalCostBreakdownViewComponent(DataFactory _datasource)
         {
             DataSource = _datasource;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string GraphTitle, string GraphSubtitle)
         {
-            TotalPurchaseBreakdownVCModel viewDataModel = new TotalPurchaseBreakdownVCModel
+            TotalCostBreakdownVCModel viewData = new TotalCostBreakdownVCModel
             {
                 GraphTitle = GraphTitle,
                 GraphTitleSubtext = GraphSubtitle,
                 SeriesPieData = DataSource.List_Purchases()
             };
 
-            return View(viewDataModel);
+            return View(viewData);
         }
     }
 }

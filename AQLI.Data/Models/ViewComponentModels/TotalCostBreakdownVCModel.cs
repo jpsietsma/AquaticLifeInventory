@@ -4,8 +4,8 @@ using System.Text;
 
 namespace AQLI.Data.Models.ViewComponentModels
 {
-    public class PurchaseByCategoryVCModel : BaseVCModel
+    public class TotalCostBreakdownVCModel : BaseVCModel
     {
-        public List<PurchaseModel> AllPurchases { get; set; }
+        public List<PurchaseModel> SeriesPieData { get; set; }
     }
 }

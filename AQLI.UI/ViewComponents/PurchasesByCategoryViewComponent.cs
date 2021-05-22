@@ -18,13 +18,13 @@ namespace AQLI.UI.ViewComponents
             DataSource = _dataSource;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(List<PurchaseModel> PurchaseHistory, string Title, string User)
+        public async Task<IViewComponentResult> InvokeAsync(List<PurchaseModel> PurchaseHistory, string GraphTitle, string GraphSubtitle, string User)
         {
             PurchaseByCategoryVCModel vcDataModel = new PurchaseByCategoryVCModel
             {
                 AllPurchases = PurchaseHistory,
-                GraphTitle = Title,
-                DataUser = User
+                GraphTitle = GraphTitle,
+                GraphTitleSubtext = GraphSubtitle
             };
 
             return View(vcDataModel);

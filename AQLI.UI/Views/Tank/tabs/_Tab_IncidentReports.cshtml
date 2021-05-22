@@ -22,20 +22,24 @@
                     </a>
                 </li>
             </ul>
-            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
-                <div class="tab-pane container active" id="purchasingReportsTab">
+            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; ">
+                <div class="tab-pane container-fluid active" id="purchasingReportsTab">
                     <div class="row">
-                        <div class="col-5">
+                        <div class="col-6">
                             <!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
-                            @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), Title = "Purchases By Category Type", User = "Jimmy Sietsma" })
+                            @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })
                         </div>
                         <div class="col-3">
                             <!-- Total purchases category breakdown. Created as a View Component for ease -->
-                            @await Component.InvokeAsync("TotalPurchaseBreakdown", new { GraphTitle = "Purchase Type Breakdown", GraphSubtitle = "for Jimmy Sietsma" })
+                            @await Component.InvokeAsync("TotalPurchaseBreakdown", new { GraphTitle = "Purchases By Category", GraphSubtitle = "by Purchase Type" })
+                        </div>
+                        <div class="col-3">
+                            <!-- Total purchases cost breakdown. Created as a View Component for ease -->
+                            @await Component.InvokeAsync("TotalCostBreakdown", new { GraphTitle = "Total Cost Breakdown", GraphSubtitle = "by Purchase Category Type" })
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane container active" id="fishTypeReportsTab">
+                <div class="tab-pane container-fluid" id="fishTypeReportsTab">
                     <div class="row">
                         <div class="col-3">
                             <!-- Lifetime Fish Type purchase breakdown. Created as a View Component for ease -->
@@ -43,15 +47,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane container active" id="medicalMaintenanceReportsTab">
+                <div class="tab-pane container-fluid" id="medicalMaintenanceReportsTab">
                     <div class="row">
                         <div class="col-6">
                             <!-- Total living vs deaths breakdown. Created as a View Component for ease -->
-                            @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "all time" })
+                            @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "Lifetime Over All Tanks" })
                         </div>
                         <div class="col-6">
                             <!-- Deaths over time breakdown. Created as a View Component for ease -->
-                            @await Component.InvokeAsync("DeathsOverTime", new { GraphTitle = "Live Fish Deaths Over Time", GraphSubtitle = "all time" })
+                            @await Component.InvokeAsync("DeathsOverTime", new { GraphTitle = "Live Fish Deaths Over Time", GraphSubtitle = "Over All Active Tanks" })
                         </div>
                     </div>
                 </div>
