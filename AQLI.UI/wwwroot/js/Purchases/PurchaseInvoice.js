@@ -150,7 +150,7 @@
                     { "title": "Type", orderable: false, "targets": 6 },
                     { "title": "", orderable: false, "targets": 7 }
                 ],
-                "searching": true,
+                "searching": false,
                 "pageLength": 5,
                 "oLanguage": {
                     "sEmptyTable": "No purchases currently added to this invoice."

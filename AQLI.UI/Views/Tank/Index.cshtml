@@ -122,40 +122,40 @@
             </ul>
 
             <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
-                <!-- tanks tab -->
-                <div class="tab-pane container active" id="tanks_tab">
+                <!-- My Tanks tab -->
+                <div class="tab-pane container-fluid active" id="tanks_tab">
                     <partial name="tabs/_Tab_MyTanks" model="Model" />
                 </div>
-                <!-- fish tab -->
+                <!-- Fish tab -->
                 <div class="tab-pane container-fluid justify-content-center fade" id="fish_tab">
                     <partial name="tabs/_Tab_Fish" model="Model" />
                 </div>
-                <!-- fish tab -->
+                <!-- Plant tab -->
                 <div class="tab-pane container-fluid justify-content-center fade" id="plant_tab">
                     <partial name="tabs/_Tab_LivePlants" model="Model" />
                 </div>
-                <!-- supplies tab -->
+                <!-- Supplies tab -->
                 <div class="tab-pane container-fluid justify-content-center fade" id="supplies_tab">
                     <partial name="tabs/_Tab_SuppliesFood" model="Model" />
                 </div>
-                <!-- maintenance tab -->
-                <div class="tab-pane container fade" id="maintenance_tab">
+                <!-- Maintenance tab -->
+                <div class="tab-pane container-fluid fade" id="maintenance_tab">
                     <partial name="tabs/_Tab_Maintenance" model="Model" />
                 </div>
                 <!-- Equipment tab -->
                 <div class="tab-pane container-fluid fade" id="inventory_tab">
                     <partial name="tabs/_Tab_Inventory" model="Model" />
                 </div>
-                <!-- incident tab -->
+                <!-- Reporting tab -->
                 <div class="tab-pane container-fluid fade" id="incident_tab">
                     <partial name="tabs/_Tab_IncidentReports" model="Model" />
                 </div>
-                <!-- alerts tab -->
-                <div class="tab-pane container fade" id="notifications_tab">
+                <!-- Alerts tab -->
+                <div class="tab-pane container-fluid fade" id="notifications_tab">
                     <partial name="tabs/_Tab_Notifications" model="Model" />
                 </div>
-                <!-- purchases tab -->
-                <div class="tab-pane container fade" id="purchases_tab">
+                <!-- Purchase Invoice tab -->
+                <div class="tab-pane container-fluid fade" id="purchases_tab">
                     <partial name="tabs/_Tab_PurchaseInvoices" model="Model" />
                 </div>
             </div>
@@ -168,6 +168,10 @@
     <script type="text/javascript" src="~/js/Purchases/Purchases.js"></script>
     <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 }
 

@@ -2,6 +2,8 @@
 @using AQLI.DataServices.context;
 @using AQLI.DataServices;
 
+@model WebsiteUser;
+
 @inject DatabaseContext Database;
 @inject DataFactory DataSource;
 
@@ -20,11 +22,24 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-8">
+        !!! Need to get Purchases By Category bar graph view component working here !!!!
+    </div>
 </div>
-</div>
-<div class="row mx-auto">
-    <div class="col-lg-12 float-left pb-2">
-        <button type="button" class="btn btn-sm btn-success" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> Add Invoice</button>
+<div class="row">
+    <div class="col-5">
+
+    </div>
+    <div class="col-7 text-right">
+        <input id="customSearchInput" class="form-control-sm" type="text" placeholder="Search Invoices..." />
+        <button id="customSearchButton" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Search</button>
+        <button type="button" class="btn btn-sm btn-success" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> New Invoice</button>
+        <button data-toggle="dropdown" type="button" class="btn btn-sm btn-warning dropdown-toggle"><i class="fas fa-download"></i> Export</button>
+        <div class="dropdown-menu">
+            <button id="exportExcel" type="button" class="btn btn-sm dropdown-item buttons-csv">as Excel</button>
+            <button id="exportPDF" type="button" class="btn btn-sm dropdown-item buttons-pdf">as PDF</button>
+        </div>
     </div>
 </div>
 <div class="container-fluid">

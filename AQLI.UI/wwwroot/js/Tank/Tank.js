@@ -14,6 +14,40 @@
             ]
         });
 
+        //Purchase Invoice datatable creation
+        var purchaseTable = $('#PurchaseInvoiceTable').DataTable({
+            dom: 'Bfrtip',
+            "columnDefs": [
+                {
+                    "orderable": false,
+                    "targets": [-1, -3]                    
+                }
+            ],
+            "pageLength": 5,
+            "searching": false,
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ]
+        });
+
+        // Custom excel and pdf export button for purchase invoices
+        $("#exportExcel").on("click", function () {
+            purchaseTable.button('.buttons-csv').trigger();
+        });
+
+        $("#exportPDF").on("click", function () {
+            purchaseTable.button('.buttons-pdf').trigger();
+        });
+
+        //Custom search input and button for purchase invoices
+        $('#customSearchButton').on('keyup click', function () {
+            purchaseTable.search($('#customSearchInput').val()).draw();
+        });
+        // end purchase Invoice datatable creation
+        
         $('#SupplyPurchaseTable').DataTable({
             "columnDefs": [
                 {
