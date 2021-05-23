@@ -211,14 +211,35 @@
                 </li>
             </ul>
             <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; ">
-                <div class="tab-pane active" id="categoryTab">
-                    @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })
+                <div class="tab-pane active container-fluid" id="categoryTab">
+                    <div class="row">
+                        <div class="col-7">
+                            @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })
+                        </div>
+                        <div class="col-5">
+                            @await Component.InvokeAsync("TotalPurchaseBreakdown", new { GraphTitle = "Purchases By Category", GraphSubtitle = "by Purchase Type" })
+                        </div>
+                    </div>                    
                 </div>
-                <div class="tab-pane" id="creatureSuccessTab">
-                    @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "Lifetime Over All Tanks" })
+                <div class="tab-pane container-fluid" id="creatureSuccessTab">
+                    <div class="row">
+                        <div class="col-6">
+                            @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "Lifetime Over All Tanks" })
+                        </div>
+                        <div class="col-6">
+                            @await Component.InvokeAsync("DeathsOverTime", new { GraphTitle = "Live Fish Deaths Over Time", GraphSubtitle = "Over All Active Tanks" })
+                        </div>
+                    </div>                                       
                 </div>
-                <div class="tab-pane" id="costsTab">
-                    @await Component.InvokeAsync("TotalCostBreakdown", new { GraphTitle = "Total Cost Breakdown", GraphSubtitle = "by Purchase Category Type" })
+                <div class="tab-pane container-fluid" id="costsTab">
+                    <div class="row">
+                        <div class="col-6">
+                            @await Component.InvokeAsync("TotalCostBreakdown", new { GraphTitle = "Total Cost Breakdown", GraphSubtitle = "by Purchase Category Type" })
+                        </div>
+                        <div class="col-6">
+                            @await Component.InvokeAsync("TotalCostBreakdown", new { GraphTitle = "Total Cost Breakdown", GraphSubtitle = "by Purchase Category Type" })
+                        </div>
+                    </div>                    
                 </div>
             </div>                
         </div>

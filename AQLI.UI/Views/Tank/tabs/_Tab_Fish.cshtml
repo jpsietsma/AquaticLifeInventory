@@ -10,6 +10,25 @@
 }
 <div class="container-fluid">
     <div class="row">
+        <div class="col-8">
+            <div class="card p-0 h-100">
+                <div class="card-header p-0">
+                    Fish Information Highlights
+                </div>
+                <div class="card-body container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            Info card body
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            @await Component.InvokeAsync("TotalFishTypeBreakdown", new { GraphTitle = "Fish Type Breakdown", GraphSubtitle = "for 29 Gallon Glo Tank" })
+        </div>
+    </div>
+    <div class="row">
         <div class="col-12">
             <table id="FishPurchaseTable" class="table table-bordered table-light table-striped table-hover sdn-purchase-table col-12" border="1">
                 <thead class="thead-dark">

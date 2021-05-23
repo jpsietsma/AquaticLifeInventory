@@ -7,8 +7,12 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/widgets/TotalPurchaseBreakdownPieWidget.css" />
 
+@{ 
+    var uid_container = string.Concat("pruchasebreakdowncontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
 <figure class="highcharts-figure">
-    <div id="pruchasebreakdowncontainer" style="padding: 5px;"></div>
+    <div id="@uid_container" style="padding: 5px;"></div>
     <p class="highcharts-description">
         
     </p>
@@ -30,7 +34,7 @@
 }
 <script>
     // Build the chart
-Highcharts.chart('pruchasebreakdowncontainer', {
+Highcharts.chart('@uid_container', {
     chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,

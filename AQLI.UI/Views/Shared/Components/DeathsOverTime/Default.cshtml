@@ -7,15 +7,19 @@
 
 <link rel="stylesheet" href="~/css/widgets/DeathsOverTimeLineWidget.css" />
 
+@{ 
+    var uid_container = string.Concat("deathsovertimecontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
 <figure class="highcharts-figure">
-    <div id="deathsovertimecontainer"></div>
+    <div id="@uid_container"></div>
     <p class="highcharts-description">
         All deaths broken down over time
     </p>
 </figure>
 
 <script>
-    Highcharts.chart('deathsovertimecontainer', {
+    Highcharts.chart('@uid_container', {
         chart: {
             type: 'line'
         },
