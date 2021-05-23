@@ -109,12 +109,12 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header p-0" style="font-size: 18px;">
-                                    Store Statistics
+                                    Store Highlights
                                 </div>
                                 <div class="card-body container-fluid p-0">
                                     <div class="row">
                                         <div class="col">
-                                            <b>Most Popular (item purchase count): </b>
+                                            <b>Most Items Purchased: </b>
                                             @(DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId)
                                                 .GroupBy(p => p.Store.StoreName)
                                                 .OrderByDescending(p => p.Count())
@@ -124,11 +124,21 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <b>Most Popular (store visit frequency): </b>
+                                            <b>Most Frequently Visited: </b>
                                             @(DataSource.List_PurchaseInvoices().Where(p => p.OwnerID == Model.UserId)
                                                 .GroupBy(i => i.Store.StoreName)
                                                 .OrderByDescending(i => i.Count())
                                                 .Select(i => new { key = i.Key, count = i.Count() })
+                                                .FirstOrDefault().key)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Most Money Spent: </b>
+                                            @(DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId)
+                                                .GroupBy(p => p.Store.StoreName)
+                                                .OrderByDescending(p => p.Sum(p => p.ExtCost))
+                                                .Select(p => new { key = p.Key, count = p.Count() })
                                                 .FirstOrDefault().key)
                                         </div>
                                     </div>
