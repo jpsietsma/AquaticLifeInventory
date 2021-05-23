@@ -5,15 +5,19 @@
 
 @inject DataFactory DataSource;
 
+@{ 
+    var uid_container = string.Concat("deathcontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
 <figure class="highcharts-figure">
-    <div id="deathcontainer"></div>
+    <div id="@uid_container"></div>
     <p class="highcharts-description">
         Breakdown of all fish deaths vs. living.
     </p>
 </figure>
 
 <script>
-    Highcharts.chart('deathcontainer', {
+    Highcharts.chart('@uid_container', {
         chart: {
             type: 'bar'
         },

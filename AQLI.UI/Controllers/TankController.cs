@@ -32,9 +32,9 @@ namespace AQLI.UI.Controllers
             UserManager = _userManager;                        
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            UserModel = UserManager.GetUserAsync(User).Result;
+            UserModel = await UserManager.GetUserAsync(User);
 
             return View(UserModel);
         }                

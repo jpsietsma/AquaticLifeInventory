@@ -7,71 +7,238 @@
 @inject DatabaseContext Database;
 @inject DataFactory DataSource;
 
-@section Style {
-    <link rel="stylesheet" href="~/css/Purchases/Purchases.css" />   
-}
-<div class="row">
-    <div class="card col-4">
-        <div class="card-header">
-            Purchase Invoice Statistic Highlights
-        </div>
-        <div class="container-fluid">
-            <div class="row mx-auto">
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-            </div>
-            <div class="row mx-auto">
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-            </div>
-            <div class="row mx-auto">
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-            </div>
-            <div class="row mx-auto">
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-                <div class="col-6">
-                    <b>Lifetime Purchase Total:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-8">
-        <!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
-        @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })
-    </div>
-</div>
-<br />
-<div class="row">
-    <div class="col-5">
 
-    </div>
-    <div class="col-7 text-right">
-        <input id="customSearchInput" class="form-control-sm" type="text" placeholder="Search Invoices..." />
-        <button id="customSearchButton" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Search</button>
-        <button type="button" class="btn btn-sm btn-success" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> New Invoice</button>
-        <button data-toggle="dropdown" type="button" class="btn btn-sm btn-warning dropdown-toggle"><i class="fas fa-download"></i> Export</button>
-        <div class="dropdown-menu">
-            <button id="exportExcel" type="button" class="btn btn-sm dropdown-item buttons-csv"><i class="fas fa-file-excel fa-2x" style="color: green;"></i> <b>Save as CSV</b></button>
-            <button id="exportPDF" type="button" class="btn btn-sm dropdown-item buttons-pdf"><i class="fas fa-file-pdf fa-2x" style="color:red;"></i> <b>Save as PDF</b></button>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Statistics Highlights card -->
+        <div class="col-5">
+            <div class="card h-100">
+                <div class="card-header p-0" style="font-size: 18px;">
+                    <b>Invoice Statistic Highlights</b>
+                </div>
+                <div class="card-body container-fluid p-0">
+                    <div class="row mx-auto mt-1">
+                        <div class="col-6 pb-1">
+                            <div class="text-left">
+                                <b>First Purchase:</b> @(DataSource.List_PurchaseInvoices().OrderBy(i => i.PurchaseDate).Select(i => i.PurchaseDate.ToString("MM/dd/yyyy")).First())
+                            </div>
+                        </div>
+                        <div class="col-6 pb-1">
+                            <div class="text-left">
+                                <b>Last Purchase:</b> @(DataSource.List_PurchaseInvoices().OrderByDescending(i => i.PurchaseDate).Select(i => i.PurchaseDate.ToString("MM/dd/yyyy")).First())
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-auto">
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-header p-0" style="font-size: 18px;">
+                                    <b>Totals</b>
+                                </div>
+                                <div class="card-body container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Money Spent:</b> $@(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Select(p => p.ExtCost).Sum()))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Items Purchased:</b> @(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Count()))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Tanks Purchased:</b> @(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Where(p => p.PurchaseCategoryID == 8).Count()))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Fish Purchased:</b> @(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Where(p => p.PurchaseCategoryID == 1).Count()))
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-header p-0" style="font-size: 18px;">
+                                    <b>Averages</b>
+                                </div>
+                                <div class="card-body container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Invoice: </b>!! $00.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Fish Cost: </b>!! $00.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Decoration:</b>!! $00.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-left">
+                                                <b>Equipment:</b>!! $00.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-auto mt-2">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header p-0" style="font-size: 18px;">
+                                    Store Statistics
+                                </div>
+                                <div class="card-body container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Most Popular (item purchase count): </b>
+                                            @(DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId)
+                                                .GroupBy(p => p.Store.StoreName)
+                                                .OrderByDescending(p => p.Count())
+                                                .Select(p => new { key = p.Key, count = p.Count() })
+                                                .FirstOrDefault().key)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Most Popular (store visit frequency): </b>
+                                            @(DataSource.List_PurchaseInvoices().Where(p => p.OwnerID == Model.UserId)
+                                                .GroupBy(i => i.Store.StoreName)
+                                                .OrderByDescending(i => i.Count())
+                                                .Select(i => new { key = i.Key, count = i.Count() })
+                                                .FirstOrDefault().key)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-auto mt-2">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header p-0" style="font-size: 18px;">
+                                    Category Statistics
+                                </div>
+                                <div class="card-body container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Top Purchased Category: </b>
+                                            !! Live Creature
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Money Spent: </b>
+                                            !! $803.54
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-auto mt-2">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header p-0" style="font-size: 18px;">
+                                    Creature Success Statistics
+                                </div>
+                                <div class="card-body container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Total Purchased: </b>
+                                            !! @(DataSource.List_PurchaseInvoices().Sum(i => i.Purchases.Where(p => p.PurchaseCategoryID == 1).Count()))
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Total Living: </b>
+                                            !! 50 (65%)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>Natural Deaths: </b>
+                                            !! 18 (75%)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
+        <div class="col-7">
+            <ul class="nav nav-pills nav-justified">
+                <li class="nav-item">
+                    <a href="#categoryTab" class="nav-link active" data-toggle="tab">
+                        Category Types
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#creatureSuccessTab" class="nav-link" data-toggle="tab">
+                        Creature Success
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#costsTab" class="nav-link" data-toggle="tab">
+                        Cost Breakdowns
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; ">
+                <div class="tab-pane active" id="categoryTab">
+                    @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })
+                </div>
+                <div class="tab-pane" id="creatureSuccessTab">
+                    @await Component.InvokeAsync("TotalDeathBreakdown", new { GraphTitle = "Living Fish vs. Deaths", GraphSubtitle = "Lifetime Over All Tanks" })
+                </div>
+                <div class="tab-pane" id="costsTab">
+                    @await Component.InvokeAsync("TotalCostBreakdown", new { GraphTitle = "Total Cost Breakdown", GraphSubtitle = "by Purchase Category Type" })
+                </div>
+            </div>                
         </div>
     </div>
-</div>
-<div class="container-fluid">
+    <hr />
+    <div class="row">
+        <div class="col-5">
+
+        </div>
+        <div class="col-7 text-right">
+            <input id="customSearchInput" class="form-control-sm" type="text" placeholder="Search Invoices..." />
+            <button id="customSearchButton" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Search</button>
+            <button type="button" class="btn btn-sm btn-success" onclick="Purchases.openPurchaseInvoiceModal(0)"><i class="fas fa-plus-circle"></i> New Invoice</button>
+            <button data-toggle="dropdown" type="button" class="btn btn-sm btn-warning dropdown-toggle"><i class="fas fa-download"></i> Export</button>
+            <div class="dropdown-menu">
+                <button id="exportExcel" type="button" class="btn btn-sm dropdown-item buttons-csv"><i class="fas fa-file-excel fa-2x" style="color: green;"></i> <b>Save as CSV</b></button>
+                <button id="exportPDF" type="button" class="btn btn-sm dropdown-item buttons-pdf"><i class="fas fa-file-pdf fa-2x" style="color:red;"></i> <b>Save as PDF</b></button>
+            </div>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-12">
             <table id="PurchaseInvoiceTable" class="table table-bordered table-light table-striped table-hover sdn-purchase-table col-12" border="1">
@@ -119,7 +286,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script type="text/javascript" src="~/js/Purchases/PurchaseInvoice.js"></script>    
 }

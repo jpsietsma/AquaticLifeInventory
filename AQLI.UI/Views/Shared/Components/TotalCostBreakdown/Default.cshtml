@@ -5,8 +5,12 @@
 
 @inject DataFactory DataSource;
 
+@{ 
+    var uid_container = string.Concat("totalcostcontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
 <figure class="highcharts-figure">
-    <div id="totalcostcontainer" style="padding: 5px;"></div>
+    <div id="@uid_container" style="padding: 5px;"></div>
     <p class="highcharts-description">
 
     </p>
@@ -28,7 +32,7 @@
 <script>
 
     // Build the chart
-    Highcharts.chart('totalcostcontainer', {
+    Highcharts.chart('@uid_container', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,

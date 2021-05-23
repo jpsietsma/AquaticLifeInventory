@@ -5,10 +5,13 @@
 
 @inject DataFactory DataSource;
 
+@{ 
+    var uid_container = string.Concat("PurchaseChartWidgetContainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
 <link rel="stylesheet" type="text/css" href="~/css/widgets/PurchaseChartWidget.css" />
 
 <figure class="highcharts-figure">
-    <div id="PurchaseChartWidgetContainer" style="padding: 5px;"></div>
+    <div id="@uid_container" style="padding: 5px;"></div>
     <br />
     <p class="highcharts-description">
         
@@ -32,7 +35,7 @@
         }
     }
 
-Highcharts.chart('PurchaseChartWidgetContainer', {
+Highcharts.chart('@uid_container', {
     chart: {
         type: 'column'
     },
