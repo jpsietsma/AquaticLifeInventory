@@ -1,0 +1,33 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+
+@model DatabaseRecordInfoVCModel;
+
+<table>
+    <tr>
+        <td>
+            <b>pk# </b><i>@Model.PKID</i>
+        </td>
+        <td>
+            <b>Created By </b>@Model.AddedBy
+        </td>
+        <td>
+            <b> on </b>@(Model.Added).
+        </td>
+    @if (Model.Modified != null)
+    {
+        <td>
+            <b>Modified By </b>@Model.ModifiedBy
+        </td>
+        <td>
+            <b> on </b>@(Model.Modified).
+        </td>
+    }
+    else
+    {
+        <td>
+            <i>
+                Never Modified.
+            </i>
+        </td>
+    }
+</table>

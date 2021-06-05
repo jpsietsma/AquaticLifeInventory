@@ -1,0 +1,35 @@
+﻿@model IEnumerable<AQLI.Data.Models.TempormentModel>
+
+@{
+    ViewData["Title"] = "TempormentLevels";
+}
+
+<h1>TempormentLevels</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TempormentName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TempormentName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TempormentID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TempormentID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TempormentID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

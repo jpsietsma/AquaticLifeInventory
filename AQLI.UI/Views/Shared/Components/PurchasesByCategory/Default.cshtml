@@ -1,0 +1,93 @@
+﻿@model AQLI.Data.Models.ViewComponentModels.PurchaseByCategoryVCModel;
+
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@inject DataFactory DataSource;
+
+@{ 
+    var uid_container = string.Concat("PurchaseChartWidgetContainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+<link rel="stylesheet" type="text/css" href="~/css/widgets/PurchaseChartWidget.css" />
+
+<figure class="highcharts-figure">
+    <div id="@uid_container" style="padding: 5px;"></div>
+    <br />
+    <p class="highcharts-description">
+        
+    </p>
+</figure>
+
+<script>
+    var purchaseDataGroup = [];
+    var purchaseDrilldownGroup = [];
+
+    @{
+        //Get count of supply purchases, grouped by month
+        var purchaseData = Model.AllPurchases
+            .GroupBy(p => p.PurchaseCategory.CategoryName)
+            .ToList();
+
+        //For each key value pair of grouped purchases
+        foreach (var purchase in purchaseData)
+        {
+            @:purchaseDataGroup.push({ name:'@purchase.Key', y:@purchase.Count(), drilldown: null });
+        }
+    }
+
+Highcharts.chart('@uid_container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '@Model.GraphTitle'
+    },
+    subtitle: {
+        text: '@Model.GraphTitleSubtext'
+    },
+    accessibility: {
+        announceNewData: {
+            enabled: true
+        }
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'Total percent market share'
+        }
+
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y:.1f}%'
+            }
+        }
+    },
+
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+    },
+
+    series: [
+        {
+            name: "Purchase Categories",
+            colorByPoint: true,
+            data: purchaseDataGroup
+        }
+    ],
+    drilldown: {
+        series: purchaseDrilldownGroup
+    }
+});
+
+</script>
+

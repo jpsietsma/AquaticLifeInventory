@@ -1,0 +1,68 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Identity;
+
+@model IEnumerable<AQLI.Data.Models.UserFishModel>
+
+@inject UserManager<WebsiteUser> UserDetails;
+@inject DataFactory DataSource;
+
+@{
+    ViewData["Title"] = "Fish Dashboard";
+
+    var user = await UserDetails.GetUserAsync(User);
+}
+
+<h1>Dashboard</h1>
+
+<p>
+    <a asp-action="Add">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EncumbranceMultiplier)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FishName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FishType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Purchase)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tank)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EncumbranceMultiplier)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FishName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FishType.CreatureTypeID)
+            </td>
+            <td>
+                @item.Purchase.Date -- @item.Purchase.Description
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TankID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.UserFishID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.UserFishID">Details</a> |
+                <a asp-action="Remove" asp-route-id="@item.UserFishID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,19 @@
+﻿@model AQLI.Data.Models.AquaticTankModel;
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form id="deleteTankForm" method="post" asp-controller="Tank" asp-action="_Delete" asp-antiforgery="true">
+            <input type="hidden" name="ID" value="@Model.TankID" />
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+            </div>
+            <div class="modal-body">
+                @($@"Are you sure you want to delete tank #{ Model.TankID }")@(Model.Name != null ? ": " + Model.Name : "")? 
+            </div>
+            <div class="modal-footer">           
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="$('#deleteTankForm').submit()">Delete</button>          
+            </div>
+        </form>
+    </div>
+</div>

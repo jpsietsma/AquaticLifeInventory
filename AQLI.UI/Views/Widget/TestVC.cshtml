@@ -1,0 +1,6 @@
+﻿@using AQLI.Data.Models;
+
+@model UserFishModel;
+
+                <!-- Database Record Widget. Created as a View Component for ease -->
+@await Component.InvokeAsync("DatabaseRecordInfo", new { Model = Model, t = Model.GetType() })

@@ -1,0 +1,72 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+@using AQLI.DataServices;
+
+@model TotalCostBreakdownVCModel;
+
+@inject DataFactory DataSource;
+
+@{ 
+    var uid_container = string.Concat("totalcostcontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
+<figure class="highcharts-figure">
+    <div id="@uid_container" style="padding: 5px;"></div>
+    <p class="highcharts-description">
+
+    </p>
+</figure>
+<script>
+    var data = [];    
+</script>
+@{
+    var purchaseGroups = Model.SeriesPieData.GroupBy(p => p.PurchaseCategoryType.PurchaseCategoryTypeName);
+
+    foreach (var dataGroup in purchaseGroups)
+    {
+    <script>
+        var ano = { name: '@dataGroup.Key', y: @dataGroup.Sum(p => p.ExtCost) };
+            data.push(ano);
+    </script>
+    }
+}
+<script>
+
+    // Build the chart
+    Highcharts.chart('@uid_container', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '@Model.GraphTitle'
+        },
+        subtitle: {
+            text: '@Model.GraphTitleSubtext'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Total Cost',
+            colorByPoint: true,
+            data: data
+        }]
+    });
+</script>

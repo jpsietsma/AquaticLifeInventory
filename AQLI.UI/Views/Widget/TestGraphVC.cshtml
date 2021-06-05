@@ -1,0 +1,6 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+
+@model PurchaseByCategoryVCModel;
+
+<!-- Purchases By Category Bar Chart Widget. Created as a View Component for ease -->
+@await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = Model.AllPurchases, Title = Model.GraphTitle })

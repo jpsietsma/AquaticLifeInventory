@@ -1,379 +1,452 @@
 ﻿using AQLI.Data.Models;
+using AQLI.Data.Models.ListModels;
+using AQLI.DataServices.context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace AQLI.DataServices
 {
     public class DataFactory
     {
-        private List<AquaticTankModel> _AllTanks;
-        private List<WebsiteUser> _AllUsers;
-        private List<FishCreatureModel> _AllFish;
-        private List<TankInventoryRecordModel> _AllInventoryRecords;
-        private List<MedicalRecord> _AllMedicalRecords;
+        private readonly DatabaseContext Database;
 
-
-        public DataFactory()
+        public DataFactory(DatabaseContext _context)
         {
-            _AllTanks = new List<AquaticTankModel>();
-            _AllUsers = new List<WebsiteUser>();
-            _AllFish = new List<FishCreatureModel>();
-
-            PopulateLists();
-            UpdateUserTanks();
+            Database = _context;      
         }
 
-        public ITankModel CreateTankModel<T>()
+        public List<TankSupplyModel> List_TankSupplies(int TankID)
         {
-            var typeName = typeof(T).Name;
+            var data = Database.Tank_Supply
+                .Where(s => s.TankID == TankID)
+                .ToList();
 
-            switch (typeName)
-            {
-                case "AquaticTankModel":
-                    {
-                        return new AquaticTankModel();
-                    }
-                default:
-                    return null;
-            }
-        }        
-
-        public List<WebsiteUser> List_WebsiteUsers()
-        {
-            return _AllUsers;
+            return Database.Tank_Supply
+                .ToList();
         }
 
-        public List<AquaticTankModel> List_Tanks()
-        {            
-            return _AllTanks;               
-        }
-
-        public List<FishCreatureModel> List_Fish()
-        {
-            return _AllFish;
-        }
-
-        public List<TankInventoryRecordModel> List_InventoryRecords()
-        {
-            return _AllInventoryRecords;
-        }
-
-        public List<MedicalRecord> List_MedicalRecords()
-        {
-            return _AllMedicalRecords;
-        }
-
+        /// <summary>
+        /// Find the details for a particular tank with loaded dependents
+        /// </summary>
+        /// <param name="id">Id of the tank for retrieving details</param>
         public AquaticTankModel Find_TankDetails(int id)
         {
-            return List_Tanks().Where(t => t.TankId == id).FirstOrDefault();
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Include(pur => pur.Purchase)
+                        .ThenInclude(st => st.Store)
+                    .Include(fp => fp.UserFish)
+                        .ThenInclude(ft => ft.FishType)
+                    .Include(sup => sup.Supplies)
+                        .ThenInclude(p => p.Purchase)
+                    .Include(eq => eq.Equipment)
+                    .Include(o => o.Owner)
+                    .Include(n => n.Notes)
+                    .Where(t => t.TankID == id)
+                    .FirstOrDefault();
         }
 
+        /// <summary>
+        /// List tanks with loaded dependent entities
+        /// </summary>
+        public List<AquaticTankModel> List_Tanks()
+        {            
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Include(pr => pr.Purchase)
+                        .ThenInclude(st => st.Store)
+                    .Include(fp => fp.UserFish)
+                        .ThenInclude(ft => ft.FishType)
+                    .Include(sup => sup.Supplies)
+                        .ThenInclude(p => p.Purchase)
+                    .Include(eq => eq.Equipment)
+                    .Include(o => o.Owner)
+                    .Include(n => n.Notes)
+                    .ToList();
+        }
+
+        /// <summary>
+        /// List notifications with loaded dependent entities
+        /// </summary>
+        public List<NotificationModel> List_Notifications()
+        {
+            var data = Database.Notification
+                .Include(np => np.NotificationPriorityLevel)
+                .ToList();
+
+            return data;
+        }
+
+        public List<NotificationModel> List_PendingNotifications()
+        {
+            var data = Database.Notification
+                .Include(np => np.NotificationPriorityLevel)
+                .Where(n => n.AcknowledgedDate == null)
+                .ToList();
+
+            return data;
+        }
+
+        public NotificationModel Add_Notification(NotificationModel _modelData)
+        {
+            var finalModel = new NotificationModel { 
+                                                        AcknowledgedDate = _modelData.AcknowledgedDate,
+                                                        Message = _modelData.Message,
+                                                        MitigatedDate = _modelData.MitigatedDate,
+                                                        NotificationID = _modelData.NotificationID,
+                                                        NotificationPriorityLevelID = _modelData.NotificationPriorityLevelID,
+                                                        TankID = _modelData.TankID,
+                                                        TriggeredDate = _modelData.TriggeredDate,
+                                                        WebsiteUserID = _modelData.WebsiteUserID         
+                                                    };
+
+            Database.Notification.Add(finalModel);
+            Database.SaveChanges();
+
+            return finalModel;
+        }
+
+        /// <summary>
+        /// Return all system medical records
+        /// </summary>
+        public List<MedicalRecordModel> List_MedicalRecords()
+        {
+            return Database.MedicalRecord
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all tanks owned by a user
+        /// </summary>
+        /// <param name="id">Id of the user to retrieve tanks</param>
         public List<AquaticTankModel> List_UserTanks(int id)
         {
-            return _AllTanks.Where(t => t.Owner.UserId == id).ToList();
+            return Database.Tank
+                    .Include(wt => wt.WaterType)
+                    .Include(ct => ct.CreatureType)
+                    .Include(tem => tem.Temporment)
+                    .Include(env => env.Environment)
+                    .Include(tt => tt.TankType)
+                    .Where(t => t.OwnerID == id)
+                    .ToList();
         }
 
-        public WebsiteUser Find_UserDetails(int id)
+        /// <summary>
+        /// List all purchases from the database
+        /// </summary>
+        /// <returns>List<PurchaseModel></returns>
+        public List<PurchaseModel> List_Purchases()
         {
-            return List_WebsiteUsers().Where(u => u.UserId == id).FirstOrDefault();
+            return Database.Purchases
+                .Include(pc => pc.PurchaseCategory)
+                .ThenInclude(ct => ct.PurchaseCategoryType)
+                .Include(pct => pct.PurchaseCategoryType)
+                .Include(st => st.Store)
+                .ToList();
         }
 
+        /// <summary>
+        /// List all purchase invoices from the database
+        /// </summary>
+        /// <returns>List<PurchaseInvoiceModel></returns>
+        public List<PurchaseInvoiceModel> List_PurchaseInvoices()
+        {
+            return Database.PurchaseInvoices
+                .Include(o => o.Owner)
+                .Include(p => p.Purchases)
+                .Include(s => s.Store)
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all purchase invoices from the database for a particular user
+        /// </summary>
+        /// <returns>List<PurchaseInvoiceModel></returns>
+        public List<PurchaseInvoiceModel> List_PurchaseInvoices(int id)
+        {
+            return Database.PurchaseInvoices
+                .Include(o => o.Owner)
+                .Include(p => p.Purchases)
+                .Include(s => s.Store)
+                //.Include(t => t.Tank)
+                .Where(o => o.OwnerID == id)
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all purchase categories
+        /// </summary>
+        /// <returns>List<PurchaseCategoryModel></returns>
+        public List<PurchaseCategoryModel> List_PurchaseCategories()
+        {
+            return Database.PurchaseCategory
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all purchase category types
+        /// </summary>
+        public List<PurchaseCategoryTypeModel> List_PurchaseCategoryTypes()
+        {
+            return Database.PurchaseCategoryTypes
+                .ToList();
+        }
+
+        /// <summary>
+        /// Return all fish types
+        /// </summary>
+        public List<FishTypeModel> List_FishTypes()
+        {
+            return Database.FishTypes
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all website users
+        /// </summary>
+        public List<WebsiteUser> List_Users()
+        {
+            return Database.AspNetUsers
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all stores
+        /// </summary>
+        public List<StoreModel> List_Stores()
+        {
+            return Database.Stores
+                .ToList();
+        }
+
+        /// <summary>
+        /// List types of tanks
+        /// </summary>
+        public List<TankTypeModel> List_TankTypes()
+        {
+            return Database.TankType
+                .ToList();
+        }
+
+        /// <summary>
+        /// List types of water
+        /// </summary>
+        public List<WaterTypeModel> List_WaterTypes()
+        {
+            return Database.WaterType
+                .ToList();
+        }
+
+        /// <summary>
+        /// List temporment levels of fish
+        /// </summary>
+        public List<TempormentModel> List_TempormentLevels()
+        {
+            return Database.Temporment
+                .ToList();
+        }
+
+        /// <summary>
+        /// List types of tank environments
+        /// </summary>
+        public List<EnvironmentModel> List_Environments()
+        {
+            return Database.Environment
+                .ToList();
+        }
+
+        /// <summary>
+        /// List creature types
+        /// </summary>
+        public List<CreatureTypeModel> List_CreatureTypes()
+        {
+            return Database.CreatureType
+                .ToList();
+        }
+
+        /// <summary>
+        /// List all of the UserFish records, or just for a particular user
+        /// </summary>
+        /// <param name="UserID">ID of the user for records</param>
+        public List<UserFishModel> List_UserFish(int? UserID)
+        {
+            List<UserFishModel> _final = new List<UserFishModel>();
+
+            if (UserID.HasValue)
+            {
+                _final = Database.UserFish
+                    .Include(p => p.Purchase)                    
+                    .Include(t => t.Tank)
+                    .Include(ft => ft.FishType)
+                    .Where(u => u.Purchase.OwnerID == UserID)
+                    .ToList();
+            }
+            else
+            {
+                _final = Database.UserFish
+                    .Include(p => p.Purchase)
+                    .Include(ft => ft.FishType)
+                    .Include(t => t.Tank)
+                    .ToList();
+            }
+
+            return _final;
+        }
+
+        /// <summary>
+        /// Add a new tank to the database
+        /// </summary>
+        /// <param name="_dataModel">Data Model representing the tank to add</param>
+        public AquaticTankModel Add_Tank(AquaticTankModel _dataModel)
+        {
+            PurchaseModel purchaseModel = List_Purchases().Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
+
+            Database.Tank.Add(_dataModel);
+            Database.SaveChanges();
+
+            purchaseModel.TankID = _dataModel.TankID;
+
+            Database.Purchases.Update(purchaseModel);
+            Database.SaveChanges();
+
+            return _dataModel;
+        }
+
+        /// <summary>
+        /// Add a new purchase to the database
+        /// </summary>
+        /// <param name="_dataModel">Data model representing the purchase to add</param>
+        /// <returns>PurchaseModel</returns>
+        public PurchaseModel Add_Purchase(PurchaseModel _dataModel)
+        {
+            Database.Purchases.Add(_dataModel);
+            Database.SaveChanges();
+
+            return _dataModel;
+        }
+
+        /// <summary>
+        /// Add a new purchase invoice to the database
+        /// </summary>
+        /// <param name="_dataModel">Data model representing the purchase invoice to add</param>
+        public async Task<PurchaseInvoiceModel> Add_PurchaseInvoice(PurchaseInvoiceModel _dataModel)
+        {
+            Database.PurchaseInvoices.Add(_dataModel);
+
+            await Database.SaveChangesAsync();
+
+            return _dataModel;
+        }
+
+        /// <summary>
+        /// Update the details for a tank, or add a new tank if model TankID doesnt exist
+        /// </summary>
+        /// <param name="_dataModel">Data model to update/add to the database</param>
+        public AquaticTankModel Update_TankDetails(AquaticTankModel _dataModel)
+        {
+            var listEntry = Database.Tank.Where(t => t.TankID == _dataModel.TankID).FirstOrDefault();
+
+            if (listEntry != null)
+            {
+                listEntry.Name = _dataModel.Name;
+                listEntry.IsActive = _dataModel.IsActive;
+                listEntry.Owner = _dataModel.Owner;
+                listEntry.TankTypeID = _dataModel.TankTypeID;
+                listEntry.TempormentID = _dataModel.TempormentID;
+                listEntry.WaterTypeID = _dataModel.WaterTypeID;
+                listEntry.CreatureTypeID = _dataModel.CreatureTypeID;
+                listEntry.EnvironmentID = _dataModel.EnvironmentID;
+
+                Database.SaveChanges();
+
+                return _dataModel;
+            }
+            else
+            {
+                return Add_Tank(_dataModel);
+            }                         
+        }
+
+        public PurchaseModel Update_Purchase(PurchaseModel _dataModel)
+        {
+            var listEntry = Database.Purchases.Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
+
+            if (listEntry != null)
+            {
+                listEntry.Description = _dataModel.Description;
+                listEntry.Quantity = _dataModel.Quantity;
+                listEntry.Cost = _dataModel.Cost;
+                listEntry.OwnerID = _dataModel.OwnerID;
+                listEntry.CreatureID = _dataModel.CreatureID;
+                listEntry.PlantID = _dataModel.PlantID;
+                listEntry.DecorationID = _dataModel.DecorationID;
+                listEntry.SupplyID = _dataModel.SupplyID;
+                listEntry.StoreID = _dataModel.StoreID;
+                listEntry.TankID = _dataModel.TankID;
+                listEntry.PurchaseCategoryID = _dataModel.PurchaseCategoryID;
+                listEntry.Date = _dataModel.Date;
+
+                Database.SaveChanges();
+
+                return _dataModel;
+            }
+            else
+            {
+                return Add_Purchase(_dataModel);
+            }
+        }
+
+        /// <summary>
+        /// Add a UserFish record when a purchase is added
+        /// </summary>
+        /// <param name="_dataModel">data model representing UserFish record to be added</param>
+        public async Task<UserFishModel> Add_UserFish(UserFishModel _dataModel)
+        {
+            Database.UserFish.Add(_dataModel);
+            await Database.SaveChangesAsync();
+
+            return _dataModel;
+        }
+
+        /// <summary>
+        /// Remove a Tank from the database.
+        /// </summary>
+        /// <param name="id">ID of the tank to remove</param>
         public void Remove_UserTank(int id)
-        {            
-            _AllTanks.Remove(_AllTanks.Where(t => t.TankId == id).First());            
+        {
+            var tankModel = Database.Tank.Where(t => t.TankID == id).First();
+
+            var purchase = Database.Purchases.Where(t => t.TankID == id).FirstOrDefault();
+                purchase.TankID = null;
+
+            Database.Purchases.Update(purchase);
+            Database.Tank.Remove(tankModel);
+
+            Database.SaveChanges();
         }
 
-        #region private list population methods
-            private void PopulateLists()
-            {
-                var user1 = new WebsiteUser
-                {
-                    UserId = 1,
-                    UserName = "jpsietsma",
-                    FirstName = "Jimmy",
-                    LastName = "Sietsma",
-                    EmailAddress = "jpsietsma@gmail.com"
-                };
+        /// <summary>
+        /// Remove a user fish record
+        /// </summary>
+        /// <param name="_dataModel">data model representing UserFish record to remove</param>
+        public async Task Remove_UserFish(UserFishModel _dataModel)
+        {
+            Database.UserFish.Remove(_dataModel);
 
-                var user2 = new WebsiteUser
-                {
-                    UserId = 2,
-                    UserName = "admin",
-                    FirstName = "Admin Jimmy",
-                    LastName = "Sietsma",
-                    EmailAddress = "admin_jpsietsma@gmail.com"
-                };
+            await Database.SaveChangesAsync();
+        }
 
-                var user3 = new WebsiteUser
-                {
-                    UserId = 3,
-                    UserName = "guser",
-                    FirstName = "Guest",
-                    LastName = "User",
-                    EmailAddress = "guser@guest"
-                };
-
-                _AllUsers.AddRange(new List<WebsiteUser> { user1, user2, user3 });
-
-                var aquaticTank1 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(1))
-                {
-                    TankId = 1,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 1).FirstOrDefault(),
-                    Added = DateTime.Now.AddDays(-7),
-                    Name = "Glo Special",
-                    Capacity = 10.00,
-                    Description = "10 Gallon special fish",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory1 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 1, TankId = 1, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 2, TankId = 1, Date = DateTime.Now.AddDays(-7), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 3, TankId = 1, Date = DateTime.Now.AddDays(365), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation1 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 1,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 2,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 3,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        },
-                        new FishCreatureModel("Nitro", AquaticFishSpecies.GLO_DANIO)
-                        {
-                            CreatureId = 4,
-                            CreatedOn = DateTime.Now.AddDays(-7)
-                        }
-                    };    
-
-                aquaticTank1.InventoryRecords = tankInventory1;
-                aquaticTank1.FishPopulation = tankPopulation1;
-
-                var aquaticTank2 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(1))
-                {
-                    TankId = 2,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 1).FirstOrDefault(),
-                    Added = DateTime.Now.AddDays(-3),
-                    Name = "Work Tank",
-                    Capacity = 15.00,
-                    Description = "15 Gallon Work Tank",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory2 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 4, TankId = 2, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 5, TankId = 2, Date = DateTime.Now.AddDays(-22), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 6, TankId = 2, Date = DateTime.Now.AddDays(35), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation2 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 5,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 6,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 7,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        }
-                    }; 
-
-                aquaticTank2.InventoryRecords = tankInventory2;
-                aquaticTank2.FishPopulation = tankPopulation2;
-
-                var aquaticTank3 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(1))
-                {
-                    TankId = 3,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 1).FirstOrDefault(),
-                    Added = DateTime.Now,
-                    Name = "Home Natural Tank",
-                    Capacity = 29.00,
-                    Description = "29 Gallon Natural aquascaped tank.",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory3 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 7, TankId = 3, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 8, TankId = 3, Date = DateTime.Now.AddDays(12), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 9, TankId = 3, Date = DateTime.Now.AddDays(48), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation3 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 8,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 9,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 10,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        }
-                    };
-
-                aquaticTank3.FishPopulation = tankPopulation3;
-                aquaticTank3.InventoryRecords = tankInventory3;
-
-                var aquaticTank4 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(2))
-                {
-                    TankId = 4,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 2).FirstOrDefault(),
-                    Added = DateTime.Now.AddDays(-7),
-                    Name = "Glo Special",
-                    Capacity = 10.00,
-                    Description = "10 Gallon special fish",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory4 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 10, TankId = 4, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 11, TankId = 4, Date = DateTime.Now.AddDays(-7), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 12, TankId = 4, Date = DateTime.Now.AddDays(365), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation4 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 11,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 12,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 13,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        }
-                    };
-
-                aquaticTank4.FishPopulation = tankPopulation4;
-                aquaticTank4.InventoryRecords = tankInventory4;
-
-                var aquaticTank5 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(2))
-                {
-                    TankId = 5,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 2).FirstOrDefault(),
-                    Added = DateTime.Now.AddDays(-3),
-                    Name = "Work Tank",
-                    Capacity = 15.00,
-                    Description = "15 Gallon Work Tank",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory5 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 13, TankId = 5, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 14, TankId = 5, Date = DateTime.Now.AddDays(-22), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 15, TankId = 5, Date = DateTime.Now.AddDays(35), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation5 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 14,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 15,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 16,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        }
-                    };
-
-                aquaticTank5.FishPopulation = tankPopulation5;
-                aquaticTank5.InventoryRecords = tankInventory5;
-
-                var aquaticTank6 = new AquaticTankModel(AquaticTankCreatureType.Fish, Find_UserDetails(2))
-                {
-                    TankId = 6,
-                    Owner = List_WebsiteUsers().Where(u => u.UserId == 2).FirstOrDefault(),
-                    Added = DateTime.Now,
-                    Name = "Home Natural Tank",
-                    Capacity = 29.00,
-                    Description = "29 Gallon Natural aquascaped tank.",
-                    SubEnvironment = TankSubEnvironment.Community,
-                    Temporment = AquariumTemporment.Community,
-                    WaterType = AquariumWaterType.Freshwater
-                };
-                var tankInventory6 = new List<TankInventoryRecordModel>()
-                        {
-                            new TankInventoryRecordModel { Id = 16, TankId = 6, Date = DateTime.Now, CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 17, TankId = 6, Date = DateTime.Now.AddDays(12), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                            new TankInventoryRecordModel { Id = 18, TankId = 6, Date = DateTime.Now.AddDays(48), CreatureInventory = new List<FishCreatureModel>(), PerformedBy = 1 },
-                        };
-                var tankPopulation6 = new List<FishCreatureModel>()
-                    {
-                        new FishCreatureModel("Speedy The Fish", AquaticFishSpecies.GLO_SHARK)
-                        {
-                            CreatureId = 17,
-                            CreatedOn = DateTime.Now.AddDays(850)
-                        },
-                        new FishCreatureModel("Whitey The Unkillable", AquaticFishSpecies.TETRA)
-                        {
-                            CreatureId = 18,
-                            CreatedOn = DateTime.Now.AddDays(-755)
-                        },
-                        new FishCreatureModel("Swordy McSword-Face", AquaticFishSpecies.SWORDTAIL)
-                        {
-                            CreatureId = 19,
-                            CreatedOn = DateTime.Now.AddDays(-365)
-                        }
-                    };
-
-                aquaticTank6.FishPopulation = tankPopulation6;
-                aquaticTank6.InventoryRecords = tankInventory6;
-
-                _AllTanks.AddRange(new List<AquaticTankModel> { aquaticTank1, aquaticTank2, aquaticTank3, aquaticTank4, aquaticTank5, aquaticTank6 });
-
-                UpdateUserTanks();
-            }
-
-            private void UpdateUserTanks()
-            {
-                foreach (var user in _AllUsers)
-                {
-                    user.AquaticTanks = _AllTanks.Where(t => t.Owner.UserId == user.UserId).ToList();
-                }
-            }
-
-        #endregion
     }
 }

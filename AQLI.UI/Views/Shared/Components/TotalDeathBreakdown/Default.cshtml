@@ -1,0 +1,67 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+@using AQLI.DataServices;
+
+@model TotalDeathBreakdownVCModel;
+
+@inject DataFactory DataSource;
+
+@{ 
+    var uid_container = string.Concat("deathcontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
+<figure class="highcharts-figure">
+    <div id="@uid_container"></div>
+    <p class="highcharts-description">
+        Breakdown of all fish deaths vs. living.
+    </p>
+</figure>
+
+<script>
+    Highcharts.chart('@uid_container', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: '@Model.GraphTitle'
+        },
+        subtitle: {
+            text: '@Model.GraphTitleSubtext'
+        },
+        xAxis: {
+            title: {
+                text: 'Deaths vs. Living'
+            }
+        },
+        yAxis: {
+        		categories: [''],
+            min: 0,
+            title: {
+                text: 'Number of Fish',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Deaths',
+            data: [63,0],
+        },{
+            name: 'Living',
+            data: [0,74],
+        }]
+    });
+</script>

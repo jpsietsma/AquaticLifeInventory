@@ -1,0 +1,186 @@
+﻿@using System.Collections.Generic;
+@using AQLI.Data.Models;
+@using AQLI.DataServices;
+@using AQLI.DataServices.context;
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+
+
+@model PurchaseInvoiceModel;
+@inject DataFactory DataSource;
+@inject DatabaseContext Database;
+@inject UserManager<WebsiteUser> UserManager;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+@section Style {
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+} 
+
+<style>
+    .card-header-text {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                @(Model.PurchaseInvoiceID == 0 ? "Add New Purchase Invoice" : "Editing Invoice Details: " + Model.PurchaseInvoiceID)
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addPurchaseInvoiceForm" method="post" asp-controller="Purchases" asp-action="_SavePurchaseInvoice" data-parsley-validate>
+                <input type="hidden" name="PurchaseInvoiceID" value="@Model.PurchaseInvoiceID" />
+                <input type="hidden" name="OwnerID" value="@((await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User)).UserId)" />
+                <!-- Store and Purchase Date form row -->
+                <div class="form-row">
+                    <div class="card col-12 mb-2">
+                        <div class="card-header text-center">
+                            <span class="card-header-text">
+                                <i class="fas fa-store-alt"></i> Supplier/Invoice Information
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="form-group col-4">
+                                        <label class="control-label">Purchase Date:</label>
+                                        <input class="form-control" type="date" name="PurchaseDate" value="@(Model.PurchaseInvoiceID == 0 ? DateTime.Now.ToString("yyyy-MM-dd") : Model.PurchaseDate.ToString("yyyy-MM-dd"))" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required") />
+                                    </div>
+                                    <div class="form-group col-4">
+                                        <label class="control-label">Supplier:</label>
+                                        <select class="form-control" name="StoreID" @(Model.PurchaseInvoiceID != 0 ? "disabled" : "required")>
+                                            @if (DataSource.List_Stores().Count() == 0)
+                                            {
+                                                <option value="">-- No Supplier Stores --</option>
+                                            }
+                                            else
+                                            {
+                                                if (Model.PurchaseInvoiceID == 0)
+                                                {
+                                                    <option selected value="">-- Select Supplier --</option>
+                                                }
+
+                                                foreach (StoreModel store in DataSource.List_Stores().OrderBy(s => s.StoreName))
+                                                {
+                                                    if (store.StoreID == Model.StoreID)
+                                                    {
+                                                        <option selected value="@store.StoreID">@store.StoreName</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@store.StoreID">@store.StoreName</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-4">
+                                        @if (Model.InvoiceFilePath == null)
+                                        {
+                                            <label class="control-label">Invoice: (<i>.pdf</i>)</label><br />
+                                            <input class="form-control-file" type="file" name="InvoiceFile" />
+                                        }
+                                        else
+                                        {
+                                            <div class="form-group">
+                                                <label class="control-label mb-2">Download Options:</label><br />
+                                                @*<a data-toggle="tooltip" title="Scanned Receipt (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID })" target="_blank"><i class="fas fa-file-invoice-dollar fa-3x mr-3 ml-2" style="color: darkblue;"></i></a>*@
+                                                <a data-toggle="tooltip" title="AQL Invoice (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "aqlpdf"  })" target="_blank"><i class="far fa-file-pdf fa-3x mr-3" style="color: red;"></i></a>
+                                                <a data-toggle="tooltip" title="Export Purchases (csv)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "csv" })" target="_blank"><i class="fas fa-file-excel fa-3x" style="color: darkgreen;"></i></a>
+                                            </div>                                            
+                                        }
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Purchase Card -->
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <div class="card col-12">
+                                <div class="card-header text-center">
+                                    <span class="card-header-text">
+                                        <i class="fas fa-shopping-basket"></i> Products Purchased
+                                    </span>
+                                    <div class="btn-group col-2">
+                                        <button type="button" class="btn btn-sm btn-sm btn-primary" onclick="Purchases.addPurchaseDetailsModal(0)"><i class="fas fa-plus-circle"></i> Add</button>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center pt-2">
+                                    <!-- Purchases Grid -->
+                                    <table name="Purchases" id="purchaseInvoicePurchaseTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                                        @if (Model.Purchases.Count() > 0)
+                                        {
+                                            foreach (PurchaseModel purchase in Model.Purchases)
+                                            {
+                                                <tr>
+                                                    <td class="sdn-purchase-table-cell" style="display: none;">@purchase.PurchaseID</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Description</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Cost</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.Quantity</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.ExtCost</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.PurchaseCategoryID</td>
+                                                    <td class="sdn-purchase-table-cell">@purchase.PurchaseCategoryTypeID</td>
+                                                    <td>
+                                                        <i data-toggle="tooltip" data-placement="top" title="Remove Purchase" class="btn btn-outline-danger far fa-trash-alt icon-delete-row"></i> <i data-toggle="tooltip" data-placement="top" title="Edit" class="btn btn-outline-warning fas fa-pencil-alt icon-edit-row"></i>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="4"><b class="float-right">Purchase Total: </b></th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4"><b class="float-right">Shipping Cost: </b></th>
+                                                <th><input type="text" id="ShippingCost" name="ShippingCost" value="@Model.ShippingCost" onfocusout="UpdateInvoiceTotal(@(Model.ShippingCost + Model.Purchases.Sum(p => p.ExtCost)))" /></th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4"><b class="float-right" style="font-size: 14px;">Invoice Total: </b></th>
+                                                <th id="InvoiceTotalFooterValue" colspan="2">$@(Model.ShippingCost + Model.Purchases.Sum(p => p.ExtCost))</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                               
+                @*
+                <div class="form-row">
+                    <div class="col-12">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="60" style="width: 60%;">
+                                <span class="sr-only"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                *@
+            </form>
+        </div>
+        <div class="modal-footer">
+            @if (Model.PurchaseInvoiceID != 0)
+            {
+                <button type="button" data-id="@Model.PurchaseInvoiceID" class="btn btn-danger sdn-delete-purchase justify-content-start"><i class="far fa-trash-alt"></i> Delete</button>
+                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Save</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Create Invoice</button>
+            }
+            @*<button type="button" class="btn btn-sm btn-info" onclick="Purchases.addPurchaseToInvoice()">Test</button>*@
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

@@ -5,49 +5,95 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AQLI.UI.Models;
 using AQLI.Data.Models;
 using AQLI.DataServices;
+using AQLI.DataServices.context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using AQLI.DataServices.Extensions;
 
 namespace AQLI.UI.Controllers
 {
+    [Authorize]
     public class TankController : Controller
     {
         private readonly ILogger<TankController> _logger;
+        private readonly UserManager<WebsiteUser> UserManager;
+
         private DataFactory DataSource;
         private WebsiteUser UserModel;
 
-        public TankController(ILogger<TankController> logger, DataFactory _dataFactory)
+        public TankController(ILogger<TankController> logger, DataFactory _dataFactory, DatabaseContext _efContext, UserManager<WebsiteUser> _userManager)
         {
             _logger = logger;
             DataSource = _dataFactory;
-
-            #region Test code area to populate user, tanks, and fish details
-                //var userModel = DataSource.CreateTankModel<AquaticTankModel>();
-                UserModel = DataSource.Find_UserDetails(1);
-            #endregion
+            UserManager = _userManager;                        
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            UserModel = await UserManager.GetUserAsync(User);
+
             return View(UserModel);
+        }                
+
+        [HttpGet]
+        public IActionResult _Details(int ID)
+        {
+            AquaticTankModel model = DataSource.Find_TankDetails(ID);
+
+            if (model == null)
+            {
+                model = new AquaticTankModel { TankID = 0 };
+            }
+
+            return PartialView(model);
         }
 
         [HttpPost]
-        public IActionResult Remove(int id)
+        [AutoValidateAntiforgeryToken]
+        public IActionResult _Save(AquaticTankModel _dataModel)
         {
-            var userModel = DataSource.Find_UserDetails(UserModel.UserId);
+            if (_dataModel.TankID == 0)
+            {
+                DataSource.Add_Tank(_dataModel);
+            }
+            else
+            {
+                DataSource.Update_TankDetails(_dataModel);
+            }
 
-            userModel.AquaticTanks.Remove(userModel.AquaticTanks.Where(t => t.TankId == id).First());
-            DataSource.Remove_UserTank(id);
-
-            return View("Index", userModel);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult _Details(int Id)
+        [AutoValidateAntiforgeryToken]
+        public IActionResult _Delete(int ID)
         {
-            return View(UserModel.AquaticTanks.Where(t => t.TankId == Id).FirstOrDefault());
+            DataSource.Remove_UserTank(ID);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult _ConfirmDeleteTank(int ID)
+        {
+            return PartialView("_ConfirmDeleteTank", DataSource.Find_TankDetails(ID));
+        }
+
+        public IActionResult Dashboard(int ID)
+        {
+            var data = DataSource.Find_TankDetails(ID);
+
+            return View(data);
+        }
+
+        public IActionResult Test()
+        {
+            AquaticTankModel dataTest = DataSource.Find_TankDetails(14);
+
+            return View(dataTest);
         }
 
     }

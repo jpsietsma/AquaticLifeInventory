@@ -1,0 +1,41 @@
+﻿@model IEnumerable<AQLI.Data.Models.StoreModel>
+
+@{
+    ViewData["Title"] = "Stores";
+}
+
+<h1>Stores</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StoreName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ContactInfoID)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContactInfoID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.StoreID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.StoreID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.StoreID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

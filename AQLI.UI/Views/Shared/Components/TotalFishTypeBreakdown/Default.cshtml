@@ -1,0 +1,77 @@
+﻿@using AQLI.Data.Models.ViewComponentModels;
+
+@model TotalFishTypeBreakdownVCModel
+
+<link rel="stylesheet" href="~/css/widgets/TotalFishTypeBreakdownPieWidget.css" />
+
+@{ 
+    var uid_container = string.Concat("fishbreakdowncontainer_", new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds());
+}
+
+<figure class="highcharts-figure">
+    <div id="@uid_container"></div>
+    <p class="highcharts-description">
+        All time live fish purchases for the user, with a breakdown of fish type.
+    </p>
+</figure>
+
+<script>
+    // Build the chart
+    Highcharts.chart('@uid_container', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '@Model.GraphTitle'
+        },
+        subtitle: {
+            text: '@Model.GraphTitleSubtext'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: [{
+                name: 'Glo Tetra',
+                y: 36.41,
+                sliced: true,
+                selected: true
+            }, {
+                name: 'Glo Barb',
+                y: 18.84
+            }, {
+                name: 'Glo Danio',
+                y: 28.85
+            }, {
+                name: 'Glo Shark',
+                y: 4.67
+            }, {
+                name: 'Pleco/Bottom',
+                y: 4.18
+            }, {
+                name: 'Smail/Other',
+                y: 7.05
+            }]
+        }]
+    });
+</script>

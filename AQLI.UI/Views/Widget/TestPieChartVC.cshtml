@@ -1,0 +1,6 @@
+﻿@model AQLI.Data.Models.ViewComponentModels.TotalPurchaseBreakdownVCModel;
+
+<link rel="stylesheet" href="~/css/widgets/TotalPurchaseBreakdownPieWidget.css" />
+
+<!-- Total Purchase Breakdown Pie Chart Widget. Created as a View Component for ease -->
+@await Component.InvokeAsync("TotalPurchaseBreakdown", new { GraphTitle = Model.GraphTitle, GraphSubtitle = Model.GraphTitleSubtext })

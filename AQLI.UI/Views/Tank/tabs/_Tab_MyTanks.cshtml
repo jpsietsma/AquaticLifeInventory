@@ -1,0 +1,101 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@model WebsiteUser;
+@inject DataFactory DataSource;
+
+<div class="justify-content-start">
+    <div class="row mx-auto">
+        <br />
+        <div class="col-lg-12 float-left">
+            <button type="button" class="btn btn-sm btn-success" onclick="Tank.openModal(0)"><i class="fas fa-fish text-white"></i> Establish New Tank</button>
+        </div>
+        <br />
+        <br />
+    </div>
+    @if (DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId).Count() > 0)
+    {
+        <div class="row">
+            <table class="table-striped table-bordered table-hover col-12">
+                <thead>
+                    <tr>
+                        <td><input type="checkbox" data-id="all" /></td>
+                        <td>Tank Name</td>
+                        <td>Description</td>
+                        <td>Tank Capacity</td>
+                        <td>Population</td>
+                        <td>Status</td>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in DataSource.List_Tanks().Where(o => o.OwnerID == Model.UserId))
+                    {
+                    <tr class="user-tank-record" data-id="@item.TankID">
+                        <td class="tank-selected">
+                            <input type="checkbox" data-id="@item.TankID" />
+                        </td>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Capacity Gallons</td>
+                        <td>
+                        @item.UserFish.Count()
+                        @if (item.UserFish.Count() > 0)
+                        {
+                            <a onclick="Tank.openModel(@item.TankID)"><img src="~/images/icons/TankPopulation_Icon.png" style="color: skyblue;" height="30" width="32" /></a>
+                        }                        
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                if (item.WaterTypeID == 4)
+                                {
+                                    <img src="~/images/icons/TerrariumStatus_Established_Active.png" width="60" height="50" title="Terrarium Established" />
+                                }
+                                else if (item.WaterTypeID == 2)
+                                {
+                                    <img src="~/images/icons/SaltwaterStatus_Established_Active.png" width="60" height="50" title="Saltwater Established" />
+                                }
+                                else
+                                {
+                                    if (item.TankTypeID == 4)
+                                    {
+                                        <img src="~/images/icons/PlantedStatus_Established_Active.png" height="50" width="60" title="Planted Tank Established" />
+                                    }
+                                    else if (item.TankTypeID == 6)
+                                    {
+                                        <img src="~/images/icons/GloStatus_Established_Active.png" height="50" width="60" title="Glo Tank Established" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/icons/TankStatus_Established_Active.png" width="60" height="50" title="Freshwater Established" />
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <img src="~/images/icons/TankStatus_Inactive.png" width="60" height="50" title="Tank not established" />
+                            }
+                        </td>
+                        <td class="justify-content-start">
+                            @if (!item.IsActive)
+                            {
+                                <button type="button" class="btn btn-sm btn-success" onclick="Tank.openModal(@item.TankID)"><i class="fas fa-power-off" style="color: white;"></i> Establish</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-sm btn-primary" onclick="location.href='@Url.Action("Dashboard", "Tank", new { ID = item.TankID })';return false;"><i class="fas fa-file-alt" style="color: white;"></i> Overview</button>
+                            }
+                            <button type="button" class="btn btn-sm btn-info" onclick="Tank.openModal(@item.TankID)"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i> Info</button>                
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
+}
