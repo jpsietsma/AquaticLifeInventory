@@ -42,7 +42,7 @@ namespace AQLI.UI.Controllers
             return View();
         }
 
-        public IActionResult Details(int ID)
+        public IActionResult Details(int ID) 
         {
             var user = UserManager.GetUserAsync(User).Result;
             List<UserFishModel> _allUserFish = DataSource.List_UserFish(user.UserId);
