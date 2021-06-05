@@ -16,7 +16,7 @@ namespace AQLI.DataServices
 
         public DataFactory(DatabaseContext _context)
         {
-            Database = _context;      
+            Database = _context;
         }
 
         public List<TankSupplyModel> List_TankSupplies(int TankID)
@@ -58,7 +58,7 @@ namespace AQLI.DataServices
         /// List tanks with loaded dependent entities
         /// </summary>
         public List<AquaticTankModel> List_Tanks()
-        {            
+        {
             return Database.Tank
                     .Include(wt => wt.WaterType)
                     .Include(ct => ct.CreatureType)
@@ -99,18 +99,40 @@ namespace AQLI.DataServices
             return data;
         }
 
+        public bool Add_MedicalRecord(UserFish_MedicalRecordModel _modelData)
+        {
+            try
+            {
+                Database.UserFish_MedicalRecords.Add(_modelData);
+                Database.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException == null)
+                {
+                    throw new Exception(ex.Message);
+                }
+                else
+                {
+                    throw new Exception(ex.InnerException.Message);
+                }                
+            }
+        }
+
         public NotificationModel Add_Notification(NotificationModel _modelData)
         {
-            var finalModel = new NotificationModel { 
-                                                        AcknowledgedDate = _modelData.AcknowledgedDate,
-                                                        Message = _modelData.Message,
-                                                        MitigatedDate = _modelData.MitigatedDate,
-                                                        NotificationID = _modelData.NotificationID,
-                                                        NotificationPriorityLevelID = _modelData.NotificationPriorityLevelID,
-                                                        TankID = _modelData.TankID,
-                                                        TriggeredDate = _modelData.TriggeredDate,
-                                                        WebsiteUserID = _modelData.WebsiteUserID         
-                                                    };
+            var finalModel = new NotificationModel {
+                AcknowledgedDate = _modelData.AcknowledgedDate,
+                Message = _modelData.Message,
+                MitigatedDate = _modelData.MitigatedDate,
+                NotificationID = _modelData.NotificationID,
+                NotificationPriorityLevelID = _modelData.NotificationPriorityLevelID,
+                TankID = _modelData.TankID,
+                TriggeredDate = _modelData.TriggeredDate,
+                WebsiteUserID = _modelData.WebsiteUserID
+            };
 
             Database.Notification.Add(finalModel);
             Database.SaveChanges();
@@ -119,11 +141,13 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
-        /// Return all system medical records
+        /// Return all medical records for a particular fis
         /// </summary>
-        public List<MedicalRecordModel> List_MedicalRecords()
+        /// <param name="fishID">ID of the userfish used to retrieve medical records</param>
+        public List<UserFish_MedicalRecordModel> List_MedicalRecords(int fishID)
         {
-            return Database.MedicalRecord
+            return Database.UserFish_MedicalRecords
+                .Where(f => f.UserFishID == fishID)
                 .ToList();
         }
 
@@ -223,6 +247,17 @@ namespace AQLI.DataServices
         }
 
         /// <summary>
+        /// List details for a user
+        /// </summary>
+        /// <param name="ID">ID of the user used to retrieve the details</param>
+        public WebsiteUser Get_UserDetails(int ID)
+        {
+            return Database.AspNetUsers
+                .Where(u => u.UserId == ID)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// List all stores
         /// </summary>
         public List<StoreModel> List_Stores()
@@ -287,9 +322,16 @@ namespace AQLI.DataServices
             if (UserID.HasValue)
             {
                 _final = Database.UserFish
-                    .Include(p => p.Purchase)                    
+                    .Include(p => p.Purchase)
                     .Include(t => t.Tank)
                     .Include(ft => ft.FishType)
+                    .ThenInclude(t => t.Temporment)
+                    .Include(t => t.FishTemporment)
+                    .Include(pf => pf.ParentFish)
+                    .Include(cf => cf.ChildrenFish)
+                    .Include(fs => fs.FishStatus)
+                    .Include(mr => mr.MedicalRecords)
+                    .ThenInclude(mrt => mrt.MedicalRecordType)
                     .Where(u => u.Purchase.OwnerID == UserID)
                     .ToList();
             }
@@ -297,12 +339,21 @@ namespace AQLI.DataServices
             {
                 _final = Database.UserFish
                     .Include(p => p.Purchase)
-                    .Include(ft => ft.FishType)
                     .Include(t => t.Tank)
+                    .Include(ft => ft.FishType)
+                    .Include(pf => pf.ParentFish)
+                    .Include(cf => cf.ChildrenFish)
+                    .Include(fs => fs.FishStatus)
                     .ToList();
             }
 
             return _final;
+        }
+
+        public List<MedicalRecordTypeModel> List_MedicalRecordTypes()
+        {
+            return Database.MedicalRecordTypes
+                .ToList();
         }
 
         /// <summary>

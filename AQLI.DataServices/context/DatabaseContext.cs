@@ -22,11 +22,14 @@ namespace AQLI.DataServices.context
         public DbSet<PurchaseCategoryModel> PurchaseCategory { get; set; }
         public DbSet<StoreModel> Stores { get; set; }
 
-        public DbSet<MedicalRecordModel> MedicalRecord { get; set; }
+        public DbSet<UserFish_MedicalRecordModel> UserFish_MedicalRecords { get; set; }
+        public DbSet<MedicalRecordTypeModel> MedicalRecordTypes { get; set; }
+
         public DbSet<AquaticTankModel> Tank { get; set; }
         public DbSet<FishTypeModel> FishTypes { get; set; }
         public DbSet<FishFamilyModel> FishFamilyTypes { get; set; }
         public DbSet<FishFeedingTypeModel> FishFeedingTypes { get; set; }
+        public DbSet<FishStatusModel> FishStatuses { get; set; }
         public DbSet<BirthingTypeModel> BirthingTypes { get; set; }
         public DbSet<TerritorialLevelModel> TerritorialLevels { get; set; }
 
@@ -56,7 +59,7 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<TempormentModel>().HasKey("TempormentID");
             modelBuilder.Entity<EnvironmentModel>().HasKey("EnvironmentID");
             modelBuilder.Entity<TankTypeModel>().HasKey("TankTypeID");
-            modelBuilder.Entity<MedicalRecordModel>().HasKey("MedicalRecordID");
+            modelBuilder.Entity<UserFish_MedicalRecordModel>().HasKey("UserFishMedicalRecordID");
             modelBuilder.Entity<PurchaseInvoiceModel>().HasKey("PurchaseInvoiceID");
             modelBuilder.Entity<PurchaseModel>().HasKey("PurchaseID");
             modelBuilder.Entity<PurchaseCategoryModel>().HasKey("PurchaseCategoryID");
@@ -134,6 +137,29 @@ namespace AQLI.DataServices.context
 
             #endregion
 
+            #region Section: UserFishModel modelBuilders
+                modelBuilder.Entity<UserFishModel>()
+                    .HasOne(t => t.FishTemporment)
+                    .WithMany();
+
+                modelBuilder.Entity<UserFishModel>()
+                    .HasOne(s => s.FishStatus)
+                    .WithMany();
+
+            modelBuilder.Entity<UserFishModel>()
+                .HasMany(cf => cf.ChildrenFish)
+                .WithOne(pf => pf.ParentFish);
+
+            modelBuilder.Entity<UserFishModel>()
+                .HasMany( mr => mr.MedicalRecords)
+                .WithOne(uf => uf.UserFish);
+
+            modelBuilder.Entity<UserFishModel>()
+                .HasOne(t => t.FishTemporment)
+                .WithOne();
+
+            #endregion
+
             #region Section: PurchaseModel modelbuilders
             modelBuilder.Entity<PurchaseModel>()
                 .HasOne(pt => pt.PurchaseCategory)
@@ -155,6 +181,12 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<StoreModel>()
                 .HasMany(p => p.Purchases)
                 .WithOne(p => p.Store);
+            #endregion
+
+            #region Section: UserFish_MedicalRecord modelbuilders   
+
+
+
             #endregion
 
             //Ignore numeric User ID identity column when updating or inserting

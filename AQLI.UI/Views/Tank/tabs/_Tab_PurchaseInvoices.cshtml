@@ -220,8 +220,8 @@
                     </a>
                 </li>
             </ul>
-            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; ">
-                <div class="tab-pane active container-fluid" id="categoryTab">
+            <div class="tab-content p-0" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; ">
+                <div class="tab-pane active container-fluid p-0" id="categoryTab">
                     <div class="row">
                         <div class="col-7">
                             @await Component.InvokeAsync("PurchasesByCategory", new { PurchaseHistory = DataSource.List_Purchases().Where(p => p.OwnerID == Model.UserId).ToList(), GraphTitle = "Purchases By Category Type", GraphSubtitle = "for Jimmy Sietsma" })

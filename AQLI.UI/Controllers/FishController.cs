@@ -2,6 +2,7 @@
 using AQLI.DataServices;
 using AQLI.DataServices.context;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,10 +43,24 @@ namespace AQLI.UI.Controllers
             return View();
         }
 
+        public IActionResult _AddMedicalRecord()
+        {
+            ViewBag.MedicalRecordTypes = DataSource.List_MedicalRecordTypes();
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult _saveMedicalRecord(UserFish_MedicalRecordModel _modelData)
+        {
+            DataSource.Add_MedicalRecord(_modelData);
+                        
+            return RedirectToAction("Details", new { ID = _modelData.UserFishID });
+        }
+
         public IActionResult Details(int ID)
         {
             var user = UserManager.GetUserAsync(User).Result;
-            List<UserFishModel> _allUserFish = DataSource.List_UserFish(user.UserId);
 
             UserFishModel _dataModel = DataSource.List_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
 

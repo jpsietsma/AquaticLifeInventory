@@ -23,8 +23,26 @@ namespace AQLI.Data.Models
         public int PurchaseID { get; set; }
         public PurchaseModel Purchase { get; set; }
 
+        public string PrimaryColor { get; set; }
+        public string SecondaryColor { get; set; }
+
+        public int? FishTempormentID { get; set; }
+        public TempormentModel FishTemporment { get; set; }
+
         public int? TankID { get; set; }
         public AquaticTankModel Tank { get; set; }
+
+        public int? FishStatusID { get; set; }
+        public FishStatusModel FishStatus { get; set; }
+
+        public int? ParentFishID { get; set; }
+        public UserFishModel ParentFish { get; set; }
+
+        public List<UserFishModel> ChildrenFish { get; set; }
+
+        public List<UserFish_MedicalRecordModel> MedicalRecords { get; set; }
+
+        public string FishSex { get; set; }
 
         public DateTime? Added { get; set; }
         public int? AddedBy { get; set; }

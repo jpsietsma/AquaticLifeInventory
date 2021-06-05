@@ -1,42 +1,146 @@
-﻿@model AQLI.Data.Models.UserFishModel
+﻿@using AQLI.DataServices;
+@using AQLI.Data.Models;
+
+@model AQLI.Data.Models.UserFishModel
+
+@inject DataFactory DataSource;
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Fish Details: @Html.DisplayFor(model => model.FishName)</h1>
+@section Scripts {
+    <script src="~/js/Fish/Fish.js"></script>
+} 
 
-<div>
-    <h4>UserFishModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EncumbranceMultiplier)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EncumbranceMultiplier)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FishType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FishType.CreatureTypeID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Purchase)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Purchase.PurchaseID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tank)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tank.TankID)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.UserFishID">Edit</a> |
-    <a asp-action="Dashboard">Back to List</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h1>Fish Overview</h1>
+            <div>
+                <h4>@Html.DisplayFor(model => model.FishName)</h4>
+                <hr />
+            </div>
+            <div>
+                <a class="btn btn-info" asp-action="Dashboard">Dashboard</a>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.UserFishID">Edit</a>
+                @if (Model.FishSex == "Female" && (Model.FishStatus.FishStatusID != 5 && Model.FishStatus.FishStatusID != 6))
+                {
+                    <a class="btn btn-secondary" asp-action="" asp-route-id="@Model.UserFishID">Set Pregnant!</a>
+                }
+                else if (Model.FishSex == "Female" && (Model.FishStatus.FishStatusID == 5 || Model.FishStatus.FishStatusID == 6))
+                {
+                    <a class="btn btn-success" asp-action="" asp-route-id="">Birthing Successful!</a>
+                    <a class="btn btn-danger" asp-action="" asp-route-id="">Birthing Failed!</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    Purchase Details
+                </div>
+                <div class="card-body container-fluid">
+                    <div class="row">
+                        @if (Model.ParentFish == null)
+                        {
+                            <div class="col">
+                                Purchase Date: 
+                            </div>
+                            <div class="col">
+                                @Model.Purchase.Date
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col">
+                                <i class="fas fa-info-circle"></i> <b>Fish was bred, no purchase data available.</b>
+                            </div>
+                        }                        
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    Created on @Model.Added.Value.ToString("MM/dd/yyyy") by @DataSource.Get_UserDetails(Model.AddedBy.Value).UserName
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    Fish Family &amp; Type Details
+                </div>
+                <div class="card-body container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <b>Fish Type:</b>
+                        </div>
+                        <div class="col">
+                            @Model.FishType.TypeName
+                        </div>
+                        <div class="col">
+                            <b>Encumbrance:</b>
+                        </div>
+                        <div class="col">
+                            @if (Model.EncumbranceMultiplier != 0)
+                            {
+                                @Model.EncumbranceMultiplier
+                            }
+                            else
+                            {
+                                @Model.FishType.TankPopulationEncumbrance
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <b>Fish Status: </b>
+                        </div>
+                        <div class="col">
+                            @Model.FishStatus.Status
+                        </div>
+                        <div class="col">
+                            <b>Aggressiveness: </b>
+                        </div>
+                        <div class="col">
+                            @Model.FishType.Temporment.TempormentName
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    Last Modified @(Model.Modified == null ? Model.Added : Model.Modified)
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                Medical Records <div class="float: right"><a class="btn btn-success" onclick="fish.events.addMedicalRecord_Clicked()">Add</a></div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <td>Date</td>
+                            <td>Type</td>
+                            <td>Record Notes</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (UserFish_MedicalRecordModel record in Model.MedicalRecords.OrderByDescending(mr => mr.CreatedOn))
+                        {
+                            <tr>
+                                <td>@record.CreatedOn.ToString()</td>
+                                <td>@record.MedicalRecordType.RecordType</td>
+                                <td>@record.RecordNote</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                Last Modified @Model.MedicalRecords.Max(mr => mr.CreatedOn)
+            </div>
+        </div>
+    </div>
 </div>

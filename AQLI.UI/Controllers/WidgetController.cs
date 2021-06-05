@@ -1,6 +1,7 @@
 ﻿using AQLI.Data.Models;
 using AQLI.Data.Models.ViewComponentModels;
 using AQLI.DataServices;
+using AQLI.DataServices.context;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,51 +14,26 @@ namespace AQLI.UI.Controllers
     public class WidgetController : Controller
     {
         private readonly DataFactory DataSource;
-        private readonly AquaticTankModel DataModel;
+        private readonly DatabaseContext Database;
         private readonly WebsiteUser DataUser;
 
-        public WidgetController(DataFactory _dataFactory)
+        public WidgetController(DataFactory _dataFactory, DatabaseContext _database)
         {
             DataSource = _dataFactory;
-
-            DataModel = new AquaticTankModel
-            {
-                TankID = 1234,
-                Added = DateTime.Now,
-                AddedBy = 4,
-                Modified = DateTime.Now,
-                ModifiedBy = 4,
-                Capacity = 10,
-                CreatureTypeID = 1,
-                Description = "mock model",
-                EnvironmentID = 4,
-                IsActive = true,
-                IsMaintenance = false,
-                IsQuarantine = false,
-                Name = "Mock Model",
-                OwnerID = 4,
-                PurchaseID = 1179,
-                TankTypeID = 1,
-                TempormentID = 1,
-                WaterTypeID = 1
-            };
+            Database = _database;
 
             DataUser = DataSource.List_Users().Where(u => u.UserId == 4).FirstOrDefault();
         }
 
         public IActionResult Index()
-        {                     
+        {
+            var ds = DataSource.List_UserFish(4);
+
+            var db = Database.UserFish_MedicalRecords;
+
             return View();
         }
-
-        public IActionResult DBRecordWidget()
-        {
-            var data = DatabaseRecordWidget(DataModel);
-            ViewBag.DatabaseRecordWidget = data;
-
-            return View("_DatabaseRecordWidget");
-        }
-
+                
         private string DatabaseRecordWidget(dynamic DataObject)
         {
             dynamic obj = DataObject;
@@ -172,5 +148,6 @@ namespace AQLI.UI.Controllers
 
             return View(dataModel);
         }
+
     }
 }

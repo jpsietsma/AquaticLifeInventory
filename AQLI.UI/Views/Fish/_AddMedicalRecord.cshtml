@@ -1,0 +1,67 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.Data.Models.ListModels;
+@using AQLI.DataServices;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+
+@inject DataFactory DataSource;
+@inject UserManager<WebsiteUser> UserManager;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+@model AQLI.Data.Models.UserFish_MedicalRecordModel
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header text-center">
+            <h4>Create New Medical Record</h4>
+        </div>
+        <div class="modal-body container-fluid">
+            <div class="row">
+                <div class="col">
+                    <form asp-action="_saveMedicalRecord">
+                        <input type="hidden" asp-for="CreatedByID" value="@((await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User)).UserId)" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            Note:
+                            <textarea asp-for="RecordNote" class="form-control" required></textarea>
+                            <span asp-validation-for="RecordNote" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            Record Date:
+                            <input asp-for="CreatedOn" class="form-control" required />
+                            <span asp-validation-for="CreatedOn" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            Patient Name:
+                            <select asp-for="UserFishID" class="form-control" required>
+                                <option value="1">Smokey Jr.</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            Incident Type:
+                            <select asp-for="MedicalRecordTypeID" class="form-control" required>
+                                <option value="">-- Select Record Type --</option>
+                                @foreach (MedicalRecordTypeModel record in DataSource.List_MedicalRecordTypes())
+                                {
+                                    <option value="@record.MedicalRecordTypeID">@record.RecordType</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
