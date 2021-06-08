@@ -1,0 +1,57 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@model AquaticTankModel;
+
+@inject DataFactory DataSource; 
+
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <form id="newFishForm" asp-action="_saveNewFish" method="post">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Assign Fish to Tank - @Model.Name
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="hidden" id="tankID" name="tankID" value="@Model.TankID" />
+                            <div class="card">
+                                <div class="card-header">
+                                    @Model.Name - Assign Fish To Tank
+                                </div>
+                                <div class="card-body container-fluid">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <b>Unassigned Fish</b>
+                                            <br />
+                                            <ul id="availableFish" name="availableFish" class="assignedNewFish" style="width: 100%">
+                                                @foreach (UserFishModel fishModel in DataSource.List_UnassignedFish())
+                                                {
+                                                    <li id="@fishModel.UserFishID">@fishModel.FishName (@fishModel.FishType.TypeName)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="col-6">
+                                            <b>Assign To: @Model.Name</b>
+                                            <br />
+                                            <ul id="selectedFish" name="selectedFish" class="assignedNewFish" style="width: 100%"></ul>                                
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-right">
+                <input class="btn btn-success" type="submit" value="Assign" />
+            </div>
+        </form>        
+    </div>
+</div>

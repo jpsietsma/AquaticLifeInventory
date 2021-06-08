@@ -82,6 +82,9 @@
     openModal: function (id) {
         openModal('Tank/_Details/?ID=' + id, Tank.modalLoaded)
     },
+    openAddFishModal: function (id) {
+        openModal('Tank/AddFish/?ID=' + id, Tank.addFishModalLoaded)
+    },
     openTankDetailsModal: function (id) {
         openModal('@Url.Action("_Details", "Tank")?ID=' + id, Tank.modalLoaded)
     },
@@ -94,6 +97,9 @@
         }
     },
     confirmModalLoaded: function (success) {
+
+    },
+    addFishModalLoaded: function (success) {
 
     },
     modalLoaded: function (success) {

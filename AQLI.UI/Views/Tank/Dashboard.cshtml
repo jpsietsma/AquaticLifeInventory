@@ -6,6 +6,28 @@
 
 @section Style {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        #availableFish, #selectedFish {
+            border: 1px solid #eee;
+            width: 100%;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 5px 0 0;
+            float: left;
+            margin-right: 10px;
+        }
+
+            #availableFish li, #selectedFish li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 98%;
+                border: 1px solid gray;
+            }
+    </style>
 }
 
 <div class="container-fluid">
@@ -285,9 +307,8 @@
             <div class="card-body text-left">
                 <div class="row">
                     <div class="col-12">
-                        <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AddFish", "Tank", new { ID = Model.TankID })'">Add</button>
-                        <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = Model.TankID })'">Transfer</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_FishDeath", "Tank", new { ID = Model.TankID })'">Deceased</button>
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="TankDashboard.openAssignFishModal(@Model.TankID)">Add</button>
+                        <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = Model.TankID })'">Transfer</button>                        
                     </div>
                 </div>
                 <table class="table-striped table-bordered table-hover col-12">
@@ -309,9 +330,16 @@
                             @foreach (UserFishModel fish in Model.UserFish)
                             {
                                 <tr>
-                                    <td>@fish.FishName</td>
-                                    <td>@fish.FishType.TypeName</td>
-                                    <td><button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button></td>
+                                    <td>
+                                        @fish.FishName
+                                    </td>
+                                    <td>
+                                        @fish.FishType.TypeName
+                                    </td>
+                                    <td>
+                                    <button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_UnassignFish", "Tank", new { ID = fish.UserFishID})'">Unassign</button>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -339,6 +367,8 @@
 
 @section Scripts{
     <script type="text/javascript" src="~/js/Tank/Tank.js"></script>
+    <script src="~/js/Tank/TankDashboard.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 }

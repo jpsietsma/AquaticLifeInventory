@@ -1,0 +1,74 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices; 
+
+
+@model AquaticTankModel;
+
+@inject DataFactory DataSource;
+
+@section Style {
+    <style>
+        #availableFish, #selectedFish {
+            border: 1px solid #eee;
+            width: 100%;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 5px 0 0;
+            float: left;
+            margin-right: 10px;
+        }
+
+        #availableFish li, #selectedFish li {
+            margin: 0 5px 5px 5px;
+            padding: 5px;
+            font-size: 1.2em;
+            width: 98%;
+            border: 1px solid gray;
+        }
+
+    </style>
+}
+
+@section Scripts {
+
+    <script src="~/js/Tank/AssignTankFish.js"></script>
+
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <form id="newFishForm" asp-action="_saveNewFish" method="post">
+                <input type="hidden" id="tankID" name="tankID" value="@Model.TankID" />
+                <div class="card">
+                    <div class="card-header">
+                        @Model.Name - Assign Fish To Tank
+                    </div>
+                    <div class="card-body container-fluid">
+                        <div class="row">
+                            <div class="col-6">
+                                <b>Unassigned Fish</b>
+                                <br />
+                                <ul id="availableFish" name="availableFish" class="assignedNewFish" style="width: 100%">
+                                    @foreach (UserFishModel fishModel in DataSource.List_UnassignedFish())
+                                    {
+                                        <li id="@fishModel.UserFishID">@fishModel.FishName (@fishModel.FishType.TypeName)</li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <b>Assign to @Model.Name</b>
+                                <br />
+                                <ul id="selectedFish" name="selectedFish" class="assignedNewFish" style="width: 100%"></ul>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <input class="btn btn-success" type="submit" value="Assign" />
+                    </div>
+                </div>
+            </form>            
+        </div>
+    </div>
+</div>

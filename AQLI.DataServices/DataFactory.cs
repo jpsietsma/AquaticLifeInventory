@@ -54,6 +54,14 @@ namespace AQLI.DataServices
                     .FirstOrDefault();
         }
 
+
+        public UserFishModel Find_FishDetails(int id)
+        {
+            return Database.UserFish
+                .Where(f => f.UserFishID == id)
+                .FirstOrDefault();
+        }
+
         /// <summary>
         /// List tanks with loaded dependent entities
         /// </summary>
@@ -311,6 +319,15 @@ namespace AQLI.DataServices
                 .ToList();
         }
 
+
+        public List<UserFishModel> List_UnassignedFish()
+        {
+            return Database.UserFish
+                .Include(ft => ft.FishType)
+                .Where(f => f.TankID == null)
+                .ToList();
+        }
+
         /// <summary>
         /// List all of the UserFish records, or just for a particular user
         /// </summary>
@@ -373,6 +390,38 @@ namespace AQLI.DataServices
             Database.SaveChanges();
 
             return _dataModel;
+        }
+
+
+        public void Add_TankFish(IEnumerable<int> _newIds, int tankID)
+        {
+            AquaticTankModel tank = Database.Tank.Where(t => t.TankID == tankID).First();
+
+            List<UserFishModel> newFish = new List<UserFishModel>();
+
+            foreach (int id in _newIds)
+            {
+                var fish = Find_FishDetails(id);
+
+                fish.TankID = tankID;
+
+                Database.UserFish.Update(fish);
+            }
+
+            Database.SaveChanges();
+
+        }
+
+        public void Remove_TankFish(int ID)
+        {
+            var fishModel = Database.UserFish
+                .Where(f => f.UserFishID == ID)
+                .First();
+
+            fishModel.TankID = null;
+
+            Database.UserFish.Update(fishModel);
+            Database.SaveChanges();
         }
 
         /// <summary>

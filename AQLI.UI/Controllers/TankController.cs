@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using AQLI.DataServices.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace AQLI.UI.Controllers
 {
@@ -88,6 +89,51 @@ namespace AQLI.UI.Controllers
 
             return View(data);
         }
+
+
+
+        public IActionResult AddFish(int ID)
+        {
+            AquaticTankModel _model = DataSource.Find_TankDetails(ID);
+
+            return View(_model);
+        }
+
+        public IActionResult _AddFish(int ID)
+        {
+            var tankModel = DataSource.Find_TankDetails(ID);
+
+            return View(tankModel);
+        }
+
+        public IActionResult _UnassignFish(int ID)
+        {
+            var id = DataSource.Find_FishDetails(ID).TankID;
+
+            DataSource.Remove_TankFish(ID);
+
+            return RedirectToAction("Dashboard", "Tank", new { ID = id });
+        }
+
+        public async Task<IActionResult> _saveNewFish(IFormCollection _newFishData)
+        {
+            var addedValues = _newFishData["addedFishList"].First().Split(',');
+            var tankId = int.Parse(_newFishData["tankID"].First());
+
+            List<int> ids = new List<int>();
+
+            foreach (var fishID in addedValues)
+            {
+                ids.Add(int.Parse(fishID)); 
+            }
+
+            DataSource.Add_TankFish(ids, tankId);
+
+            var user = await UserManager.GetUserAsync(User);
+
+            return RedirectToAction("Dashboard", new { ID = tankId });
+        }
+
 
         public IActionResult Test()
         {
