@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-center">
-                    Created on @Model.Added.Value.ToString("MM/dd/yyyy") by @DataSource.Get_UserDetails(Model.AddedBy.Value).UserName
+                    Created on @Model.Added.Value.ToString("MM/dd/yyyy") by @DataSource.Find_UserDetails(Model.AddedBy.Value).UserName
                 </div>
             </div>
         </div>

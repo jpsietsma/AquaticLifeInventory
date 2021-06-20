@@ -51,7 +51,7 @@
                                 <b>Unassigned Fish</b>
                                 <br />
                                 <ul id="availableFish" name="availableFish" class="assignedNewFish" style="width: 100%">
-                                    @foreach (UserFishModel fishModel in DataSource.List_UnassignedFish())
+                                    @foreach (UserFishModel fishModel in DataSource.List_NewUnassignedFishPurchases())
                                     {
                                         <li id="@fishModel.UserFishID">@fishModel.FishName (@fishModel.FishType.TypeName)</li>
                                     }

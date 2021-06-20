@@ -33,7 +33,7 @@ namespace AQLI.UI.Controllers
         public IActionResult Dashboard()
         {
             var user = UserManager.GetUserAsync(User).Result;
-            List<UserFishModel> _allUserFish = DataSource.List_UserFish(user.UserId);
+            List<UserFishModel> _allUserFish = DataSource.Find_UserFish(user.UserId);
             
             return View(_allUserFish);
         }
@@ -62,7 +62,7 @@ namespace AQLI.UI.Controllers
         {
             var user = UserManager.GetUserAsync(User).Result;
 
-            UserFishModel _dataModel = DataSource.List_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
+            UserFishModel _dataModel = DataSource.Find_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
 
             return View(_dataModel);
         }
@@ -70,16 +70,16 @@ namespace AQLI.UI.Controllers
         public IActionResult Edit(int ID)
         {
             var user = UserManager.GetUserAsync(User).Result;
-            List<UserFishModel> _allUserFish = DataSource.List_UserFish(user.UserId);
+            List<UserFishModel> _allUserFish = DataSource.Find_UserFish(user.UserId);
 
-            UserFishModel _dataModel = DataSource.List_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
+            UserFishModel _dataModel = DataSource.Find_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
 
             return View(_dataModel);
         }
 
         public async Task<IActionResult> Remove(int ID)
         {
-            UserFishModel _dataModel = DataSource.List_UserFish(null).Where(id => id.UserFishID == ID).FirstOrDefault();
+            UserFishModel _dataModel = DataSource.Find_FishDetails(ID);
 
             await DataSource.Remove_UserFish(_dataModel);
 
