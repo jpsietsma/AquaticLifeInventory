@@ -33,6 +33,15 @@ namespace AQLI.DataServices.context
         public DbSet<BirthingTypeModel> BirthingTypes { get; set; }
         public DbSet<TerritorialLevelModel> TerritorialLevels { get; set; }
 
+        public DbSet<MaintenanceLogType> MaintenanceLogTypes { get; set; }
+        public DbSet<MaintenanceLogModel> MaintenanceLogs { get; set; }
+
+        public DbSet<TankTemperatureRecordModel> TankTemperatureRecords { get; set; }
+        public DbSet<TankWaterChangeRecordModel> TankWaterChangeRecords { get; set; }
+        public DbSet<TankFilterChangeRecordModel> TankFilterChangeRecords { get; set; }
+        public DbSet<TankFeedingRecordModel> TankFeedingRecords { get; set; }
+        public DbSet<TankCreatureInventoryRecordModel> TankCreatureInventoryRecords { get; set; }
+
         public DbSet<WebsiteUser> AspNetUsers { get; set; }
         public DbSet<IdentityUserClaim<string>> AspNetUserClaims { get; set; }
         public DbSet<IdentityUserRole<string>> AspNetUserRoles { get; set; }
@@ -47,6 +56,9 @@ namespace AQLI.DataServices.context
         public DbSet<TankEquipmentModel> Tank_Equipment { get; set; }
         public DbSet<TankNoteModel> Tank_Notes { get; set; }
         public DbSet<PurchaseCategoryTypeModel> PurchaseCategoryTypes { get; set; }
+
+        public DbSet<PlantTypeModel> PlantTypes { get; set; }
+        public DbSet<UserPlantModel> UserPlants { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -116,6 +128,30 @@ namespace AQLI.DataServices.context
                 .WithOne(t => t.Tank);
             modelBuilder.Entity<AquaticTankModel>()
                 .Property(x => x.TankID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<AquaticTankModel>()
+                .HasMany(m => m.MaintenanceLogs)
+                .WithOne(t => t.Tank);
+            #endregion
+
+            #region Section: MaintenanceLogModel modelbuilders
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasOne(t => t.MaintenanceLogType)
+                .WithMany();
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasMany(tl => tl.TemperatureRecords)
+                .WithOne(m => m.MaintenanceLog);
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasMany(il => il.CreatureInventoryRecords)
+                .WithOne(m => m.MaintenanceLog);
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasMany(wc => wc.WaterChangeRecords)
+                .WithOne(m => m.MaintenanceLog);
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasMany(fc => fc.FilterChangeRecords)
+                .WithOne(m => m.MaintenanceLog);
+            modelBuilder.Entity<MaintenanceLogModel>()
+                .HasMany(fl => fl.FeedingRecords)
+                .WithOne(m => m.MaintenanceLog);
             #endregion
 
             #region Section: InvoicePurchaseModel modelbuilders
@@ -187,6 +223,12 @@ namespace AQLI.DataServices.context
 
 
 
+            #endregion
+
+            #region Section: UserPlants modelbuilders
+            modelBuilder.Entity<UserPlantModel>()
+                .HasOne(pt => pt.PlantType)
+                .WithMany();
             #endregion
 
             //Ignore numeric User ID identity column when updating or inserting

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AQLI.Data.Models.ListModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -43,6 +44,8 @@ namespace AQLI.Data.Models
 
         public int OwnerID { get; set; }
         public WebsiteUser Owner { get; set; }
+
+        public List<MaintenanceLogModel> MaintenanceLogs { get; set; }
 
         public List<UserFishModel> UserFish { get; set; }
         public List<TankSupplyModel> Supplies { get; set; }

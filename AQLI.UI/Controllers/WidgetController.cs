@@ -27,9 +27,13 @@ namespace AQLI.UI.Controllers
 
         public IActionResult Index()
         {
-            var ds = DataSource.List_UserFish(4);
+            var db = DataSource.List_UserTankMaintenanceLogs(14)
+                               .Where(tl => tl.MaintenanceLogTypeID == 1)
+                               .ToList();
 
-            var db = Database.UserFish_MedicalRecords;
+            var temps = db.GroupBy(g => g.LogDate)
+                          .OrderByDescending(d => d.Key)
+                          .Take(7);
 
             return View();
         }

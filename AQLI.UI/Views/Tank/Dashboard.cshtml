@@ -53,7 +53,8 @@
             <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_DisbandTank", "Tank", new { ID = Model.TankID })'" disabled>Disband</button>
         </div>
     </div>
-    <div class="row">
+    <div class="row p-1">
+        <!-- Tank Overview Card -->
         <div id="tankCard_addCard" class="card tank-card col-4" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
                 Tank Details Overview
@@ -169,7 +170,8 @@
                 </div>
             </div>
         </div>
-        <div id="tankCard_addCard" class="card tank-card col-3" data-id="0" onclick="Tank.events.cardClicked(this)">
+        <!-- Food and Supply Card -->
+        <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
                 Food &amp; Supplies
             </div>
@@ -249,6 +251,72 @@
                 </div>
             </div>
         </div>
+        <!-- Fish Population Card -->
+        <div id="tankCard_addCard" class="card tank-card col-5" data-id="0" onclick="Tank.events.cardClicked(this)">
+            <div class="card-header text-center">
+                Fish Population
+            </div>
+            <div class="card-body text-left">
+                <div class="row">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="TankDashboard.openAssignFishModal(@Model.TankID)">Add</button>                        
+                    </div>
+                </div>
+                <table class="table-striped table-bordered table-hover col-12">
+                    @if (Model.UserFish.Count() > 0)
+                    {
+                        <thead>
+                            <tr>
+                                <td>
+                                    Fish Name
+                                </td>
+                                <td>
+                                    Type
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (UserFishModel fish in Model.UserFish)
+                            {
+                                <tr>
+                                    <td>
+                                        @fish.FishName
+                                    </td>
+                                    <td>
+                                        @fish.FishType.TypeName
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_UnassignFish", "Tank", new { ID = fish.UserFishID})'">Unassign</button>
+                                        <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = fish.UserFishID })'">Transfer</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td>
+                                    No Fish assigned!
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row p-1">
+        <!-- Equipment Card -->
         <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
                 Assigned Equipment
@@ -300,46 +368,39 @@
                 </div>
             </div>
         </div>
-        <div id="tankCard_addCard" class="card tank-card col-2" data-id="0" onclick="Tank.events.cardClicked(this)">
+        <!-- Maintenance Log card -->
+        <div id="tankCard_addCard" class="card tank-card col-5" data-id="0" onclick="Tank.events.cardClicked(this)">
             <div class="card-header text-center">
-                Fish Population
+                Maintenance Logs
             </div>
             <div class="card-body text-left">
                 <div class="row">
-                    <div class="col-12">
-                        <button type="button" class="btn btn-sm btn-outline-success" onclick="TankDashboard.openAssignFishModal(@Model.TankID)">Add</button>
-                        <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = Model.TankID })'">Transfer</button>                        
+                    <div class="col-12 mx-auto">
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="location.href='@Url.ActionLink("_AssignEquipment", "Tank", new { ID = Model.TankID })'">Add Log</button>
                     </div>
                 </div>
-                <table class="table-striped table-bordered table-hover col-12">
-                    @if (Model.UserFish.Count() > 0)
+                <table id="maintenanceDashboardTable" class="table-striped table-bordered table-hover col-12">
+                    @if (Model.Equipment.Count() > 0)
                     {
                         <thead>
                             <tr>
                                 <td>
-                                    Fish Name
+                                    Date
                                 </td>
                                 <td>
-                                    Type
+                                    Log Type
                                 </td>
                                 <td>
+
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (UserFishModel fish in Model.UserFish)
+                            @foreach (TankEquipmentModel equipment in Model.Equipment)
                             {
                                 <tr>
-                                    <td>
-                                        @fish.FishName
-                                    </td>
-                                    <td>
-                                        @fish.FishType.TypeName
-                                    </td>
-                                    <td>
-                                    <button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_UnassignFish", "Tank", new { ID = fish.UserFishID})'">Unassign</button>
-                                    </td>
+                                    <td>@equipment.EquipmentName</td>
+                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href='@Url.Action("_RemoveEquipment", "Tank", new { ID = equipment.TankEquipmentId })';return false;"><i class="fas fa-minus-circle" style="color: white;"></i></button></td>
                                 </tr>
                             }
                         </tbody>
@@ -350,7 +411,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    No Fish assigned!
+                                    No tank maintenance has been performed!
                                 </td>
                             </tr>
                         </tbody>
@@ -359,6 +420,7 @@
             </div>
             <div class="card-footer">
                 <div class="row">
+
                 </div>
             </div>
         </div>
