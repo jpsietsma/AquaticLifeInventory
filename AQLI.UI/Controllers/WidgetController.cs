@@ -27,7 +27,7 @@ namespace AQLI.UI.Controllers
 
         public IActionResult Index()
         {
-            var db = DataSource.List_UserTankMaintenanceLogs(14)
+            var db = DataSource.Find_TankMaintenanceLogs(14)
                                .Where(tl => tl.MaintenanceLogTypeID == 1)
                                .ToList();
 
@@ -107,7 +107,7 @@ namespace AQLI.UI.Controllers
         //Database widget = working
         public IActionResult TestVC()
         {
-            UserFishModel Model = DataSource.List_UserFish(4).First();
+            UserFishModel Model = DataSource.Find_UserFish(4).First();
 
             return View(Model);
         }

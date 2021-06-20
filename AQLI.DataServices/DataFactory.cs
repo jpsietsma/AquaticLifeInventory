@@ -20,15 +20,13 @@ namespace AQLI.DataServices
         }
 
         #region Section: List Factory Methods
-            
+
             /// <summary>
-            /// List all the supplies belonging to a specific tank
+            /// List all the tank supplies in the database
             /// </summary>
-            /// <param name="TankID">ID of the tank to filter on</param>
-            public List<TankSupplyModel> List_TankSupplies(int TankID)
+            public List<TankSupplyModel> List_TankSupplies()
             {
                 return Database.Tank_Supply
-                    .Where(s => s.TankID == TankID)
                     .ToList();
             }
 
@@ -40,19 +38,7 @@ namespace AQLI.DataServices
                 return Database.PlantTypes
                     .ToList();
             }
-
-            /// <summary>
-            /// List all user plants, along with PlantType
-            /// </summary>
-            /// <param name="userId">ID of the user to filter plants</param>
-            public List<UserPlantModel> List_UserPlants(int userId)
-            {
-                return Database.UserPlants
-                    .Where(o => o.OwnerID == userId)
-                    .Include(pt => pt.PlantType)
-                    .ToList();
-            }
-
+                    
             /// <summary>
             /// List all tanks found in the database
             /// </summary>
@@ -106,44 +92,7 @@ namespace AQLI.DataServices
                     .Include(np => np.NotificationPriorityLevel)
                     .Where(n => n.AcknowledgedDate == null)
                     .ToList();
-            }
-
-            /// <summary>
-            /// Return all medical records for a particular fish
-            /// </summary>
-            /// <param name="fishID">ID of the userfish used to retrieve medical records</param>
-            public List<UserFish_MedicalRecordModel> List_MedicalRecords(int fishID)
-            {
-                return Database.UserFish_MedicalRecords
-                    .Where(f => f.UserFishID == fishID)
-                    .ToList();
-            }
-
-            /// <summary>
-            /// List all tanks owned by a user
-            /// </summary>
-            /// <param name="id">Id of the user to retrieve tanks</param>
-            public List<AquaticTankModel> List_UserTanks(int id)
-            {
-                return Database.Tank
-                        .Include(wt => wt.WaterType)
-                        .Include(ct => ct.CreatureType)
-                        .Include(tem => tem.Temporment)
-                        .Include(env => env.Environment)
-                        .Include(tt => tt.TankType)
-                        .Include(ml => ml.MaintenanceLogs)
-                        .ThenInclude(tl => tl.TemperatureRecords)
-                        .Include(ml => ml.MaintenanceLogs)
-                        .ThenInclude(ci => ci.CreatureInventoryRecords)
-                        .Include(ml => ml.MaintenanceLogs)
-                        .ThenInclude(fc => fc.FilterChangeRecords)
-                        .Include(ml => ml.MaintenanceLogs)
-                        .ThenInclude(fr => fr.FeedingRecords)
-                        .Include(ml => ml.MaintenanceLogs)
-                        .ThenInclude(wc => wc.WaterChangeRecords)
-                        .Where(t => t.OwnerID == id)
-                        .ToList();
-            }
+            }                                      
 
             /// <summary>
             /// List all purchases from the database
@@ -169,20 +118,7 @@ namespace AQLI.DataServices
                     .Include(s => s.Store)
                     .ToList();
             }
-
-            /// <summary>
-            /// List all purchase invoices from the database for a particular user
-            /// </summary>
-            public List<PurchaseInvoiceModel> List_PurchaseInvoices(int id)
-            {
-                return Database.PurchaseInvoices
-                    .Include(o => o.Owner)
-                    .Include(p => p.Purchases)
-                    .Include(s => s.Store)
-                    .Where(o => o.OwnerID == id)
-                    .ToList();
-            }
-
+                    
             /// <summary>
             /// List all purchase categories
             /// </summary>
@@ -290,19 +226,28 @@ namespace AQLI.DataServices
                 return Database.UserFish
                     .Where(f => f.TankID == null && f.FishStatusID == 7)
                     .ToList();
-            }
+            }                    
 
             /// <summary>
-            /// List all of the UserFish records, or just for a particular user
+            /// List the types of medical records in the database
             /// </summary>
-            /// <param name="UserID">ID of the user to filter on</param>
-            public List<UserFishModel> List_UserFish(int? UserID)
+            public List<MedicalRecordTypeModel> List_MedicalRecordTypes()
             {
-                List<UserFishModel> _final = new List<UserFishModel>();
+                return Database.MedicalRecordTypes
+                    .ToList();
+            }
+            
+        #endregion
 
-                if (UserID.HasValue)
-                {
-                    _final = Database.UserFish
+        #region Section: Find Factory Methods
+
+            /// <summary>
+            /// Find all of the fish for a particular user
+            /// </summary>
+            /// <param name="userId">ID of the user to filter on</param>
+            public List<UserFishModel> Find_UserFish(int userId)
+            {
+                return Database.UserFish
                         .Include(p => p.Purchase)
                         .Include(t => t.Tank)
                         .Include(ft => ft.FishType)
@@ -313,69 +258,38 @@ namespace AQLI.DataServices
                         .Include(fs => fs.FishStatus)
                         .Include(mr => mr.MedicalRecords)
                         .ThenInclude(mrt => mrt.MedicalRecordType)
-                        .Where(u => u.Purchase.OwnerID == UserID)
+                        .Where(u => u.Purchase.OwnerID == userId)
                         .ToList();
-                }
-                else
-                {
-                    _final = Database.UserFish
-                        .Include(p => p.Purchase)
-                        .Include(t => t.Tank)
-                        .Include(ft => ft.FishType)
-                        .Include(pf => pf.ParentFish)
-                        .Include(cf => cf.ChildrenFish)
-                        .Include(fs => fs.FishStatus)
-                        .ToList();
-                }
-
-                return _final;
             }
 
             /// <summary>
-            /// List the types of medical records in the database
+            /// Find details for a specific plant
             /// </summary>
-            public List<MedicalRecordTypeModel> List_MedicalRecordTypes()
-            {
-                return Database.MedicalRecordTypes
-                    .ToList();
-            }
-
-            /// <summary>
-            /// List the maintenance logs for a particular tank
-            /// </summary>
-            /// <param name="tankID">ID of the tank to filter on</param>
-            public List<MaintenanceLogModel> List_UserTankMaintenanceLogs(int tankID)
-            {
-                return Database.MaintenanceLogs
-                    .Include(tl => tl.TemperatureRecords)
-                    .Include(ci => ci.CreatureInventoryRecords)
-                    .Include(fc => fc.FilterChangeRecords)
-                    .Include(fr => fr.FeedingRecords)
-                    .Include(wc => wc.WaterChangeRecords)
-                    .Where(l => l.TankID == tankID)
-                    .ToList();
-            }
-
-        #endregion
-
-        #region Section: Find Factory Methods
-
-            /// <summary>
-            /// Return details for a specific plant
-            /// </summary>
-            /// <param name="plantID">ID of the plant to filter</param>
-            public UserPlantModel Find_UserPlantDetails(int plantID)
+            /// <param name="plantId">ID of the plant to filter</param>
+            public UserPlantModel Find_UserPlantDetails(int plantId)
             {
                 return Database.UserPlants
-                    .Where(p => p.UserPlantID == plantID)
+                    .Where(p => p.UserPlantID == plantId)
                     .FirstOrDefault();
+            }
+
+            /// <summary>
+            /// Find all the plants belonging to a particular user
+            /// </summary>
+            /// <param name="userId">ID of the user to filter on</param>
+            public List<UserPlantModel> Find_UserPlants(int userId)
+            {
+                return Database.UserPlants
+                    .Where(o => o.OwnerID == userId)
+                    .Include(pt => pt.PlantType)
+                    .ToList();
             }
 
             /// <summary>
             /// Find the details for a particular tank with loaded dependents
             /// </summary>
-            /// <param name="id">Id of the tank for retrieving details</param>
-            public AquaticTankModel Find_TankDetails(int id)
+            /// <param name="tankId">Id of the tank for retrieving details</param>
+            public AquaticTankModel Find_TankDetails(int tankId)
             {
                 return Database.Tank
                         .Include(wt => wt.WaterType)
@@ -403,31 +317,110 @@ namespace AQLI.DataServices
                         .Include(ml => ml.MaintenanceLogs)
                         .ThenInclude(wc => wc.WaterChangeRecords)
                         .Include(ci => ci.InventoryRecords)
-                        .Where(t => t.TankID == id)
+                        .Where(t => t.TankID == tankId)
                         .FirstOrDefault();
             }
 
             /// <summary>
             /// Find the details for a particular fish
             /// </summary>
-            /// <param name="id">ID of the fish for filtering</param>
-            public UserFishModel Find_FishDetails(int id)
+            /// <param name="fishId">ID of the fish for filtering</param>
+            public UserFishModel Find_FishDetails(int fishId)
             {
                 return Database.UserFish
-                    .Where(f => f.UserFishID == id)
+                    .Where(f => f.UserFishID == fishId)
                     .FirstOrDefault();
             }
 
             /// <summary>
-            /// List details for a particular user
+            /// Find details for a particular user
             /// </summary>
-            /// <param name="ID">ID of the user used to retrieve the details</param>
-            public WebsiteUser Find_UserDetails(int ID)
+            /// <param name="userId">ID of the user used to retrieve the details</param>
+            public WebsiteUser Find_UserDetails(int userId)
             {
                 return Database.AspNetUsers
-                    .Where(u => u.UserId == ID)
+                    .Where(u => u.UserId == userId)
                     .FirstOrDefault();
             }
+
+            /// <summary>
+            /// Find the supplies for a particular tank
+            /// </summary>
+            /// <param name="TankId">Tank ID to filter on</param>
+            public List<TankSupplyModel> Find_TankSupplies(int TankId)
+            {
+                return Database.Tank_Supply
+                    .Where(s => s.TankID == TankId)
+                    .ToList();
+            }
+
+            /// <summary>
+            /// Find the maintenance logs for a particular tank
+            /// </summary>
+            /// <param name="tankId">ID of the tank to filter on</param>
+            public List<MaintenanceLogModel> Find_TankMaintenanceLogs(int tankId)
+            {
+                return Database.MaintenanceLogs
+                    .Include(tl => tl.TemperatureRecords)
+                    .Include(ci => ci.CreatureInventoryRecords)
+                    .Include(fc => fc.FilterChangeRecords)
+                    .Include(fr => fr.FeedingRecords)
+                    .Include(wc => wc.WaterChangeRecords)
+                    .Where(l => l.TankID == tankId)
+                    .ToList();
+            }
+
+            /// <summary>
+            /// Find all purchase invoices for a particular user
+            /// </summary>
+            /// <param name="userId">ID of the user to filter on</param>
+            public List<PurchaseInvoiceModel> Find_PurchaseInvoices(int userId)
+            {
+                return Database.PurchaseInvoices
+                    .Include(o => o.Owner)
+                    .Include(p => p.Purchases)
+                    .Include(s => s.Store)
+                    .Where(o => o.OwnerID == userId)
+                    .ToList();
+            }
+
+            /// <summary>
+            /// Find all the tanks owner by a particular user
+            /// </summary>
+            /// <param name="userId">ID of the user to filter on</param>
+            public List<AquaticTankModel> Find_UserTanks(int userId)
+            {
+                return Database.Tank
+                        .Include(wt => wt.WaterType)
+                        .Include(ct => ct.CreatureType)
+                        .Include(tem => tem.Temporment)
+                        .Include(env => env.Environment)
+                        .Include(tt => tt.TankType)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(tl => tl.TemperatureRecords)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(ci => ci.CreatureInventoryRecords)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(fc => fc.FilterChangeRecords)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(fr => fr.FeedingRecords)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(wc => wc.WaterChangeRecords)
+                        .Where(t => t.OwnerID == userId)
+                        .ToList();
+            }
+
+            /// <summary>
+            /// Find all medical records for a particular fish
+            /// </summary>
+            /// <param name="fishId">ID of the fish to filter on</param>
+            public List<UserFish_MedicalRecordModel> Find_FishMedicalRecords(int fishId)
+            {
+                return Database.UserFish_MedicalRecords
+                    .Where(f => f.UserFishID == fishId)
+                    .ToList();
+            }
+
 
         #endregion
 
@@ -438,12 +431,12 @@ namespace AQLI.DataServices
             /// </summary>
             /// <param name="_modelData">Data model for adding a medical record</param>
             /// <returns>return true if successful</returns>
-            public bool Add_MedicalRecord(UserFish_MedicalRecordModel _modelData)
+            public async Task<bool> Add_MedicalRecord(UserFish_MedicalRecordModel _modelData)
             {
                 try
                 {
                     Database.UserFish_MedicalRecords.Add(_modelData);
-                    Database.SaveChanges();
+                    await Database.SaveChangesAsync();
 
                     return true;
                 }
@@ -465,7 +458,7 @@ namespace AQLI.DataServices
             /// </summary>
             /// <param name="_modelData">Data model to user when adding the notification</param>
             /// <returns>returns true if successful</returns>
-            public bool Add_Notification(NotificationModel _modelData)
+            public async Task<bool> Add_Notification(NotificationModel _modelData)
             {
                 bool isSuccessful = false;
 
@@ -484,7 +477,7 @@ namespace AQLI.DataServices
                     };
 
                     Database.Notification.Add(finalModel);
-                    Database.SaveChanges();
+                    await Database.SaveChangesAsync();
 
                     isSuccessful = true;
                 }
@@ -500,7 +493,7 @@ namespace AQLI.DataServices
             /// Add a new tank to the database
             /// </summary>
             /// <param name="_dataModel">Data Model representing the tank to add</param>
-            public AquaticTankModel Add_Tank(AquaticTankModel _dataModel)
+            public async Task<AquaticTankModel> Add_Tank(AquaticTankModel _dataModel)
             {
                 PurchaseModel purchaseModel = List_Purchases().Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
 
@@ -510,7 +503,7 @@ namespace AQLI.DataServices
                 purchaseModel.TankID = _dataModel.TankID;
 
                 Database.Purchases.Update(purchaseModel);
-                Database.SaveChanges();
+                await Database.SaveChangesAsync();
 
                 return _dataModel;
             }
@@ -520,7 +513,7 @@ namespace AQLI.DataServices
             /// </summary>
             /// <param name="_newIds">List of fish Ids to add</param>
             /// <param name="tankID">Tank to add fish to</param>
-            public void Add_TankFish(IEnumerable<int> _newIds, int tankID)
+            public async Task Add_TankFish(IEnumerable<int> _newIds, int tankID)
             {
                 AquaticTankModel tank = Database.Tank.Where(t => t.TankID == tankID).First();
 
@@ -535,7 +528,7 @@ namespace AQLI.DataServices
                     Database.UserFish.Update(fish);
                 }
 
-                Database.SaveChanges();
+                await Database.SaveChangesAsync();
 
             }
 
@@ -543,10 +536,10 @@ namespace AQLI.DataServices
             /// Add a new purchase to the database
             /// </summary>
             /// <param name="_dataModel">Data model representing the purchase to add</param>
-            public PurchaseModel Add_Purchase(PurchaseModel _dataModel)
+            public async Task<PurchaseModel> Add_Purchase(PurchaseModel _dataModel)
             {
                 Database.Purchases.Add(_dataModel);
-                Database.SaveChanges();
+                await Database.SaveChangesAsync();
 
                 return _dataModel;
             }
@@ -584,7 +577,7 @@ namespace AQLI.DataServices
             /// Update the details for a tank, or add a new tank if model TankID doesnt exist
             /// </summary>
             /// <param name="_dataModel">Data model to update/add to the database</param>
-            public AquaticTankModel Update_TankDetails(AquaticTankModel _dataModel)
+            public async Task<AquaticTankModel> Update_TankDetails(AquaticTankModel _dataModel)
             {
                 var listEntry = Database.Tank.Where(t => t.TankID == _dataModel.TankID).FirstOrDefault();
 
@@ -605,7 +598,7 @@ namespace AQLI.DataServices
                 }
                 else
                 {
-                    return Add_Tank(_dataModel);
+                    return await Add_Tank(_dataModel);
                 }
             }
 
@@ -613,7 +606,7 @@ namespace AQLI.DataServices
             /// Update the details for a Purchase
             /// </summary>
             /// <param name="_dataModel">Data model containing the purchase details</param>
-            public PurchaseModel Update_Purchase(PurchaseModel _dataModel)
+            public async Task<PurchaseModel> Update_Purchase(PurchaseModel _dataModel)
             {
                 var listEntry = Database.Purchases.Where(p => p.PurchaseID == _dataModel.PurchaseID).FirstOrDefault();
 
@@ -638,22 +631,22 @@ namespace AQLI.DataServices
                 }
                 else
                 {
-                    return Add_Purchase(_dataModel);
+                    return await Add_Purchase(_dataModel);
                 }
             }
 
         #endregion
 
-        #region Section: Remove Factory Methods
+        #region Section: Remove/Unassign Factory Methods
 
             /// <summary>
-            /// Unassigns a fish from a tank, making that fish homeless
+            /// Unassign a fish from a tank, making that fish homeless
             /// </summary>
-            /// <param name="fishID">ID of the fish to remove</param>
-            public async Task Remove_TankFish(int fishID)
+            /// <param name="fishId">ID of the fish to unassign</param>
+            public async Task Unassign_TankFish(int fishId)
             {
                 var fishModel = Database.UserFish
-                    .Where(f => f.UserFishID == fishID)
+                    .Where(f => f.UserFishID == fishId)
                     .First();
 
                 fishModel.TankID = null;
@@ -663,14 +656,26 @@ namespace AQLI.DataServices
             }
 
             /// <summary>
+            /// Unassign a fish from a tank, making that fish homeless
+            /// </summary>
+            /// <param name="_fishDataModel">Data model representing the fish to evict</param>
+            public async Task Unassign_TankFish(UserFishModel _fishDataModel)
+            {
+                _fishDataModel.TankID = null;
+
+                Database.UserFish.Update(_fishDataModel);
+                await Database.SaveChangesAsync();
+            }
+
+            /// <summary>
             /// Remove a Tank from the database.
             /// </summary>
-            /// <param name="id">ID of the tank to remove</param>
-            public async Task Remove_UserTank(int id)
+            /// <param name="tankId">ID of the tank to remove</param>
+            public async Task Remove_UserTank(int tankId)
             {
-                var tankModel = Database.Tank.Where(t => t.TankID == id).First();
+                var tankModel = Database.Tank.Where(t => t.TankID == tankId).First();
 
-                var purchase = Database.Purchases.Where(t => t.TankID == id).FirstOrDefault();
+                var purchase = Database.Purchases.Where(t => t.TankID == tankId).FirstOrDefault();
                 purchase.TankID = null;
 
                 Database.Purchases.Update(purchase);
@@ -680,12 +685,37 @@ namespace AQLI.DataServices
             }
 
             /// <summary>
+            /// Remove a Tank from the database.
+            /// </summary>
+            /// <param name="_tankDataModel">ID of the tank to remove</param>
+            public async Task Remove_UserTank(AquaticTankModel _tankDataModel)
+            {
+                Database.Tank.Remove(_tankDataModel);
+                await Database.SaveChangesAsync();
+            }
+                    
+            /// <summary>
+            /// Remove a user fish record from the database
+            /// </summary>
+            /// <param name="fishId">ID of the fish to remove</param>
+            public async Task Remove_UserFish(int fishId)
+            {
+                var fish = Database.UserFish.Where(f => f.UserFishID == fishId).FirstOrDefault();
+
+                if (fish != null)
+                {
+                    Database.UserFish.Remove(fish);
+                    await Database.SaveChangesAsync();
+                }
+            }
+
+            /// <summary>
             /// Remove a user fish record
             /// </summary>
-            /// <param name="_dataModel">data model representing UserFish record to remove</param>
-            public async Task Remove_UserFish(UserFishModel _dataModel)
+            /// <param name="_fishDataModel">data model representing UserFish record to remove</param>
+            public async Task Remove_UserFish(UserFishModel _fishDataModel)
             {
-                Database.UserFish.Remove(_dataModel);
+                Database.UserFish.Remove(_fishDataModel);
 
                 await Database.SaveChangesAsync();
             }

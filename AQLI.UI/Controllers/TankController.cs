@@ -55,15 +55,15 @@ namespace AQLI.UI.Controllers
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public IActionResult _Save(AquaticTankModel _dataModel)
+        public async Task<IActionResult> _Save(AquaticTankModel _dataModel)
         {
             if (_dataModel.TankID == 0)
             {
-                DataSource.Add_Tank(_dataModel);
+                await DataSource.Add_Tank(_dataModel);
             }
             else
             {
-                DataSource.Update_TankDetails(_dataModel);
+                await DataSource.Update_TankDetails(_dataModel);
             }
 
             return RedirectToAction("Index");
@@ -106,11 +106,11 @@ namespace AQLI.UI.Controllers
             return View(tankModel);
         }
 
-        public IActionResult _UnassignFish(int ID)
+        public async Task<IActionResult> _UnassignFish(int ID)
         {
             var id = DataSource.Find_FishDetails(ID).TankID;
 
-            DataSource.Remove_TankFish(ID);
+            await DataSource.Unassign_TankFish(ID);
 
             return RedirectToAction("Dashboard", "Tank", new { ID = id });
         }
@@ -127,7 +127,7 @@ namespace AQLI.UI.Controllers
                 ids.Add(int.Parse(fishID)); 
             }
 
-            DataSource.Add_TankFish(ids, tankId);
+            await DataSource.Add_TankFish(ids, tankId);
 
             var user = await UserManager.GetUserAsync(User);
 
