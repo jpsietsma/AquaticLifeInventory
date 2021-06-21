@@ -1,1 +1,91 @@
 ﻿Maintenance
+
+@using AQLI.Data.Models;
+@using AQLI.DataServices.context;
+@using AQLI.DataServices;
+
+@inject DatabaseContext Database;
+@inject DataFactory DataSource;
+
+@model WebsiteUser;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/Purchases/Purchases.css" />
+}
+
+<!-- 
+
+One tab per tank, each tab holds a table of maintenance records for that particular tank    
+    
+-->
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <ul class="nav nav-tabs nav-justified">
+                @foreach (AquaticTankModel userTank in DataSource.Find_UserTanks(Model.UserId))
+                {
+                    <li class="nav-item">
+                        <a href="@("#tab_" + userTank.TankID)" class="nav-link" data-toggle="tab">
+                            (#@userTank.TankID)
+                            <br />@userTank.Name
+                        </a>
+                    </li>
+                }                
+            </ul>
+            <div class="tab-content" style="border-radius: 0 0 4px 4px; border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 10px; ">
+                <div class="tab-pane container-fluid active" id="defaultMaintenancePane">
+                    <b>Select a tank to review maintenance logs</b>
+                </div>
+                @foreach (AquaticTankModel userTank in DataSource.Find_UserTanks(Model.UserId))
+                {
+                    <div class="tab-pane container-fluid" id="@("tab_" + userTank.TankID)">
+                        @if (userTank.MaintenanceLogs.Count() > 0)
+                        {
+                            <table id="MaintenanceLogTable_@(userTank.TankID)" class="table table-bordered table-light table-striped table-hover col-12 MaintenanceLogTable" border="1">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>
+                                        Log Date
+                                    </th>
+                                    <th>
+                                        Log Type
+                                    </th>
+                                    <th>
+                                        Tank Name
+                                    </th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (MaintenanceLogModel maintenanceLog in userTank.MaintenanceLogs)
+                                {
+                                    <tr data-id="@maintenanceLog.MaintenanceLogID">
+                                        <td>
+                                            @maintenanceLog.LogDate
+                                        </td>
+                                        <td>
+                                            @maintenanceLog.MaintenanceLogType.LogTypeName
+                                        </td>
+                                        <td>
+                                            @userTank.Name
+                                        </td>
+                                        <td class="text-left">
+                                            <button type="button" onclick="Maintenance.openLogDetailsModal(@maintenanceLog.MaintenanceLogTypeID, @maintenanceLog.MaintenanceLogID)" class="btn-sm btn-primary">Log Details</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                            <b>There are no maintenance records for this tank.</b>
+                        }
+                    </div>
+                }                
+            </div>                        
+        </div>
+    </div>
+</div>

@@ -41,6 +41,7 @@ namespace AQLI.DataServices.context
         public DbSet<TankFilterChangeRecordModel> TankFilterChangeRecords { get; set; }
         public DbSet<TankFeedingRecordModel> TankFeedingRecords { get; set; }
         public DbSet<TankCreatureInventoryRecordModel> TankCreatureInventoryRecords { get; set; }
+        public DbSet<UserTankInventoryRecordModel> UserTankInventoryRecords { get; set; }
 
         public DbSet<WebsiteUser> AspNetUsers { get; set; }
         public DbSet<IdentityUserClaim<string>> AspNetUserClaims { get; set; }

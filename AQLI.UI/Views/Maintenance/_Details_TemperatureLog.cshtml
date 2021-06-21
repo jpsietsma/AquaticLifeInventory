@@ -1,0 +1,25 @@
+﻿@using AQLI.Data.Models;
+
+@model TankTemperatureRecordModel;
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Temperature Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+            </h4>
+        </div><div class="container-fluid"></div>
+        <div class="modal-body">
+            <b>
+                Temp Check Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+            </b>
+            <br />
+            <b>
+                Temperature: @Model.RecordedTemperature
+            </b>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+</div>

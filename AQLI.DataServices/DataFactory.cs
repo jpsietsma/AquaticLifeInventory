@@ -316,7 +316,7 @@ namespace AQLI.DataServices
                         .ThenInclude(fr => fr.FeedingRecords)
                         .Include(ml => ml.MaintenanceLogs)
                         .ThenInclude(wc => wc.WaterChangeRecords)
-                        .Include(ci => ci.InventoryRecords)
+                        //.Include(ci => ci.InventoryRecords)
                         .Where(t => t.TankID == tankId)
                         .FirstOrDefault();
             }
@@ -371,6 +371,22 @@ namespace AQLI.DataServices
             }
 
             /// <summary>
+            /// Find the details for a tank maintenance record
+            /// </summary>
+            /// <param name="logId">ID of the maintenance log to filter on</param>
+            public MaintenanceLogModel Find_TankMaintenanceLogDetails(int logId)
+            {
+                return Database.MaintenanceLogs
+                    .Include(tl => tl.TemperatureRecords)
+                    .Include(ci => ci.CreatureInventoryRecords)
+                    .Include(fc => fc.FilterChangeRecords)
+                    .Include(fr => fr.FeedingRecords)
+                    .Include(wc => wc.WaterChangeRecords)
+                    .Where(l => l.MaintenanceLogID == logId)
+                    .FirstOrDefault();
+            }
+
+            /// <summary>
             /// Find all purchase invoices for a particular user
             /// </summary>
             /// <param name="userId">ID of the user to filter on</param>
@@ -396,6 +412,8 @@ namespace AQLI.DataServices
                         .Include(tem => tem.Temporment)
                         .Include(env => env.Environment)
                         .Include(tt => tt.TankType)
+                        .Include(ml => ml.MaintenanceLogs)
+                        .ThenInclude(lt => lt.MaintenanceLogType)
                         .Include(ml => ml.MaintenanceLogs)
                         .ThenInclude(tl => tl.TemperatureRecords)
                         .Include(ml => ml.MaintenanceLogs)

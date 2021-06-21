@@ -1,0 +1,31 @@
+﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
+
+@model TankFeedingRecordModel;
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Tank Feeding Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+            </h4>
+        </div><div class="container-fluid"></div>
+        <div class="modal-body">
+            <b>
+                Feeding Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+            </b>
+            <br />
+            <b>
+                Amount Fed: @Model.ServingsFed
+            </b>
+            <br />
+            <br />
+            <b>
+                Supply Used: @Model.SupplyID
+            </b>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+</div>

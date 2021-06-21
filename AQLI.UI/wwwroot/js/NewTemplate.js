@@ -1,4 +1,4 @@
-﻿var change_me = {
+﻿var Maintenance = {
     init: function () {
         ////Reload page on modal closing
         //$('#modalAddEdit').on('hidden.bs.modal', function () {

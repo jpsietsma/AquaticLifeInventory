@@ -11,5 +11,7 @@ namespace AQLI.Data.Models
         public int PerformedBy { get; set; }
         public DateTime Date { get; set; }
         public List<FishCreatureModel> CreatureInventory { get; set; }
+
+        public MaintenanceLogModel MaintenanceLog { get; set; }
     }
 }
