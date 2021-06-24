@@ -1,5 +1,19 @@
 ﻿var TankDashboard = {
-    init: function () {                
+    init: function () {
+
+        if (!$.fn.DataTable.isDataTable('#maintenanceDashboardTable')) {
+            table = $('#maintenanceDashboardTable').DataTable({
+                "searching": true,
+                "pageLength": 5
+            });
+        }
+
+        if (!$.fn.DataTable.isDataTable('#fishDashboardTable')) {
+            table = $('#fishDashboardTable').DataTable({
+                "searching": true,
+                "pageLength": 10
+            });
+        }
         ////Reload page on modal closing
         //$('#modalAddEdit').on('hidden.bs.modal', function () {
         //    //location.reload();

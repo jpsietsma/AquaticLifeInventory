@@ -366,7 +366,9 @@ namespace AQLI.DataServices
                     .Include(fc => fc.FilterChangeRecords)
                     .Include(fr => fr.FeedingRecords)
                     .Include(wc => wc.WaterChangeRecords)
+                    .Include(lt => lt.MaintenanceLogType)
                     .Where(l => l.TankID == tankId)
+                    .OrderByDescending(o => o.LogDate)
                     .ToList();
             }
 
@@ -585,6 +587,16 @@ namespace AQLI.DataServices
                 await Database.SaveChangesAsync();
 
                 return _dataModel;
+            }
+
+            /// <summary>
+            /// Add a Tank Maintenance Log record
+            /// </summary>
+            /// <param name="">Data model representing the maintenance log</param>
+            public async Task Add_MaintenanceRecord(MaintenanceLogModel _dataModel)
+            {
+                Database.MaintenanceLogs.Add(_dataModel);
+                await Database.SaveChangesAsync();
             }
 
         #endregion

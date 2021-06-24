@@ -6,20 +6,50 @@
     <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title">
-                Water Change Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                @if (Model.MaintenanceLogID != 0)
+                {
+                    <b>
+                        Water Change Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                    </b>
+                }
+                else
+                {
+                    <b>
+                        New Water Change Record | Enter Details
+                    </b>
+                }
             </h4>
-        </div><div class="container-fluid"></div>
-        <div class="modal-body">
-            <b>
-                Change Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
-            </b>
-            <br />
-            <b>
-                Water Changed: @Model.WaterChangePercentage%
-            </b>
         </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-        </div>
+        @if (Model.MaintenanceLogID != 0)
+        {
+            <div class="modal-body">
+                <b>
+                    Change Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+                </b>
+                <br />
+                <b>
+                    Water Changed: @Model.WaterChangePercentage%
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            </div>
+        }
+        else
+        {
+            <div class="modal-body">
+                <b>
+                    Water Change Time: <input type="datetime" value="@DateTime.Now" />
+                </b>
+                <br />
+                <b>
+                    Water Changed (%): <input type="text" value="" />
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <button type="button" class="btn btn-sm btn-success">Save Log</button>
+            </div>
+        }
     </div>
 </div>

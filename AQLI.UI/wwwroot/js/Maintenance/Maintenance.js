@@ -41,15 +41,15 @@
     },
     openLogDetailsModal: function (logType, logID) {
         if (logType == 1) {
-            openModal('Maintenance/_Details_TemperatureLog/' + logID, Maintenance.temperatureLogModalLoaded)
+            openModal('/Maintenance/_Details_TemperatureLog/' + logID, Maintenance.temperatureLogModalLoaded)
         } else if (logType == 2) {
-            openModal('Maintenance/_Details_InventoryLog/' + logID, Maintenance.inventoryLogModalLoaded)
+            openModal('/Maintenance/_Details_InventoryLog/' + logID, Maintenance.inventoryLogModalLoaded)
         } else if (logType == 3) {
-            openModal('Maintenance/_Details_WaterChangeLog/' + logID, Maintenance.waterChangeLogModalLoaded)
+            openModal('/Maintenance/_Details_WaterChangeLog/' + logID, Maintenance.waterChangeLogModalLoaded)
         }  else if (logType == 4) {
-            openModal('Maintenance/_Details_FilterChangeLog/' + logID, Maintenance.filterChangeLogModalLoaded)
+            openModal('/Maintenance/_Details_FilterChangeLog/' + logID, Maintenance.filterChangeLogModalLoaded)
         } else if (logType == 5) {
-            openModal('Maintenance/_Details_FeedingLog/' + logID, Maintenance.feedingLogModalLoaded)
+            openModal('/Maintenance/_Details_FeedingLog/' + logID, Maintenance.feedingLogModalLoaded)
         }      
     },
     temperatureLogModalLoaded: function (success) {

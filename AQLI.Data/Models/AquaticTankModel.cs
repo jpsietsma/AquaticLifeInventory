@@ -51,11 +51,11 @@ namespace AQLI.Data.Models
         public List<TankSupplyModel> Supplies { get; set; }
         public List<TankEquipmentModel> Equipment { get; set; }
         public List<TankNoteModel> Notes { get; set; }
-        public List<TankInventoryRecordModel> InventoryRecords { get; set; }        
+        public List<TankCreatureInventoryRecordModel> InventoryRecords { get; set; }        
 
         public AquaticTankModel(WebsiteUser _tankOwner = null)
         {
-            InventoryRecords = new List<TankInventoryRecordModel>();            
+            InventoryRecords = new List<TankCreatureInventoryRecordModel>();            
 
             if (_tankOwner != null)
             {
@@ -65,7 +65,7 @@ namespace AQLI.Data.Models
 
         public AquaticTankModel()
         {
-            InventoryRecords = new List<TankInventoryRecordModel>();
+            InventoryRecords = new List<TankCreatureInventoryRecordModel>();
         }               
 
     }

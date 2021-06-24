@@ -3,29 +3,77 @@
 
 @model TankFeedingRecordModel;
 
+@inject DataFactory DataSource;
+
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title">
-                Tank Feeding Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                @if (Model.MaintenanceLogID != 0)
+                {
+                    <b>
+                        Tank Feeding Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                    </b>
+                }
+                else
+                {
+                    <b>
+                        New Tank Feeding Record | Enter Details
+                    </b>
+                }                
             </h4>
-        </div><div class="container-fluid"></div>
-        <div class="modal-body">
-            <b>
-                Feeding Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
-            </b>
-            <br />
-            <b>
-                Amount Fed: @Model.ServingsFed
-            </b>
-            <br />
-            <br />
-            <b>
-                Supply Used: @Model.SupplyID
-            </b>
         </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-        </div>
+        @if (Model.MaintenanceLogID != 0)
+        {
+            <div class="modal-body">
+                <b>
+                    Feeding Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+                </b>
+                <br />
+                <b>
+                    Amount Fed: @Model.ServingsFed
+                </b>
+                <br />
+                <br />
+                <b>
+                    Supply Used: @Model.SupplyID
+                </b>
+                <br />
+                <b>
+                    <i>
+                        Inventory Performed by @DataSource.Find_UserDetails(Model.RecordedBy).FirstName @DataSource.Find_UserDetails(Model.RecordedBy).LastName
+                    </i>
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            </div>
+        }
+        else
+        {
+            <div class="modal-body">
+                <b>
+                Feeding time: <input type="datetime" value="@DateTime.Now" disabled />
+            </b>
+            <br />
+            <b>
+                Amount Fed (# Servings): <input type="text" value="" />
+            </b>
+            <br />
+            <b>
+                Supply Used: 
+                <select name="SupplyID">
+                    <option value="1">Glo Flakes (8oz)</option>
+                    <option value="2">TetraMin Flakes (8oz)</option>
+                    <option value="3">Shrimp Pellets (16oz)</option>
+                    <option value="4">Algae Wafers (24oz)</option>
+                </select>
+            </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <button type="button" class="btn btn-sm btn-success">Save Log</button>
+            </div>
+        }
     </div>
 </div>

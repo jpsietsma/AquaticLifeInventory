@@ -18,5 +18,7 @@ namespace AQLI.Data.Models
 
         public int MaintenanceLogID { get; set; }
         public MaintenanceLogModel MaintenanceLog { get; set; }
+
+        public int RecordedBy { get; set; }
     }
 }

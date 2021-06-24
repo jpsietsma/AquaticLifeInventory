@@ -1,21 +1,57 @@
 ﻿@using AQLI.Data.Models;
+@using AQLI.DataServices;
 
 @model TankFilterChangeRecordModel;
+
+@inject DataFactory DataSource; 
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title">
-                Filter Change Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                @if (Model.MaintenanceLogID != 0)
+                {
+                    <b>
+                        Filter Change Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                    </b>
+                }
+                else
+                {
+                    <b>
+                        New Filter Change Record | Enter Details
+                    </b>
+                }
+
             </h4>
-        </div><div class="container-fluid"></div>
-        <div class="modal-body">
-            <b>
-                Change Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
-            </b>
         </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-        </div>
+        @if (Model.MaintenanceLogID != 0)
+        {
+            <div class="modal-body">
+                <b>
+                    Change Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+                </b>
+                <br />
+                <b>
+                    <i>
+                        Filter change performed by @DataSource.Find_UserDetails(Model.RecordedBy).FirstName @DataSource.Find_UserDetails(Model.RecordedBy).LastName
+                    </i>
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            </div>
+        }
+        else
+        {
+            <div class="modal-body">
+                <b>
+                    Filter Change Time: <input type="datetime" value="@DateTime.Now" />
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <button type="button" class="btn btn-sm btn-success">Save Log</button>
+            </div>
+        }
     </div>
 </div>

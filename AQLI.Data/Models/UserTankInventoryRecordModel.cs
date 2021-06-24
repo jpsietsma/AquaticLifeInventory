@@ -9,5 +9,6 @@ namespace AQLI.Data.Models
     {
         [Key]
         public int UserTankInventoryRecordID { get; set; }
+        public int RecordedBy { get; set; }
     }
 }

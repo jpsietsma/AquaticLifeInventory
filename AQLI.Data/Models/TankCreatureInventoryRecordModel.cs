@@ -15,5 +15,10 @@ namespace AQLI.Data.Models
 
         public int MaintenanceLogID { get; set; }
         public MaintenanceLogModel MaintenanceLog { get; set; }
+
+        public AquaticTankModel Tank { get; set; }
+        public int TankID { get; set; }
+
+        public int RecordedBy { get; set; }
     }
 }

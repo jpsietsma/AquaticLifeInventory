@@ -1,25 +1,64 @@
 ﻿@using AQLI.Data.Models;
+@using AQLI.DataServices; 
 
 @model TankTemperatureRecordModel;
+
+@inject DataFactory DataSource; 
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title">
-                Temperature Log - @Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                @if (Model.TankTemperatureRecordID != 0)
+                {
+                    <b>
+                        Temperature Log -@Model.MaintenanceLog.LogDate.ToString("MMM dd, yyyy")
+                    </b>
+                }
+                else
+                {
+                    <b>
+                        New Temperature Log | Enter Details
+                    </b>
+                }
             </h4>
-        </div><div class="container-fluid"></div>
-        <div class="modal-body">
-            <b>
-                Temp Check Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+        </div>
+        @if (Model.TankTemperatureRecordID != 0)
+        {
+            <div class="modal-body">
+                <b>
+                    Temp Check Time: @Model.MaintenanceLog.LogDate.ToString("hh:mm tt").ToLower()
+                </b>
+                <br />
+                <b>
+                    Temperature: @Model.RecordedTemperature
+                </b>
+                <br />
+                <b>
+                    <i>
+                        Check Performed by @DataSource.Find_UserDetails(Model.RecordedBy).FirstName @DataSource.Find_UserDetails(Model.RecordedBy).LastName
+                    </i>
+                </b>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+            </div>
+        }
+        else
+        {
+            <div class="modal-body">
+                <b>
+                Log Time: <input id="LogDate" type="datetime" value="@DateTime.Now" disabled />
             </b>
             <br />
             <b>
-                Temperature: @Model.RecordedTemperature
+                Recorded Temperature: <input id="RecordedTemperature" type="number" />
             </b>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                <a href="#" class="btn btn-success" data-dismiss="modal">Save Log</a>
+            </div>                
+        }
     </div>
 </div>
