@@ -42,6 +42,9 @@ namespace AQLI.UI
             //inject EF context wrapper factory service
             services.AddTransient<DataFactory>();
 
+            //inject user factory service
+            services.AddTransient<UserFactory>();
+
             //inject Barcode Factory service
             services.AddTransient<BarcodeFactory>();
         }

@@ -55,7 +55,7 @@ namespace AQLI.DataServices.context
         public DbSet<UserFishModel> UserFish { get; set; }
         public DbSet<TankSupplyModel> Tank_Supply { get; set; }
         public DbSet<TankEquipmentModel> Tank_Equipment { get; set; }
-        public DbSet<TankNoteModel> Tank_Notes { get; set; }
+        public DbSet<TankNoteModel> TankNotes { get; set; }
         public DbSet<PurchaseCategoryTypeModel> PurchaseCategoryTypes { get; set; }
 
         public DbSet<PlantTypeModel> PlantTypes { get; set; }
@@ -230,6 +230,10 @@ namespace AQLI.DataServices.context
             modelBuilder.Entity<UserPlantModel>()
                 .HasOne(pt => pt.PlantType)
                 .WithMany();
+            #endregion
+
+            #region Section: TankNotes modelbuilders
+
             #endregion
 
             //Ignore numeric User ID identity column when updating or inserting

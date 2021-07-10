@@ -12,6 +12,8 @@ namespace AQLI.Data.Models
         public string NoteText { get; set; }
         public DateTime Added { get; set; }
 
+        public int AddedBy { get; set; }
+
         public int TankID { get; set; }
         public AquaticTankModel Tank { get; set; }
     }

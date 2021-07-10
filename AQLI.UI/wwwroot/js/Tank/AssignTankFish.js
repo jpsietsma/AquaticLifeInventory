@@ -1,4 +1,4 @@
-﻿var change_me = {
+﻿var AssignTankFish = {
     init: function () {
 
         $("#availableFish, #selectedFish").sortable({
@@ -66,16 +66,8 @@
         if (!success) {
             ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
         }
-
-        //On form submit using parsley
-        $('#someExampleForm').parsley().on('form:submit', function () {
-
-
-
-            //This return line is crucial to ensure the form does not do a regular(double) post
-            return false;
-        });
+                
     }
 }
 
-$(change_me.init);
+$(AssignTankFish.init);

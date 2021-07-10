@@ -1,5 +1,31 @@
 ﻿var PurchaseInvoice = {
     init: function () {
+
+        document.querySelector("html").classList.add('js');
+
+        var fileInput = document.querySelector(".input-file"),
+            button = document.querySelector(".input-file-trigger")
+
+        button.addEventListener("keydown", function (event) {
+            if (event.keyCode == 13 || event.keyCode == 32) {
+                fileInput.focus();
+            }
+        });
+        button.addEventListener("click", function (event) {
+            fileInput.focus();
+            return false;
+        });
+        fileInput.addEventListener("change", function (event) {
+
+            var filepath = this.value;
+            var filename = filepath.split('\\');
+            filename = filename[filename.length - 1];
+
+            button.innerHTML = filename;
+        });
+
+        console.log("Purchase invoice loaded")
+                                
         //make sure multiple modal backdrops overlay properly
         $(document).on('show.bs.modal', '.modal', function () {
             var zIndex = 1040 + (10 * $('.modal:visible').length);
@@ -46,16 +72,16 @@
         },
     },
     openModal: function (id) {
-        openModal('Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
-    },
+        openModal('/Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
+    },    
     openPurchaseInvoiceModal: function (id) {
-        openModal('Purchases/_PurchaseInvoiceDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
+        openModal('/Purchases/_PurchaseInvoiceDetails/?ID=' + id, PurchaseInvoice.modalLoaded)
     },
     addPurchaseDetailsModal: function (id) {
-        openNestedModal('Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.nestedModalLoaded);
+        openNestedModal('/Purchases/_PurchaseDetails/?ID=' + id, PurchaseInvoice.nestedModalLoaded);
     },
     openConfirmDeleteModal: function (id) {
-        openConfirmModal('Purchases/_ConfirmDeletePurchase/?ID=' + id, PurchaseInvoice.confirmModalLoaded)
+        openConfirmModal('/Purchases/_ConfirmDeletePurchase/?ID=' + id, PurchaseInvoice.confirmModalLoaded)
     },
     confirmModalLoaded: function (success) {
         if (!success) {
@@ -79,8 +105,9 @@
     nestedModalLoaded: function (success) {
         if (!success) {
             ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
-        }
+        }               
 
+        //Add purchase to invoice data table on button click
         $('#addToInvoice').on('click', function () {
             var purchaseID = $('#PurchaseID').val();
             var description = $('#PurchaseDescription').val();
@@ -101,13 +128,16 @@
                 purchaseCategoryType
             ]).draw(false);
 
+            console.log("Clicked add button captured");
+                        
         });
+                
     },
     modalLoaded: function (success) {
         if (!success) {
             ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
         }
-
+                
         ////Begin modal edit timeout
         //var i = 10;
 
@@ -235,13 +265,7 @@
                     }
                 }
             );
-
-            //clear the form, reset focus
-            document.getElementById("#addPurchaseInvoiceForm").reset();
-
-            //Reset focus on description for new add
-            $("#PurchaseDescription").focus();
-
+                        
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;
         });

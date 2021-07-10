@@ -138,8 +138,6 @@
             var purchaseCategory = $('#PurchaseCategoryID').val();
             var purchaseCategoryType = $('#PurchaseCategoryTypeID').val();
             
-
-
             $('#purchaseInvoicePurchaseTable').DataTable().row.add([
                     purchaseID,
                     description,
@@ -149,6 +147,10 @@
                     purchaseCategory,
                     purchaseCategoryType
                 ]).draw(false);
+
+            /* Reset purchase form and set focus to Purchase Description field */
+            document.getElementById("addEditPurchaseForm").reset();
+            $("#PurchaseDescription").focus();
         });
 
     },

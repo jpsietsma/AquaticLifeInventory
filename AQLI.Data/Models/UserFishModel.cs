@@ -12,7 +12,7 @@ namespace AQLI.Data.Models
         public int UserFishID { get; set; }
 
         [Display(Name = "Encumbrance Multiplier")]
-        public decimal EncumbranceMultiplier { get; set; }
+        public decimal? EncumbranceMultiplier { get; set; }
 
         [Display(Name = "Fish Friendly Name")]
         public string FishName { get; set; }

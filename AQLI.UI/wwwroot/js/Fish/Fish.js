@@ -19,31 +19,19 @@
     events: {
         addMedicalRecord_Clicked: function () {
             fish.openAddMedicalRecordModal();
-        },        
-        //purchaseQuantityOrCost_Changed: function () {
-
-        //    //Change extended cost on quantity or cost update
-        //    var quantityInputElement = document.getElementById('Quantity');
-        //    var costInputElement = document.getElementById('Cost');
-        //    var extCostInputElement = document.getElementById('ExtCost');
-
-        //    $(extCostInputElement).val($(quantityInputElement).val() * $(costInputElement).val());
-
-        //    //debugging
-        //    //console.log("Quantity Updated: " + $(quantityInputElement).val() + " x " + $(costInputElement).val() + " = " + ($(quantityInputElement).val() * $(costInputElement).val()));           
-        //},
+        }        
     },
     openAddMedicalRecordModal: function () {
         openModal('/Fish/_AddMedicalRecord', fish.addMedicalRecordModalLoaded)
-    },    
-    //openConfirmDeleteModal: function (id) {
-    //    openConfirmModal('Purchases/_ConfirmDeletePurchase/?ID=' + id, PurchaseInvoice.confirmDeleteModalLoaded)
-    //},
-    //confirmDeleteModalLoaded: function (success) {
-    //    if (!success) {
-    //        ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
-    //    }
-    //},     
+    },
+    openFishDetailsModal: function (id) {
+        openModal('/Fish/Details/' + id, fish.fishDetailsModalLoaded)
+    },
+    fishDetailsModalLoaded: function (success) {
+        if (!success) {
+            ErrorMessage.show('A problem has occurred obtaining the record. <br />Please refresh the page and try again.')
+        }
+    },
     addMedicalRecordModalLoaded: function (success) {
         if (!success) {
             ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');

@@ -22,20 +22,77 @@
         font-size: 18px;
         font-weight: bold;
     }
+
+    /* Begin invoice receipt button styles */
+
+    .input-file-container {
+        position: relative;
+        width: 225px;
+    }
+
+    .js .input-file-trigger {
+        display: block;
+        padding: 14px 45px;
+        background: #39D2B4;
+        color: #fff;
+        font-size: 1em;
+        transition: all .4s;
+        cursor: pointer;
+    }
+
+    .js .input-file {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 225px;
+        opacity: 0;
+        padding: 14px 0;
+        cursor: pointer;
+    }
+
+    .js .input-file:hover + .input-file-trigger,
+    .js .input-file:focus + .input-file-trigger,
+    .js .input-file-trigger:hover,
+    .js .input-file-trigger:focus {
+        background: #34495E;
+        color: #39D2B4;
+    }
+
+    .file-return {
+        margin: 0;
+    }
+
+    .file-return:not(:empty) {
+        margin: 1em 0;
+    }
+
+    .js .file-return {
+        font-style: italic;
+        font-size: .9em;
+        font-weight: bold;
+    }
+
+    .js .file-return:not(:empty):before {
+        content: "Selected file: ";
+        font-style: normal;
+        font-weight: normal;
+    }
+
+/* End invoice receipt button styles */
 </style>
 
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
-                @(Model.PurchaseInvoiceID == 0 ? "Add New Purchase Invoice" : "Editing Invoice Details: " + Model.PurchaseInvoiceID)
+                @(Model.PurchaseInvoiceID == 0 ? "Create Purchase Invoice | Enter Details" : "Editing Invoice Details: " + Model.Store.StoreName + " " + Model.PurchaseDate.ToString("MM/dd/yyyy"))
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body">
-            <form id="addPurchaseInvoiceForm" method="post" asp-controller="Purchases" asp-action="_SavePurchaseInvoice" data-parsley-validate>
+        <form id="addPurchaseInvoiceForm" method="post" asp-controller="Purchases" asp-action="_SavePurchaseInvoice" data-parsley-validate>
+            <div class="modal-body">
                 <input type="hidden" name="PurchaseInvoiceID" value="@Model.PurchaseInvoiceID" />
                 <input type="hidden" name="OwnerID" value="@((await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User)).UserId)" />
                 <!-- Store and Purchase Date form row -->
@@ -82,22 +139,9 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-4">
-                                        @if (Model.InvoiceFilePath == null)
-                                        {
-                                            <label class="control-label">Invoice: (<i>.pdf</i>)</label><br />
-                                            <input class="form-control-file" type="file" name="InvoiceFile" />
-                                        }
-                                        else
-                                        {
-                                            <div class="form-group">
-                                                <label class="control-label mb-2">Download Options:</label><br />
-                                                @*<a data-toggle="tooltip" title="Scanned Receipt (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID })" target="_blank"><i class="fas fa-file-invoice-dollar fa-3x mr-3 ml-2" style="color: darkblue;"></i></a>*@
-                                                <a data-toggle="tooltip" title="AQL Invoice (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "aqlpdf"  })" target="_blank"><i class="far fa-file-pdf fa-3x mr-3" style="color: red;"></i></a>
-                                                <a data-toggle="tooltip" title="Export Purchases (csv)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "csv" })" target="_blank"><i class="fas fa-file-excel fa-3x" style="color: darkgreen;"></i></a>
-                                            </div>                                            
-                                        }
+                                        <!-- old invoice spot -->
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,7 +199,7 @@
                             </div>
                         </div>
                     </div>
-                </div>                               
+                </div>
                 @*
                 <div class="form-row">
                     <div class="col-12">
@@ -167,20 +211,57 @@
                     </div>
                 </div>
                 *@
-            </form>
-        </div>
-        <div class="modal-footer">
-            @if (Model.PurchaseInvoiceID != 0)
-            {
-                <button type="button" data-id="@Model.PurchaseInvoiceID" class="btn btn-danger sdn-delete-purchase justify-content-start"><i class="far fa-trash-alt"></i> Delete</button>
-                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Save</button>
-            }
-            else
-            {
-                <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Create Invoice</button>
-            }
-            @*<button type="button" class="btn btn-sm btn-info" onclick="Purchases.addPurchaseToInvoice()">Test</button>*@
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row w-100">
+                    <div class="col-6">
+                        @if (Model.InvoiceFilePath == null)
+                        {
+                            @*<div class="form-row">
+                                <div class="col">
+                                    <b>Attach Receipt</b> (<i>.pdf, .jpg, .csv</i>):
+                                </div>
+                                <div class="col">
+                                    <input class="form-control-file" type="file" name="InvoiceFile" />
+                                </div>
+                            </div>*@
+                            <div class="form-row">
+                                <div class="col">
+                                    <div class="input-file-container">
+                                        <input class="input-file" id="invoiceFile" name="InvoiceFile" type="file" style="display: none;">
+                                        <label tabindex="0" for="invoiceFile" class="input-file-trigger btn btn-info">Attach Receipt...</label>
+                                    </div>
+                                </div>
+                                <div id="selectedFile" class="col">
+
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-row">
+                                <div class="col">
+                                    <a data-toggle="tooltip" title="Original Receipt" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "aqlpdf"  })" target="_blank"><i class="fas fa-file-invoice-dollar fa-lg fa-2x mr-3" style="color: blue;"></i></a>
+                                    <a data-toggle="tooltip" title="AQL Invoice (pdf)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "aqlpdf"  })" target="_blank"><i class="far fa-file-pdf fa-2x mr-3" style="color: red;"></i></a>
+                                    <a data-toggle="tooltip" title="Export Purchases (csv)" href="@Url.Action("ExportPurchaseInvoice", "Export", new { purchaseID = Model.PurchaseInvoiceID, fileType = "csv" })" target="_blank"><i class="fas fa-file-excel fa-2x" style="color: darkgreen;"></i></a>
+                                </div>                                
+                            </div>
+                        }
+                    </div>
+                    <div class="col-6 text-right">
+                        @if (Model.PurchaseInvoiceID != 0)
+                        {
+                            <button type="button" data-id="@Model.PurchaseInvoiceID" class="btn btn-danger sdn-delete-purchase"><i class="far fa-trash-alt"></i> Delete</button>
+                            <button type="button" class="btn btn-success on-new" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success on-new ml-auto" onclick="$('#addPurchaseInvoiceForm').submit();"><i class="far fa-save"></i> Create Invoice</button>
+                        }
+                        <button type="button" class="btn btn-secondary ml-auto" data-dismiss="modal">Close</button>
+                    </div>                    
+                </div>                              
+            </div>
+        </form>
     </div>
 </div>

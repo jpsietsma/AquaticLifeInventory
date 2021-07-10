@@ -3,6 +3,12 @@
 
         if (!$.fn.DataTable.isDataTable('#maintenanceDashboardTable')) {
             table = $('#maintenanceDashboardTable').DataTable({
+                "columnDefs": [
+                    {
+                        "orderable": false,
+                        "targets": 2
+                    }
+                ],
                 "searching": true,
                 "pageLength": 5
             });
@@ -10,8 +16,27 @@
 
         if (!$.fn.DataTable.isDataTable('#fishDashboardTable')) {
             table = $('#fishDashboardTable').DataTable({
+                "columnDefs": [
+                    {
+                        "orderable": false,
+                        "targets": 2
+                    }
+                ],
                 "searching": true,
-                "pageLength": 10
+                "pageLength": 5
+            });
+        }
+
+        if (!$.fn.DataTable.isDataTable('#notesDashboardTable')) {
+            table = $('#notesDashboardTable').DataTable({
+                "columnDefs": [
+                    {
+                        "orderable": false,
+                        "targets": 3
+                    }
+                ],
+                "searching": true,
+                "pageLength": 5
             });
         }
         ////Reload page on modal closing
@@ -44,7 +69,7 @@
         openModal('/Tank/_AddFish/' + id, TankDashboard.openAssignFishModalLoaded)
     },
     openTransferFishModal: function (id) {
-        openModal('/Tank/_AddFish/' + id, TankDashboard.openAssignFishModalLoaded)
+        openModal('/Tank/_AddFish/' + id, TankDashboard.openTransferFishModalLoaded)
     },
     openAssignFishModalLoaded: function (success) {
         if (!success) {

@@ -6,7 +6,7 @@
 
 @section Style {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <style>
         #availableFish, #selectedFish {
@@ -30,6 +30,10 @@
     </style>
 }
 
+@{ 
+    ViewData["Title"] = @$"{Model.Name} Dashboard";
+}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-5">
@@ -37,18 +41,49 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12">
+        <div class="col-6">
             <div><a href="@Url.ActionLink("Index", "Tank")"><i class="fas fa-arrow-circle-left"></i> Back to User Dashboard</a></div>
+        </div>        
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <!-- Tank Action Button row -->
+            <div class="col-12 mx-auto">
+                <button type="button" class="btn btn-sm btn-success" onclick="TankDashboard.openAssignFishModal('@Model.TankID')"><i class="fas fa-plus-circle"></i> Add Fish</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick=""><i class="fas fa-toolbox"></i> Equipment</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick=""><i class="fas fa-boxes"></i> Supplies</button>
+                @*<button type="button" class="btn btn-sm btn-info" onclick=""><i class="fas fa-sticky-note"></i> Tank Notes</button>*@
+
+                <!-- Maintenance Button Dropdown -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-secondary">Tank Tasks</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="dropdown-menu" style="border: 2px solid black;">
+                        <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(1, 0)"><i class="fas fa-temperature-high"></i> &nbsp;&nbsp;Tank Temperature</span></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(2, 0)"><i class="fas fa-fish"></i> &nbsp;&nbsp;Creature Inventory</span></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(3, 0)"><i class="fas fa-tint"></i> &nbsp;&nbsp;Water Change</span></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(4, 0)"><i class="fas fa-exchange-alt"></i> &nbsp;&nbsp;Change Filter</span></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(5, 0)"><i class="fas fa-drumstick-bite"></i> &nbsp;&nbsp;Feed Creatures</span></div>
+                        <div class="dropdown-divider"></div>
+                        <a style="color: red; font-weight: bold;" class="dropdown-item" href="#"><i class="fas fa-archive"></i> &nbsp;&nbsp;Disband Tank</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <br />
     <br />
     <div class="row">
         <div class="col">
             <!-- Tank Overview card -->
             <div class="card">
-                <div class="card-header">
-                    <b>Tank Details Overview</b>
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-sitemap"></i> Tank Details Overview
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -101,8 +136,8 @@
         <div class="col">
             <!-- Purchase Info card -->
             <div class="card">
-                <div class="card-header">
-                    <b>Tank Purchase Information</b>
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-money-check-alt"></i> Tank Purchase Information
                 </div>
                 <div class="card-body" style="padding-bottom: 12px;">
                     <div class="row">
@@ -142,8 +177,8 @@
                     </div>
                     <div class="row">
                         <div class="col-7">
-                            <button type="button" class="btn btn-sm btn-primary">View Details</button>
-                            <button type="button" class="btn btn-sm btn-success">Download</button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="PurchaseInvoice.openPurchaseInvoiceModal('@Model.Purchase.InvoiceID')">View Invoice</button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="PurchaseInvoice.addPurchaseDetailsModal('@Model.PurchaseID')">Purchase Details</button>
                         </div>
                     </div>
                 </div>
@@ -152,8 +187,8 @@
         <div class="col">
             <!-- Water & Community Statistics card -->
             <div class="card">
-                <div class="card-header">
-                    <b>Water &amp; Community Statistics</b>
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-water"></i> Water &amp; Community Statistics
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -193,59 +228,94 @@
                         </div>
                         <div class="col-8">
                             <b>Longest Resident: </b>
-                            <br />@(Model.UserFish.OrderByDescending(o => o.Added).Count() > 0 ? string.Concat(Model.UserFish.OrderByDescending(o => o.Added).FirstOrDefault().FishName, " (", @Model.UserFish.OrderByDescending(o => o.Added).FirstOrDefault().Added.Value.ToString("MM/dd/yyyy"), ")") : "No tank residents")
+                            <br />@(Model.UserFish.OrderBy(o => o.Added).Count() > 0 ? string.Concat(Model.UserFish.OrderByDescending(o => o.Added).FirstOrDefault().FishName, " (", @Model.UserFish.OrderBy(o => o.Added).FirstOrDefault().Added.Value.ToString("MM/dd/yyyy"), ")") : "No tank residents")
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Tank Button row -->
-    <div class="row">
+    </div>    
+    <div class="row m-1">
+        <!-- Horizontal Rule -->
         <div class="col-12 mx-auto">
-            <button type="button" class="btn btn-sm btn-primary" onclick=""><i class="fas fa-info-circle"></i> Equipment</button>
-            <button type="button" class="btn btn-sm btn-primary" onclick=""><i class="fas fa-info-circle"></i> Supplies</button>
-            <button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.ActionLink("_AddTankNote", "Tank", new { ID = Model.TankID })'"><i class="fas fa-plus-circle"></i> Add Note</button>
-
-            <!-- Maintenance Button Dropdown -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-secondary">Tank Tasks</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-cog"></i>
-                </button>
-                <div class="dropdown-menu" style="border: 2px solid black;">
-                    <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(1, 0)"><i class="fas fa-temperature-high"></i> &nbsp;&nbsp;Tank Temperature</span></div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(2, 0)"><i class="fas fa-fish"></i> &nbsp;&nbsp;Creature Inventory</span></div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(3, 0)"><i class="fas fa-tint"></i> &nbsp;&nbsp;Water Change</span></div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(4, 0)"><i class="fas fa-exchange-alt"></i> &nbsp;&nbsp;Change Filter</span></div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item"><span onclick="Maintenance.openLogDetailsModal(5, 0)"><i class="fas fa-drumstick-bite"></i> &nbsp;&nbsp;Feed Creatures</span></div>
-                    <div class="dropdown-divider"></div>
-                    <a style="color: red; font-weight: bold;" class="dropdown-item" href="#"><i class="fas fa-archive"></i> &nbsp;&nbsp;Disband Tank</a>
-                </div>
-            </div>
+            <hr />
         </div>
     </div>
     <div class="row p-1">
-        <div class="col-6">
+        <div class="col-4">
+            <!-- Tank Note Card -->
+            <div class="card">
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-sticky-note"></i> Tank Notes
+                </div>
+                <div class="card-body">
+                    <table id="notesDashboardTable" class="table table-striped table-hover">
+                        @if (Model.Notes.Count() > 0)
+                        {
+                            <thead style="font-size: 18px;">
+                                <tr>
+                                    <td>
+                                        Date
+                                    </td>
+                                    <td>
+                                        User
+                                    </td>
+                                    <td>
+                                        Note Text
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (TankNoteModel noteModel in Model.Notes)
+                                {
+                                    <tr style="font-size: 13px;">
+                                        <td>
+                                            @noteModel.Added.ToString("MM/dd/yyyy")
+                                        </td>
+                                        <td>
+                                            @DataSource.Find_UserDetails(noteModel.AddedBy).FirstName @DataSource.Find_UserDetails(noteModel.AddedBy).LastName
+                                        </td>
+                                        <td>
+                                            @noteModel.NoteText
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle" style="color: white;"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        }
+                        else
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        There are no tank notes recorded.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
             <!-- Fish Population Card -->
             <div class="card">
-                <div class="card-header text-center">
-                    Fish Population
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-fish"></i> Fish Population
                 </div>
-                <div class="card-body text-left">
-                    <div class="row">
-                        <div class="col-12">
-                            <button type="button" class="btn btn-sm btn-outline-success" onclick="TankDashboard.openAssignFishModal(@Model.TankID)">Add</button>
-                        </div>
-                    </div>
-                    <table id="fishDashboardTable" class="table-striped table-bordered table-hover col-12">
+                <div class="card-body">
+                    <table id="fishDashboardTable" class="table table-striped table-hover col-12">
                         @if (Model.UserFish.Count() > 0)
                         {
-                            <thead>
+                            <thead style="font-size: 18px;">
                                 <tr>
                                     <td>
                                         Fish Name
@@ -260,7 +330,7 @@
                             <tbody>
                                 @foreach (UserFishModel fish in Model.UserFish)
                                 {
-                                    <tr>
+                                    <tr style="font-size: 13px;">
                                         <td>
                                             @fish.FishName
                                         </td>
@@ -268,9 +338,8 @@
                                             @fish.FishType.TypeName
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-info" onclick="location.href='@Url.Action("_details", "Fish", new { ID = fish.UserFishID })';return false;"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.ActionLink("_UnassignFish", "Tank", new { ID = fish.UserFishID})'">Unassign</button>
-                                            <button type="button" class="btn btn-sm btn-outline-info" onclick="location.href='@Url.ActionLink("_TransferFish", "Tank", new { ID = fish.UserFishID })'">Transfer</button>
+                                            <button type="button" class="btn btn-sm btn-primary" onclick="fish.openFishDetailsModal('@fish.UserFishID')"><i class="fa fa-info-circle" style="color: white;" aria-hidden="true"></i></button>
+                                            <button type="button" class="btn btn-sm btn-warning" onclick=""><i class="fas fa-exchange-alt"></i> Transfer</button>
                                         </td>
                                     </tr>
                                 }
@@ -295,22 +364,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <!-- Maintenance Log card -->
             <div class="card">
-                <div class="card-header text-center">
-                    Maintenance Logs
+                <div class="card-header text-center" style="font-size: 20px;">
+                    <i class="fas fa-clipboard-list"></i> Maintenance Logs
                 </div>
-                <div class="card-body text-left">
-                    <div class="row">
-                        <div class="col-12 mx-auto">
-                            <button type="button" class="btn btn-sm btn-outline-success">Add Log</button>
-                        </div>
-                    </div>
-                    <table id="maintenanceDashboardTable" class="table-striped table-bordered table-hover col-12">
+                <div class="card-body">
+                    <table id="maintenanceDashboardTable" class="table table-striped table-hover col-12">
                         @if (Model.MaintenanceLogs.Count() > 0)
                         {
-                            <thead>
+                            <thead style="font-size: 18px;">
                                 <tr>
                                     <td>
                                         Date
@@ -325,7 +389,7 @@
                             <tbody>
                                 @foreach (MaintenanceLogModel maintenanceLog in DataSource.Find_TankMaintenanceLogs(Model.TankID))
                                 {
-                                    <tr>
+                                    <tr style="font-size: 13px;">
                                         <td>@maintenanceLog.LogDate</td>
                                         <td>@maintenanceLog.MaintenanceLogType.LogTypeName</td>
                                         <td>
@@ -361,4 +425,6 @@
 @section Scripts{    
     <script type="text/javascript" src="~/js/Maintenance/Maintenance.js"></script>
     <script type="text/javascript" src="~/js/Tank/TankDashboard.js"></script>
+    <script type="text/javascript" src="~/js/Purchases/PurchaseInvoice.js"></script>
+    <script type="text/javascript" src="~/js/Fish/Fish.js"></script>
 }

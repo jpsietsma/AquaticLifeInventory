@@ -5,6 +5,7 @@
             //location.reload();
         });
 
+        //Fish purchase table
         $('#FishPurchaseTable').DataTable({
             "columnDefs": [
                 {
@@ -46,8 +47,8 @@
         $('#customSearchButton').on('keyup click', function () {
             purchaseTable.search($('#customSearchInput').val()).draw();
         });
-        // end purchase Invoice datatable creation
-        
+
+        //Supply purchase table
         $('#SupplyPurchaseTable').DataTable({
             "columnDefs": [
                 {
@@ -57,6 +58,7 @@
             ]
         });
 
+        //Equipment purchase table
         $('#EquipmentPurchaseTable').DataTable({
             "columnDefs": [
                 {
@@ -81,10 +83,7 @@
     },
     openModal: function (id) {
         openModal('Tank/_Details/?ID=' + id, Tank.modalLoaded)
-    },
-    openAddFishModal: function (id) {
-        openModal('Tank/AddFish/?ID=' + id, Tank.addFishModalLoaded)
-    },
+    },    
     openTankDetailsModal: function (id) {
         openModal('@Url.Action("_Details", "Tank")?ID=' + id, Tank.modalLoaded)
     },
@@ -95,13 +94,7 @@
         if (!success) {
             ErrorMessage.show('A problem has occurred deleting the record.<br />Please refresh the page and try again.');
         }
-    },
-    confirmModalLoaded: function (success) {
-
-    },
-    addFishModalLoaded: function (success) {
-
-    },
+    },   
     modalLoaded: function (success) {
         if (!success) {
             ErrorMessage.show('A problem has occurred obtaining the record.<br />Please refresh the page and try again.');
@@ -132,10 +125,6 @@
             //This return line is crucial to ensure the form does not do a regular(double) post
             return false;
         });
-    },
-    HideCard: function (cardId) {
-        $(cardId).hide();
-        console.log(cardId);
     }
 }
 

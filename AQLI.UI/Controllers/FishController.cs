@@ -17,12 +17,14 @@ namespace AQLI.UI.Controllers
     {
         private readonly DataFactory DataSource;
         private readonly UserManager<WebsiteUser> UserManager;
+        private readonly UserFactory UserData;
        
 
-        public FishController(DataFactory _dataFactory, UserManager<WebsiteUser> _userManager)
+        public FishController(DataFactory _dataFactory, UserManager<WebsiteUser> _userManager, UserFactory _userFactory)
         {
             DataSource = _dataFactory;
             UserManager = _userManager;
+            UserData = _userFactory;
         }
 
         public IActionResult Index()
@@ -30,10 +32,10 @@ namespace AQLI.UI.Controllers
             return View();
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            var user = UserManager.GetUserAsync(User).Result;
-            List<UserFishModel> _allUserFish = DataSource.Find_UserFish(user.UserId);
+            var CurrentUser = await UserData.Find_LoggedInUser(User);
+            List<UserFishModel> _allUserFish = DataSource.Find_UserFish(CurrentUser);
             
             return View(_allUserFish);
         }
@@ -51,18 +53,16 @@ namespace AQLI.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult _saveMedicalRecord(UserFish_MedicalRecordModel _modelData)
+        public async Task<IActionResult> _saveMedicalRecord(UserFish_MedicalRecordModel _modelData)
         {
-            DataSource.Add_MedicalRecord(_modelData);
+            await DataSource.Add_MedicalRecord(_modelData);
                         
             return RedirectToAction("Details", new { ID = _modelData.UserFishID });
         }
 
         public IActionResult Details(int ID)
         {
-            var user = UserManager.GetUserAsync(User).Result;
-
-            UserFishModel _dataModel = DataSource.Find_UserFish(user.UserId).Where(id => id.UserFishID == ID).FirstOrDefault();
+            UserFishModel _dataModel = DataSource.Find_FishDetails(ID);
 
             return View(_dataModel);
         }

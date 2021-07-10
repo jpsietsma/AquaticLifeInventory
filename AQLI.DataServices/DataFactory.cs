@@ -1,11 +1,13 @@
 ﻿using AQLI.Data.Models;
 using AQLI.Data.Models.ListModels;
 using AQLI.DataServices.context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AQLI.DataServices
@@ -13,10 +15,12 @@ namespace AQLI.DataServices
     public class DataFactory
     {
         private readonly DatabaseContext Database;
+        private readonly UserManager<WebsiteUser> UserManager;
 
-        public DataFactory(DatabaseContext _context)
+        public DataFactory(DatabaseContext _context, UserManager<WebsiteUser> _userManager)
         {
             Database = _context;
+            UserManager = _userManager;
         }
 
         #region Section: List Factory Methods
@@ -224,8 +228,9 @@ namespace AQLI.DataServices
             public List<UserFishModel> List_NewUnassignedFishPurchases()
             {
                 return Database.UserFish
-                    .Where(f => f.TankID == null && f.FishStatusID == 7)
-                    .ToList();
+                        .Include(ft => ft.FishType)
+                        .Where(f => f.TankID == null)
+                        .ToList();
             }                    
 
             /// <summary>
@@ -259,6 +264,27 @@ namespace AQLI.DataServices
                         .Include(mr => mr.MedicalRecords)
                         .ThenInclude(mrt => mrt.MedicalRecordType)
                         .Where(u => u.Purchase.OwnerID == userId)
+                        .ToList();
+            }
+
+            /// <summary>
+            /// Find all of the fish for a particular user
+            /// </summary>
+            /// <param name="_fishModel">Model of the user to filter on</param>
+            public List<UserFishModel> Find_UserFish(WebsiteUser _userModel)
+            {
+                return Database.UserFish
+                        .Include(p => p.Purchase)
+                        .Include(t => t.Tank)
+                        .Include(ft => ft.FishType)
+                        .ThenInclude(t => t.Temporment)
+                        .Include(t => t.FishTemporment)
+                        .Include(pf => pf.ParentFish)
+                        .Include(cf => cf.ChildrenFish)
+                        .Include(fs => fs.FishStatus)
+                        .Include(mr => mr.MedicalRecords)
+                        .ThenInclude(mrt => mrt.MedicalRecordType)
+                        .Where(u => u.Purchase.OwnerID == _userModel.UserId)
                         .ToList();
             }
 
@@ -328,6 +354,11 @@ namespace AQLI.DataServices
             public UserFishModel Find_FishDetails(int fishId)
             {
                 return Database.UserFish
+                    .Include(p => p.Purchase)
+                    .Include(ft => ft.FishType)
+                    .ThenInclude(t => t.Temporment)
+                    .Include(fs => fs.FishStatus)
+                    .Include(mr => mr.MedicalRecords)
                     .Where(f => f.UserFishID == fishId)
                     .FirstOrDefault();
             }
@@ -342,7 +373,7 @@ namespace AQLI.DataServices
                     .Where(u => u.UserId == userId)
                     .FirstOrDefault();
             }
-
+            
             /// <summary>
             /// Find the supplies for a particular tank
             /// </summary>

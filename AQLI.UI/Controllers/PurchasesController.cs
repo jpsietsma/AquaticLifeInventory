@@ -41,7 +41,7 @@ namespace AQLI.UI.Controllers
 
             if (ID != 0)
             {
-                model = Database.Purchases.Where(p => p.PurchaseID == ID).Include("PurchaseCategory").FirstOrDefault();
+                model = DataSource.List_Purchases().Where(p => p.PurchaseID == ID).FirstOrDefault();
             }            
 
             return PartialView(model);
@@ -63,7 +63,7 @@ namespace AQLI.UI.Controllers
 
             return PartialView(model);
         }
-
+                
         public IActionResult _ConfirmDeletePurchase(int ID)
         {
             var model = DataSource.List_Purchases().Where(p => p.PurchaseID == ID).First();
